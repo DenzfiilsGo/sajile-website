@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Menu - SajiLe</title>
+    <link rel="stylesheet" href="C:\Users\Denzf\Documents\P5 Project\css\daftar_makanan.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">Saji<span class="brand-highlight">Le</span></div>
+        <ul class="nav-links">
+            <li><a href="beranda.html">Beranda</a></li>
+            <li><a href="#" class="active">Menu</a></li>
+            <li><a href="resep.html">Resep</a></li>
+            <li><a href="favorit.html">Favorit</a></li> </ul>
+        <div class="nav-actions">
+            <button id="theme-toggle" class="btn-icon"><i class="fas fa-moon"></i></button>
+            <a href="daftar_atau_login.html" class="btn-primary">Masuk/Daftar</a>
+            <div class="profile-pic">
+                <img src="https://placehold.co/40x40/png" alt="Profil">
+            </div>
+        </div>
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>Jelajahi Rasa</h1>
+        <p>Temukan hidangan favoritmu dari dapur terbaik kami.</p>
+    </header>
+
+    <div class="toggle-container">
+        <div class="toggle-wrapper">
+            <button class="toggle-btn active" data-filter="makanan">
+                <i class="fas fa-utensils"></i> Makanan
+            </button>
+            <button class="toggle-btn" data-filter="minuman">
+                <i class="fas fa-glass-martini-alt"></i> Minuman
+            </button>
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="menu-grid" id="menuGrid">
+            
+            <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/orange/white?text=Nasi+Goreng');"></div>
+                <div class="card-info">
+                    <h3>Nasi Goreng Spesial</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.8</div>
+                </div>
+            </div>
+
+            <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/brown/white?text=Sate+Ayam');"></div>
+                <div class="card-info">
+                    <h3>Sate Ayam Madura</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.7</div>
+                </div>
+            </div>
+
+            <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/red/white?text=Rendang');"></div>
+                <div class="card-info">
+                    <h3>Rendang Daging</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.9</div>
+                </div>
+            </div>
+
+            <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/yellow/black?text=Soto');"></div>
+                <div class="card-info">
+                    <h3>Soto Lamongan</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.6</div>
+                </div>
+            </div>
+
+            <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/grey/white?text=Bakso');"></div>
+                <div class="card-info">
+                    <h3>Bakso Urat Besar</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.8</div>
+                </div>
+            </div>
+            
+            <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/green/white?text=Gado+Gado');"></div>
+                <div class="card-info">
+                    <h3>Gado-Gado Siram</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.5</div>
+                </div>
+            </div>
+
+            <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/darkred/white?text=Gudeg');"></div>
+                <div class="card-info">
+                    <h3>Gudeg Jogja Komplit</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.7</div>
+                </div>
+            </div>
+
+             <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/pink/black?text=Pempek');"></div>
+                <div class="card-info">
+                    <h3>Pempek Kapal Selam</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.8</div>
+                </div>
+            </div>
+
+             <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/333/white?text=Rawon');"></div>
+                <div class="card-info">
+                    <h3>Rawon Setan</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.9</div>
+                </div>
+            </div>
+
+             <div class="menu-card category-makanan">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/orange/black?text=Ayam+Geprek');"></div>
+                <div class="card-info">
+                    <h3>Ayam Geprek Keju</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.6</div>
+                </div>
+            </div>
+
+            <div class="menu-card category-minuman" style="display: none;">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/blue/white?text=Es+Teh');"></div>
+                <div class="card-info">
+                    <h3>Es Teh Solo</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.5</div>
+                </div>
+            </div>
+
+            <div class="menu-card category-minuman" style="display: none;">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/orange/white?text=Jus+Jeruk');"></div>
+                <div class="card-info">
+                    <h3>Jus Jeruk Murni</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.7</div>
+                </div>
+            </div>
+
+            <div class="menu-card category-minuman" style="display: none;">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/brown/white?text=Kopi+Susu');"></div>
+                <div class="card-info">
+                    <h3>Kopi Susu Gula Aren</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.8</div>
+                </div>
+            </div>
+
+             <div class="menu-card category-minuman" style="display: none;">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/pink/white?text=Es+Campur');"></div>
+                <div class="card-info">
+                    <h3>Es Campur Spesial</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.9</div>
+                </div>
+            </div>
+
+             <div class="menu-card category-minuman" style="display: none;">
+                <div class="card-img" style="background-image: url('https://placehold.co/300x300/green/white?text=Es+Cendol');"></div>
+                <div class="card-info">
+                    <h3>Es Cendol Dawet</h3>
+                    <div class="rating"><i class="fas fa-star"></i> 4.6</div>
+                </div>
+            </div>
+
+        </div> </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
+        <p><a href="tentang_kami.html">Tentang Kami</a> | Email: sajile@gmail.com | Whatsapp: 0812-3456-7890</p>
+        <p>Dikelola oleh Tim SajiLe (ex-MBADOKLE) Indonesia</p>
+    </footer>
+
+    <script src="C:\Users\Denzf\Documents\P5 Project\js\daftar_makanan.js"></script>
+</body>
+</html>

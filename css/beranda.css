@@ -1,0 +1,448 @@
+/* Reset & Base Variables */
+:root {
+    --primary-color: #2ecc71; /* Hijau segar khas makanan */
+    --primary-dark: #27ae60;
+    --accent-color: #3498db;
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --card-bg: #f9f9f9;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    --nav-height: 70px;
+    --transition: all 0.3s ease; 
+    --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --text-light: #aaaaaa;
+    --card-bg: #1e1e1e;
+    --card-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--color-transition), color var(--color-transition); 
+    overflow-x: hidden;
+}
+
+/* 1. Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    height: var(--nav-height);
+    background-color: var(--bg-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: background-color var(--color-transition), 
+                box-shadow var(--color-transition);
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.brand-highlight {
+    color: var(--primary-color);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: color var(--color-transition); 
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    /* Transisi ikon tema */
+    transition: color var(--color-transition); 
+}
+
+.profile-pic img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+}
+
+.hamburger { display: none; }
+
+/* 2. Banner Carousel */
+.hero-slider {
+    width: 100%;
+    height: 450px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.slider-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.slide.active { opacity: 1; }
+
+/* 3. Global Layout & Typography */
+.main-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.text-center-section {
+    text-align: center;
+    margin: 60px 0 40px;
+}
+
+.big-title {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    /* Transisi warna teks ringan */
+    transition: color var(--color-transition); 
+    line-height: 1.6;
+}
+
+/* 4. Features Grid (3 Items) */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-bottom: 60px;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+    text-align: center;
+    /* Transisi Card penuh */
+    transition: transform 0.3s ease, 
+                background-color var(--color-transition), 
+                box-shadow var(--color-transition);
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+}
+
+.img-placeholder {
+    width: 100%;
+    height: 150px;
+    background-color: #ddd;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background-image: url('https://placehold.co/400x300/ccc/999?text=Food+Shot');
+    background-size: cover;
+}
+
+/* 5. Divider */
+.divider {
+    position: relative;
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 60px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Transisi garis divider */
+    transition: background-color var(--color-transition);
+}
+
+.divider-icon {
+    background-color: var(--bg-color);
+    padding: 0 15px;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    /* Transisi background icon (untuk menutupi divider) */
+    transition: background-color var(--color-transition);
+}
+
+/* 6 & 12. Split Section */
+.split-section {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    margin-bottom: 60px;
+}
+
+.split-section.reverse {
+    flex-direction: row-reverse;
+}
+
+.split-text { flex: 1; }
+.split-image { flex: 1; }
+
+.split-image img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.split-image img:hover {
+    transform: scale(1.02);
+}
+
+.highlight-text {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.btn-secondary {
+    margin-top: 20px;
+    padding: 10px 25px;
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* 7 & 11. Grid 5 Columns */
+.food-grid-section, .course-container {
+    margin-bottom: 60px;
+}
+
+.highlight-tag {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.grid-5-col {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+}
+
+.food-card, .course-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    /* Transisi Card penuh */
+    transition: transform 0.3s ease, 
+                background-color var(--color-transition), 
+                box-shadow var(--color-transition);
+    cursor: pointer;
+}
+
+.food-card:hover, .course-card:hover {
+    transform: translateY(-5px);
+}
+
+.fc-img, .cc-img {
+    width: 100%;
+    height: 120px;
+    background-color: #ccc;
+    background-image: url('https://placehold.co/200x200/orange/white?text=Yummy');
+    background-size: cover;
+}
+
+.fc-info, .course-card span {
+    padding: 10px;
+    text-align: center;
+    font-weight: 600;
+    display: block;
+    /* Transisi warna teks */
+    transition: color var(--color-transition); 
+}
+
+/* 10. Course Banner */
+.course-banner {
+    background-color: var(--text-color); /* Dark in light mode */
+    color: var(--bg-color);
+    padding: 40px;
+    text-align: center;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    /* Transisi banner kursus */
+    transition: background-color var(--color-transition), 
+                color var(--color-transition);
+}
+
+/* 13. CTA Banner */
+.cta-banner {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    padding: 60px 20px;
+    text-align: center;
+    border-radius: 20px;
+    color: white;
+    margin-bottom: 80px;
+}
+
+.cta-content h2 { font-size: 2.2rem; margin-bottom: 15px; }
+.cta-content p { margin-bottom: 30px; font-size: 1.1rem; }
+
+.btn-cta {
+    background-color: white;
+    color: var(--primary-color);
+    padding: 12px 40px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.btn-cta:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* 14. Footer */
+.site-footer {
+    background-color: #e8f5e9; /* Hijau sangat muda */
+    padding: 30px 20px;
+    text-align: center;
+    border-top: 4px solid var(--primary-color);
+    color: #555;
+    /* Transisi Footer penuh */
+    transition: background-color var(--color-transition), 
+                color var(--color-transition),
+                border-top-color var(--color-transition);
+}
+
+/* --- Penambahan Styling untuk Link Footer --- */
+
+.site-footer a {
+    color: var(--text-light); /* Warna teks ringan di footer */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--transition);
+}
+
+.site-footer a:hover {
+    color: var(--primary-color);
+}
+
+/* Dark Mode Footer Override */
+
+[data-theme="dark"] .site-footer {
+    background-color: #0f0f0f;
+    /* PERBAIKAN: Mengganti #888 menjadi #aaa agar lebih terang dan konsisten */
+    color: #aaa; 
+}
+
+/* Dark Mode Footer Link Override */
+[data-theme="dark"] .site-footer a {
+    /* PERBAIKAN: Mengganti #aaa menjadi #ccc agar lebih terang dan konsisten */
+    color: #ccc; 
+}
+
+/* --- Akhir Penambahan Styling untuk Link Footer --- */
+
+
+/* Animations */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+    .navbar { padding: 0 20px; }
+    .nav-links, .nav-actions { display: none; } /* Sederhana untuk demo */
+    .hamburger { display: block; font-size: 1.5rem; }
+    
+    .features-grid { grid-template-columns: 1fr; }
+    .split-section, .split-section.reverse { flex-direction: column; text-align: center; }
+    .grid-5-col { grid-template-columns: repeat(2, 1fr); } /* Jadi 2 kolom di HP */
+    .big-title { font-size: 1.8rem; }
+    .hero-slider { height: 250px; }
+}

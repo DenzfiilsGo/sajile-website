@@ -1,0 +1,272 @@
+/* --- 1. BASE VARIABLES & RESET (Sama dengan resep.css) --- */
+:root {
+    --primary-color: #2ecc71; 
+    --primary-dark: #27ae60;
+    --accent-color: #3498db;
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --card-bg: #f9f9f9;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    --nav-height: 70px;
+    
+    /* Transisi Konsisten */
+    --transition: all 0.3s ease; 
+    --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --text-light: #aaaaaa;
+    --card-bg: #1e1e1e;
+    --card-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--color-transition), color var(--color-transition);
+    overflow-x: hidden;
+    min-height: 100vh; /* Penting untuk footer di halaman pendek */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Agar footer selalu di bawah */
+.main-wrapper { 
+    flex-grow: 1;
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 20px;
+    width: 100%; /* Penting untuk flex grow */
+}
+
+/* --- 2. BASE UTILITIES (Navbar, Footer, Buttons) --- */
+.navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 5%; height: var(--nav-height);
+    background-color: var(--bg-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky; top: 0; z-index: 1000;
+    transition: background-color var(--color-transition), box-shadow var(--color-transition);
+}
+.nav-brand { font-size: 1.5rem; font-weight: 700; letter-spacing: 1px; }
+.brand-highlight { color: var(--primary-color); }
+.nav-links { display: flex; list-style: none; gap: 25px; }
+.nav-links a { text-decoration: none; color: var(--text-color); font-weight: 500; transition: color var(--color-transition); }
+.nav-links a:hover { color: var(--primary-color); }
+.nav-actions { display: flex; align-items: center; gap: 15px; }
+.btn-primary { 
+    background-color: var(--primary-color); 
+    color: white; 
+    padding: 8px 20px; 
+    border-radius: 25px; 
+    text-decoration: none; 
+    font-weight: 600; 
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+}
+.btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+.btn-icon { 
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    font-size: 1.2rem; 
+    color: var(--text-color); 
+    transition: color var(--color-transition); 
+}
+.profile-pic img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
+.hamburger { display: none; }
+
+/* Footer Styling */
+.site-footer {
+    background-color: #e8f5e9;
+    padding: 30px 20px;
+    text-align: center;
+    border-top: 4px solid var(--primary-color);
+    color: #555;
+    transition: background-color var(--color-transition), color var(--color-transition), border-top-color var(--color-transition);
+    margin-top: 50px; /* Jarak dari konten utama */
+}
+.site-footer a { 
+    color: var(--text-light); 
+    text-decoration: none; 
+    font-weight: 600; 
+    transition: color var(--transition); 
+}
+.site-footer a:hover { color: var(--primary-color); }
+[data-theme="dark"] .site-footer { 
+    background-color: #0f0f0f; 
+    color: #aaa; 
+    border-top-color: var(--primary-dark); 
+}
+[data-theme="dark"] .site-footer a { color: #ccc; }
+
+
+/* --- 3. STYLING KHUSUS FAVORIT & RESEP GRID --- */
+
+.page-header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    border-bottom: 2px solid var(--primary-color);
+    margin-bottom: 40px;
+}
+.page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+.page-header p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+}
+
+/* Empty State Styling (Penting untuk halaman Favorit) */
+#empty-state {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.empty-message {
+    max-width: 400px;
+    padding: 30px;
+    border: 2px dashed #ccc;
+    border-radius: 15px;
+    background-color: var(--card-bg);
+    transition: all var(--color-transition);
+}
+
+[data-theme="dark"] .empty-message { border-color: #333; }
+
+.icon-large {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+.empty-message h2 { margin-bottom: 10px; font-weight: 600; }
+.empty-message p { margin-bottom: 25px; color: var(--text-light); }
+
+
+/* Recipe Grid (Sama dengan resep.css) */
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 kolom desktop */
+    gap: 25px;
+}
+
+.recipe-card {
+    position: relative; /* Untuk posisi tombol hapus */
+    display: block;
+    text-decoration: none;
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color var(--color-transition), opacity 0.3s ease;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-image {
+    position: relative;
+    height: 180px;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 15px;
+}
+
+.card-info h3 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+.card-info .duration {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.card-info .duration i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+/* Tombol Hapus Favorit */
+.btn-remove-fav {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #e74c3c; /* Warna merah untuk hapus */
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+}
+.btn-remove-fav:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+/* Animations (Sama dengan resep.css) */
+.fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+.delay-1 { transition-delay: 0.05s; }
+.delay-2 { transition-delay: 0.10s; }
+.delay-3 { transition-delay: 0.15s; }
+.delay-4 { transition-delay: 0.20s; }
+.delay-5 { transition-delay: 0.25s; }
+.delay-6 { transition-delay: 0.30s; }
+.delay-7 { transition-delay: 0.35s; }
+.delay-8 { transition-delay: 0.40s; }
+.delay-9 { transition-delay: 0.45s; }
+
+
+/* --- 4. RESPONSIVE DESIGN --- */
+
+@media (max-width: 1024px) {
+    .recipe-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .navbar { padding: 0 20px; }
+    .nav-links, .nav-actions { display: none; }
+    .hamburger { display: block; font-size: 1.5rem; }
+    .page-header h1 { font-size: 2rem; }
+    .recipe-grid { grid-template-columns: repeat(2, 1fr); }
+    .empty-message { padding: 20px; }
+}
+
+@media (max-width: 480px) {
+    .recipe-grid { grid-template-columns: 1fr; }
+    .page-header h1 { font-size: 1.8rem; }
+    .icon-large { font-size: 3rem; }
+}
