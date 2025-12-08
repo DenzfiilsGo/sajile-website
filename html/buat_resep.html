@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Unggah Resep Baru - SajiLe</title>
+
+        <link rel="stylesheet" href="../css/buat_resep.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    <body data-logged-in="false">
+
+        <nav class="navbar">
+            <a class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
+
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <div class="nav-menu-container" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="../index.html">Beranda</a></li>
+                    <li><a href="daftar_makanan.html">Menu</a></li>
+                    <li><a href="resep.html">Resep</a></li>
+                    <li><a href="favorit.html">Favorit</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="btn-icon">
+                        <i class="fas fa-moon"></i>
+                        <span class="mobile-only-text">Mode Gelap</span>
+                    </button>
+                    
+                    <div class="nav-auth-links logged-out-only">
+                        <a href="daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
+                    </div>
+                    
+                    <div class="profile-dropdown-wrapper logged-in-only">
+                        <div class="profile-pic" id="profile-pic-btn">
+                            <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna" onerror="this.onerror=null; this.src='https://placehold.co/40x40/3498db/fff?text=U'">
+                        </div>
+                        
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <div class="dropdown-header">
+                                <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
+                                <div class="user-info">
+                                    <span class="username">Nama Pengguna</span>
+                                    <span class="email">user.email@mail.com</span>
+                                </div>
+                            </div>
+                            <ul class="dropdown-links">
+                                <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
+                                <li><a href="pengaturan.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
+                                <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
+                                <li class="divider-item"></li>
+                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-wrapper">
+            
+            <section class="recipe-hero fade-in">
+                <h1><i class="fas fa-pen-fancy"></i>&nbsp;&nbsp;&nbsp;&nbsp;Bagikan Resep Spesial Anda</h1>
+                <p>Unggah resep favorit Anda dan bagikan dengan komunitas SajiLe. Mari ciptakan koleksi kuliner bersama!</p>
+                
+                <div class="recipe-image-container">
+                    <div class="image-preview-hero" id="image-preview-hero">
+                        <i class="fas fa-image"></i>
+                        <p>Pratinjau Foto Resep</p>
+                    </div>
+                </div>
+
+                <div class="recipe-actions">
+                    <button type="button" id="btn-upload-image" class="btn-primary">
+                        <i class="fas fa-cloud-upload-alt"></i>&nbsp;&nbsp;Pilih Foto Resep
+                    </button>
+                    <button type="button" id="btn-back" class="btn-secondary" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Kembali
+                    </button>
+                </div>
+            </section>
+
+            <section class="recipe-meta-bar fade-in">
+                <div class="meta-item">
+                    <i class="fas fa-list-check"></i>
+                    <p><span id="field-count">0</span>&nbsp;&nbsp;Bagian Terisi</p>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-image"></i>
+                    <p id="image-status">&nbsp;&nbsp;Belum Ada Foto</p>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-fire"></i>
+                    <p id="form-status">&nbsp;&nbsp;Draft</p>
+                </div>
+            </section>
+
+            <section class="recipe-content-grid fade-in">
+                
+                <aside class="left-column">
+                    <div class="section-card fade-in">
+                        <h2><i class="fas fa-info-circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;Informasi Dasar</h2>
+                        
+                        <form id="recipe-form" class="recipe-form">
+                            
+                            <div class="form-group">
+                                <label for="title">
+                                    <span class="label-icon"><i class="fas fa-heading"></i></span>
+                                    &nbsp;&nbsp;Judul Resep <span class="required">*</span>
+                                </label>
+                                <input type="text" id="title" name="title" placeholder="Cth: Rendang Daging Sapi" required>
+                                <small class="form-hint">Buat judul yang singkat dan menarik.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category">
+                                    <span class="label-icon"><i class="fas fa-tag"></i></span>
+                                    &nbsp;&nbsp;Kategori <span class="required">*</span>
+                                </label>
+                                <select id="category" name="category" required>
+                                    <option value="">-- Pilih Kategori --</option>
+                                    <option value="makanan_utama">🍚 Makanan Utama</option>
+                                    <option value="camilan">🍪 Camilan</option>
+                                    <option value="minuman">🥤 Minuman</option>
+                                    <option value="dessert">🍰 Dessert</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">
+                                    <span class="label-icon"><i class="fas fa-pen"></i></span>
+                                    &nbsp;&nbsp;Deskripsi Singkat <span class="required">*</span>
+                                </label>
+                                <textarea id="description" name="description" rows="4" placeholder="Ceritakan sedikit tentang resep ini..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="serving_size">
+                                    <span class="label-icon"><i class="fas fa-utensils"></i></span>
+                                    &nbsp;&nbsp;Porsi Awal
+                                </label>
+                                <div class="input-group">
+                                    <button type="button" class="btn-spin-down" id="serving-down">−</button>
+                                    <input type="number" id="serving_size" name="serving_size" value="2" min="1" max="50" required>
+                                    <span class="input-label">orang</span>
+                                    <button type="button" class="btn-spin-up" id="serving-up">+</button>
+                                </div>
+                            </div>
+
+                            <input type="file" id="image" name="image" accept="image/jpeg, image/png" style="display:none;">
+                            
+                            <div class="image-upload-zone" id="image-upload-zone" style="margin-top: 20px;">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Atau Drag & Drop Foto di Sini</p>
+                            </div>
+
+                        </form>
+                    </div>
+                </aside>
+
+                <main class="right-column">
+                    
+                    <div class="section-card fade-in">
+                        <h2><i class="fas fa-shopping-basket"></i>&nbsp;&nbsp;&nbsp;&nbsp;Bahan-bahan</h2>
+                        <div id="ingredients-container">
+                            </div>
+                        <button type="button" id="add-ingredient-btn" class="add-btn">
+                            <i class="fas fa-plus-circle"></i>&nbsp;&nbsp;Tambah Bahan
+                        </button>
+                    </div>
+
+                    <div class="section-card fade-in">
+                        <h2><i class="fas fa-utensils"></i>&nbsp;&nbsp;&nbsp;&nbsp;Alat-alat</h2>
+                        <div id="tools-container">
+                            </div>
+                        <button type="button" id="add-tool-btn" class="add-btn">
+                            <i class="fas fa-plus-circle"></i>&nbsp;&nbsp;Tambah Alat
+                        </button>
+                    </div>
+
+                    <div class="section-card fade-in">
+                        <h2><i class="fas fa-list-ol"></i>&nbsp;&nbsp;&nbsp;&nbsp;Langkah Memasak</h2>
+                        <div id="steps-container">
+                            </div>
+                        <button type="button" id="add-step-btn" class="add-btn">
+                            <i class="fas fa-plus-circle"></i>&nbsp;&nbsp;Tambah Langkah
+                        </button>
+                    </div>
+
+                </main>
+            </section>
+
+            <section class="submit-section fade-in">
+                <div class="submit-actions">
+                    <button type="button" id="submit-recipe-btn" class="btn-submit-primary">
+                        <i class="fas fa-paper-plane"></i>&nbsp;&nbsp;Unggah Resep Saya
+                    </button>
+                    <button type="button" id="cancel-btn" class="btn-submit-secondary" onclick="window.location.reload()">
+                        <i class="fas fa-times"></i>&nbsp;&nbsp;Batal / Reset
+                    </button>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="site-footer">
+            <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
+            <p><a href="tentang_kami.html" class="about-we">Tentang Kami</a> | Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> | Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a></p>
+            <p>Dikelola oleh Tim <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</strong></span></a> (ex-MBADOKLE) Indonesia</p>
+        </footer>
+
+        <div id="custom-alert-modal" class="custom-modal-overlay">
+            <div class="custom-modal-content">
+                <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <h3 class="modal-title">Ukuran File Melebihi Batas!</h3>
+                <p id="modal-message">
+                    Ukuran file Anda melebihi batas 100 KB.
+                    <br>
+                    Ukuran file yang diunggah: <span id="uploaded-file-size">0 KB</span>.
+                </p>
+                <button id="modal-ok-btn" class="btn-primary">Oke</button>
+            </div>
+        </div>
+
+        <script type="module" src="../js/authManager.js"></script>
+        <script type="module" src="../js/buat_resep.js"></script>
+    </body>
+</html>

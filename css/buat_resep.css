@@ -1,0 +1,759 @@
+/* =========================================
+   1. BASE VARIABLES & RESET (STANDAR SAJILE)
+   ========================================= */
+:root {
+    --hover-button: #98FB98;
+    --primary-color: #2ecc71;
+    --primary-dark: #27ae60;
+    --danger-color: #e74c3c;
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --card-bg: #f9f9f9;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    --nav-height: 70px;
+    --transition: all 0.3s ease; 
+    --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
+    --dropdown-bg: #ffffff; /* Tambahan untuk dropdown */
+    --border-color: #eeeeee; /* Tambahan untuk batas */
+}
+
+/* DARK MODE VARIABLES */
+[data-theme="dark"] {
+    --bg-color: #121212; 
+    --text-color: #e0e0e0; 
+    --text-light: #aaaaaa; 
+    --card-bg: #1e1e1e;
+    --card-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+    --dropdown-bg: #1e1e1e; /* Dark mode dropdown */
+    --border-color: #333333; /* Dark mode batas */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--color-transition), color var(--color-transition);
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    user-select: none; /* Mencegah seleksi teks */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge lama */
+}
+
+.main-wrapper { 
+    flex-grow: 1;
+    max-width: 1450px; 
+    margin: 0 auto; 
+    padding: 0 20px;
+    width: 100%;
+}
+
+/* =========================================
+   2. NAVBAR STYLING (FIXED & SAFE - STANDAR WAJIB)
+   ========================================= */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    height: var(--nav-height);
+    background-color: var(--bg-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: background-color var(--color-transition), box-shadow var(--color-transition);
+}
+
+.nav-brand { 
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    flex-shrink: 0; 
+    color: var(--user-name-color); /* Menggunakan variabel baru */
+}
+.brand-highlight { color: var(--primary-color); }
+
+/* --- Container Menu (Desktop Mode) --- */
+.nav-menu-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    margin: 0 auto;
+}
+
+.nav-links a { 
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.nav-links a::after {
+    content: ''; position: absolute; width: 0; height: 2px;
+    bottom: -5px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary-color); }
+
+.nav-actions { 
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.btn-primary { 
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+.btn-primary:hover {
+    background-color: transparent; border-color: var(--primary-color); color: var(--primary-color);
+}
+
+.btn-icon { 
+    background: none; border: none; font-size: 1.2rem; cursor: pointer; 
+    color: var(--text-color); padding: 5px; border-radius: 50%;
+    transition: color var(--color-transition), background-color var(--transition); 
+}
+.btn-icon:hover { background-color: rgba(0,0,0,0.05); color: #7296AB; }
+
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+/* Tambahan: Sembunyikan item mobile di desktop */
+.mobile-only-text, .profile-pic.mobile-only { display: none; } 
+/* Tambahan: Tampilkan item desktop di desktop */
+.profile-pic.desktop-only { display: block; }
+
+/* Hamburger Button */
+.hamburger {
+    display: none; cursor: pointer; background: none; border: none; padding: 10px; z-index: 1001;
+}
+.bar {
+    display: block; width: 25px; height: 3px; margin: 5px auto;
+    background-color: var(--text-color); transition: all 0.3s ease-in-out; border-radius: 3px;
+}
+/* Animasi Hamburger ke X */
+.hamburger.active .bar:nth-child(2) { opacity: 0; }
+.hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* ----------------------------------------- */
+/* ⭐ Tambahan Styling Status Login/Logout ⭐ */
+/* ----------------------------------------- */
+
+/* Sembunyikan elemen tergantung status body data-logged-in */
+body[data-logged-in="true"] .logged-out-only { display: none !important; }
+body[data-logged-in="false"] .logged-in-only { display: none !important; }
+
+/* =========================================
+    3. DROPDOWN PROFILE STYLING (STANDAR WAJIB)
+    ========================================= */
+.profile-dropdown-wrapper { position: relative; }
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.profile-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 30px); /* Jarak dari nav-actions */
+    right: -60px; /* Penyesuaian posisi kanan */
+    width: 300px;
+    background-color: var(--dropdown-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 15px 0;
+    z-index: 990;
+    
+    /* State Awal (Sembunyi) */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Kelas yang akan ditambahkan via JavaScript */
+.profile-dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    padding: 0 15px 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+.dropdown-header img {
+    width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+    margin-right: 10px; border: 2px solid var(--primary-color);
+}
+.user-info {
+    display: flex; flex-direction: column;
+}
+.username {
+    font-weight: 600; color: var(--text-color); font-size: 1rem;
+}
+.email {
+    font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.dropdown-links {
+    list-style: none; padding: 0; margin: 0;
+}
+.dropdown-links li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dropdown-links li a:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--primary-dark);
+}
+.dropdown-links li a i {
+    margin-right: 10px; width: 20px; text-align: center;
+}
+.dropdown-links li a.logout {
+    color: #e74c3c;
+}
+.dropdown-links li a.logout:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #c0392b;
+}
+
+.divider-item {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 5px 0;
+}
+
+.mobile-only-text { display: none; } /* Teks penjelasan icon di desktop sembunyi */
+
+/* Responsive Navbar */
+@media (max-width: 1024px) {
+    .navbar { padding: 0 20px; }
+    .hamburger { display: block; }
+    .nav-menu-container {
+        position: absolute; top: var(--nav-height); left: 0; width: 100%; margin: 0;
+        flex-direction: column; background-color: var(--bg-color); padding: 30px 20px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-bottom: 1px solid rgba(0,0,0,0.05);
+        opacity: 0; visibility: hidden; transform: translateY(-20px);
+        transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), visibility 0.4s ease;
+    }
+    .nav-menu-container.active { opacity: 1; visibility: visible; transform: translateY(0); }
+    .nav-links { flex-direction: column; width: 100%; text-align: center; gap: 15px; margin-bottom: 25px; }
+    .nav-actions { width: 100%; flex-direction: column; gap: 15px; border-top: 1px solid var(--border-color); padding-top: 25px; }
+    .mobile-only-text { display: inline; margin-left: 10px; }
+    .btn-icon { width: 100%; border: 1px solid var(--border-color); padding: 10px; border-radius: 10px; }
+    .btn-primary { width: 100%; text-align: center; }
+}
+
+/* =========================================
+   3. FORM & CONTENT STYLING (REVISI UI/UX)
+   ========================================= */
+.recipe-hero {
+    margin-top: 40px; padding: 40px; border-radius: 15px; text-align: center;
+    /* REVISI: Mengubah background & menambahkan shadow untuk elevasi yang lebih baik */
+    background: var(--card-bg); 
+    box-shadow: var(--card-shadow);
+}
+.recipe-hero h1 { color: var(--primary-color); margin-bottom: 10px; }
+
+/* REVISI: Mengubah rasio aspek hero image menggunakan teknik padding-bottom (3:2) */
+.recipe-image-container { 
+    margin: 20px 0; /* Jaga margin */
+    position: relative;
+    width: 100%;
+    padding-bottom: 66.66%; /* Rasio Aspek 3:2 (Tinggi 2/3 dari lebar) */
+    overflow: hidden;
+}
+
+.image-preview-hero {
+    /* REVISI: Menjadikan preview mengambil 100% dari wadah 3:2 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; 
+    height: 100%; 
+    border: 3px dashed var(--primary-color); /* Ubah border color agar lebih menarik */
+    border-radius: 15px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background-color: var(--bg-color); /* Background dalam frame */
+    color: var(--text-light); 
+    overflow: hidden;
+}
+.image-preview-hero img { width: 100%; height: 100%; object-fit: cover; }
+.recipe-actions { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+
+/* Meta Bar */
+.recipe-meta-bar {
+    display: flex; gap: 20px; margin: 30px 0; padding: 20px; background: var(--card-bg);
+    border-radius: 12px; box-shadow: var(--card-shadow); justify-content: space-around; flex-wrap: wrap;
+}
+/* REVISI: Meningkatkan visualisasi meta item */
+.meta-item { 
+    display: flex; align-items: center; gap: 10px; color: var(--text-color); font-weight: 600; 
+    padding: 5px 10px;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+.meta-item i { color: var(--primary-color); font-size: 1.2rem; }
+
+/* Grid Layout */
+.recipe-content-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; margin-bottom: 40px; }
+@media (max-width: 900px) { .recipe-content-grid { grid-template-columns: 1fr; } }
+
+.section-card {
+    background: var(--card-bg); padding: 30px; border-radius: 15px;
+    box-shadow: var(--card-shadow); margin-bottom: 30px;
+}
+.section-card h2 { color: var(--primary-dark); margin-bottom: 20px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; font-size: 1.4rem; }
+
+/* Form Inputs */
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+.label-icon { color: var(--primary-color); margin-right: 5px; }
+.required { color: var(--danger-color); }
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px;
+    background: var(--bg-color); color: var(--text-color); font-family: inherit; transition: var(--transition);
+}
+.form-group input:focus, .form-group textarea:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2); } /* Peningkatan fokus state */
+
+/* Input Spinner */
+.input-group { display: flex; align-items: center; gap: 10px; }
+.btn-spin-down, .btn-spin-up {
+    width: 40px; height: 40px; border: 2px solid var(--border-color); background: var(--bg-color);
+    border-radius: 8px; cursor: pointer; color: var(--text-color); font-weight: bold; transition: var(--transition);
+}
+.btn-spin-down:hover, .btn-spin-up:hover { border-color: var(--primary-color); color: var(--primary-color); }
+.input-group input { text-align: center; width: 80px; }
+
+/* Dynamic Inputs (Ingredients & Steps) */
+.ingredient-input-group, .step-input-group { 
+    display: flex; gap: 10px; margin-bottom: 15px; 
+    align-items: center; /* REVISI: Align items ke center untuk konsistensi */
+}
+.ingredient-input-group input { flex: 1; }
+.ingredient-input-group input[name="ingredient_qty"] { flex: 0 0 80px; }
+.ingredient-input-group input[name="ingredient_unit"] { flex: 0 0 80px; }
+.step-input-group textarea { flex: 1; }
+
+/* =========================================
+    REVISI: Bahan-bahan & Alat-alat (Baru)
+    ========================================= */
+
+.input-section h3 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    color: var(--primary-dark);
+}
+
+.ingredient-input-group,
+.tool-input-group,
+.step-input-group { /* Grouping untuk Bahan dan Alat */
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: var(--card-bg); /* Tambahkan latar belakang untuk menonjolkan */
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+}
+
+.ingredient-input-group input[type="text"] {
+    margin-right: 20px;
+    /* Revisi styling input di dalam group */
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.tool-input-group input[type="text"] {
+    /* Revisi styling input di dalam group */
+    margin-right: 20px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.step-input-group input[type="text"] {
+    /* Revisi styling input di dalam group */
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.ingredient-input-group input[type="text"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+}
+
+.tool-input-group input[type="text"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+}
+
+.step-input-group input[type="text"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+}
+
+/* Penyesuaian lebar kolom agar lebih estetis */
+.ingredient-input-group input[name="ingredient_qty"] {
+    flex: 0.5; /* Jumlah */
+    max-width: 100px;
+}
+.ingredient-input-group input[name="ingredient_unit"] {
+    flex: 0.7; /* Unit */
+    max-width: 100px;
+}
+.ingredient-input-group input[name="ingredient_name"] {
+    flex: 3; /* Nama Bahan */
+}
+
+.tool-input-group input[name="tool_name"] {
+    flex: 3; /* Nama Alat */
+}
+
+.step-input-group input[name="step_description"] {
+    flex: 3; /* Deskripsi Langkah */
+}
+
+.ingredient-input-group .remove-btn,
+.tool-input-group .remove-btn,
+.step-input-group .remove-btn {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.ingredient-input-group .remove-btn:hover,
+.tool-input-group .remove-btn:hover,
+.step-input-group .remove-btn:hover {
+    background-color: #c0392b;
+    transform: rotate(90deg);
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+    .ingredient-input-group,
+    .tool-input-group,
+    .steps-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px;
+    }
+    .ingredient-input-group input[name="ingredient_qty"],
+    .ingredient-input-group input[name="ingredient_unit"] {
+        max-width: none; /* Hilangkan batas lebar pada mode mobile */
+    }
+    /* Atur input jumlah dan unit agar tetap bersebelahan di satu baris */
+    .ingredient-qty-unit-wrap {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+    }
+    .ingredient-qty-unit-wrap input {
+        flex: 1;
+    }
+    .ingredient-input-group input[name="ingredient_name"] {
+        width: 100%;
+    }
+    .ingredient-input-group .remove-btn,
+    .tool-input-group .remove-btn,
+    .step-input-group .remove-btn {
+        margin-left: auto; /* Dorong ke kanan */
+        align-self: flex-end;
+    }
+}
+
+/* REVISI: Badge Penomoran Langkah */
+.step-number-display {
+    flex-shrink: 0;
+    width: 40px; /* Ukuran sedikit lebih besar */
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 2px 5px rgba(46, 204, 113, 0.4);
+}
+
+.remove-btn {
+    background: var(--danger-color); 
+    color: white; 
+    border: none; 
+    padding: 10px;
+    border-radius: 8px; 
+    cursor: pointer; 
+    height: 44px; /* REVISI: Sesuaikan tinggi agar sejajar dengan input */
+    width: 44px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    flex-shrink: 0; 
+    transition: background 0.2s;
+}
+.remove-btn:hover {
+    background: #c0392b; /* Warna lebih gelap saat hover */
+}
+
+.add-btn {
+    width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none;
+    border-radius: 10px; cursor: pointer; font-weight: 600; margin-top: 10px; transition: var(--transition);
+}
+.add-btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 3px 10px rgba(46, 204, 113, 0.3); }
+
+/* Image Zone */
+.image-upload-zone {
+    border: 2px dashed var(--border-color); 
+    padding: 40px; /* REVISI: Tambah padding agar lebih menarik */
+    text-align: center;
+    border-radius: 10px; 
+    cursor: pointer; 
+    color: var(--text-light); 
+    transition: var(--transition);
+    background-color: var(--bg-color);
+}
+.image-upload-zone:hover { 
+    border-color: var(--primary-color); 
+    background: rgba(46, 204, 113, 0.05); 
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); /* Tambah shadow hover */
+}
+
+/* Submit Section */
+.submit-section { text-align: center; margin-bottom: 50px; }
+.submit-actions { display: flex; justify-content: center; gap: 20px; }
+.btn-submit-primary { 
+    background: var(--primary-color); color: white; padding: 15px 40px; border: none;
+    border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: var(--transition);
+    box-shadow: 0 8px 20px rgba(46,204,113,0.4); /* REVISI: Shadow lebih kuat */
+}
+.btn-submit-primary:hover { 
+    transform: translateY(-5px); /* REVISI: Efek lift lebih terasa */
+    box-shadow: 0 10px 25px rgba(46,204,113,0.5); 
+}
+.btn-submit-secondary {
+    background: transparent; border: 2px solid var(--text-light); color: var(--text-color);
+    padding: 15px 30px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: var(--transition);
+}
+.btn-submit-secondary:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* Footer (Standar) */
+.site-footer {
+    background-color: #f0f0f0; padding: 40px 20px 20px; border-top: 5px solid var(--primary-color);
+    text-align: center; margin-top: auto;
+}
+.site-footer p { margin-bottom: 5px; }
+.site-footer p:last-child { margin-bottom: 0; }
+
+.about-we { 
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.about-we::after {
+    content: ''; position: absolute; width: 0; height: 1px;
+    bottom: -1px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.about-we:hover::after, .about-we.active::after { width: 100%; }
+.about-we:hover, .about-we.active { color: var(--primary-color); }
+
+.contact-we { 
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.contact-we::after {
+    content: ''; position: absolute; width: 0; height: 1px;
+    bottom: -1px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.contact-we:hover::after, .contact-we.active::after { width: 100%; }
+.contact-we:hover, .contact-we.active { color: var(--primary-color); }
+
+.footer-brand {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+}
+.footer-brand-highlight {
+    color: var(--primary-color);
+}
+
+/* =========================================
+   4. ANIMATION (FADE IN - STANDAR WAJIB)
+   ========================================= */
+.fade-in { 
+    opacity: 0; 
+    transform: translateY(30px); 
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out; 
+}
+.fade-in.visible { 
+    opacity: 1; 
+    transform: translateY(0); 
+}
+
+/* =========================================
+    7. MODAL PERINGATAN KUSTOM (CUSTOM ALERT)
+    ========================================= */
+
+.custom-modal-overlay {
+    /* Overlay Latar Belakang */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Latar belakang gelap transparan */
+    display: none; /* Default tersembunyi */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Pastikan di atas semua elemen lain */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.custom-modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.custom-modal-content {
+    background: var(--bg-color);
+    color: var(--text-color);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.custom-modal-overlay.active .custom-modal-content {
+    transform: scale(1);
+}
+
+.modal-icon {
+    color: var(--danger-color); /* Warna merah untuk peringatan */
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.modal-title {
+    margin-top: 0;
+    color: var(--danger-color);
+}
+
+#modal-ok-btn {
+    /* Styling Tombol Oke (Menggunakan btn-primary sebagai dasar) */
+    display: block;
+    width: 50%; /* Membuat tombol di tengah */
+    margin: 20px auto 0;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: var(--primary-color);
+    color: white;
+    transition: var(--transition);
+}
+
+#modal-ok-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+/* =========================================
+   6. DARK MODE STYLING (FIXED & MANDATORY)
+   ========================================= */
+
+[data-theme="dark"] .navbar { background-color: #1a1a1a; box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .nav-brand { color: #BB86FC; }
+[data-theme="dark"] .nav-links a { color: #cccccc; }
+[data-theme="dark"] .nav-links a:hover, 
+[data-theme="dark"] .nav-links a.active { color: var(--primary-color); }
+[data-theme="dark"] .btn-icon { color: #e0e0e0; }
+[data-theme="dark"] .btn-icon:hover { background-color: rgba(255, 255, 255, 0.05); color: #FFE87C; }
+[data-theme="dark"] .bar { background-color: #e0e0e0; }
+[data-theme="dark"] .profile-pic img { border-color: var(--primary-color); }
+[data-theme="dark"] .profile-dropdown-menu { background-color: var(--dropdown-bg); box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .dropdown-header { border-bottom: 1px solid var(--border-color); }
+[data-theme="dark"] .custom-modal-content { background: var(--card-bg); border: 1px solid var(--border-color); }
+[data-theme="dark"] .site-footer { background-color: #1a1a1a; color: #bbb; border-top-color: var(--primary-dark); }
+[data-theme="dark"] .about-we, [data-theme="dark"] .contact-we { color: #999999; }
+[data-theme="dark"] .about-we:hover, [data-theme="dark"] .contact-we:hover { color: var(--primary-color); }
+[data-theme="dark"] .footer-brand { color: #BB86FC; }

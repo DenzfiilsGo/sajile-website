@@ -1,137 +1,211 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang Kami - SajiLe</title>
-    <link rel="stylesheet" href="..\css\tentang_kami.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tentang Kami - SajiLe</title>
+        <link rel="stylesheet" href="..\css\tentang_kami.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    <body data-logged-in="false">
 
-    <nav class="navbar">
-        <div class="nav-brand">Saji<span class="brand-highlight">Le</span></div>
-        <ul class="nav-links">
-            <li><a href="..\index.html">Beranda</a></li>
-            <li><a href="daftar_makanan.html">Menu</a></li>
-            <li><a href="resep.html">Resep</a></li>
-            <li><a href="favorit.html">Favorit</a></li>
-        </ul>
-        <div class="nav-actions">
-            <button id="theme-toggle" class="btn-icon"><i class="fas fa-moon"></i></button>
-            <a href="daftar_atau_login.html" class="btn-primary">Masuk/Daftar</a>
-            <div class="profile-pic">
-                <img src="https://placehold.co/40x40/png" alt="Profil">
-            </div>
-        </div>
-        <div class="hamburger">
-            <i class="fas fa-bars"></i>
-        </div>
-    </nav>
-
-    <header class="about-header fade-in">
-        <div class="header-content">
-            <h1>Di Balik Rasa SajiLe</h1>
-            <p>Perjalanan kami menghadirkan cita rasa Nusantara langsung ke meja makan Anda.</p>
-        </div>
-    </header>
-
-    <div class="main-wrapper">
-        
-        <section class="split-section fade-in">
-            <div class="split-text">
-                <h2 class="highlight-text">Berawal dari Dapur Kecil</h2>
-                <p class="sub-text">
-                    SajiLe (sebelumnya dikenal sebagai MBADOKLE) lahir dari keinginan sederhana: membuat masakan enak bisa diakses oleh siapa saja. Kami percaya bahwa makanan bukan sekadar kebutuhan, melainkan jembatan yang menyatukan keluarga dan teman.
-                </p>
-                <p class="sub-text">
-                    Dimulai pada tahun 2025, kami berkomitmen untuk menyediakan katalog kuliner terlengkap dan kursus memasak yang mudah dipahami, bahkan untuk pemula sekalipun.
-                </p>
-            </div>
-            <div class="split-image">
-                <img src="https://placehold.co/600x400/2ecc71/fff?text=Dapur+Kami" alt="Sejarah SajiLe">
-            </div>
-        </section>
-
-        <section class="text-center-section fade-in">
-            <h2 class="big-title">Misi Kami</h2>
-            <p class="subtitle">Apa yang mendorong kami terus berinovasi setiap hari.</p>
-        </section>
-
-        <section class="features-grid fade-in">
-            <div class="feature-card">
-                <div class="icon-wrapper"><i class="fas fa-heart"></i></div>
-                <h3>Cinta Masakan Lokal</h3>
-                <p>Melestarikan resep warisan Nusantara agar tidak hilang ditelan zaman.</p>
-            </div>
-            <div class="feature-card">
-                <div class="icon-wrapper"><i class="fas fa-graduation-cap"></i></div>
-                <h3>Edukasi Kuliner</h3>
-                <p>Membantu siapa saja menjadi koki handal melalui panduan "TOLE" AI kami.</p>
-            </div>
-            <div class="feature-card">
-                <div class="icon-wrapper"><i class="fas fa-users"></i></div>
-                <h3>Komunitas Positif</h3>
-                <p>Membangun wadah bagi pecinta kuliner untuk berbagi dan saling menginspirasi.</p>
-            </div>
-        </section>
-
-        <div class="divider">
-            <span class="divider-icon"><i class="fas fa-user-friends"></i></span>
-        </div>
-
-        <section class="team-section fade-in">
-            <div class="text-center-section">
-                <h2 class="big-title">Tim Kami</h2>
-                <p class="subtitle">Orang-orang hebat di balik layar SajiLe.</p>
+        <nav class="navbar">
+            <a class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
+            
+            <button class="hamburger" id="hamburger-btn" aria-label="Buka Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            
+            <div class="nav-menu-container" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="..\index.html">Beranda</a></li>
+                    <li><a href="daftar_makanan.html">Menu</a></li>
+                    <li><a href="resep.html">Resep</a></li>
+                    <li><a href="favorit.html">Favorit</a></li>
+                </ul>
+                
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="btn-icon" aria-label="Toggle Dark Mode">
+                        <i class="fas fa-moon"></i>
+                        <span class="mobile-only-text">Tema Gelap/Terang</span> 
+                    </button>
+                    
+                    <div class="nav-auth-links logged-out-only">
+                        <a href="daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
+                    </div>
+                    
+                    <div class="profile-dropdown-wrapper logged-in-only" style="display:none;"> 
+                        <div class="profile-pic" id="profile-pic-btn">
+                            <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna" onerror="this.onerror=null; this.src='https://placehold.co/40x40/3498db/fff?text=U'">
+                        </div>
+                        
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <div class="dropdown-header">
+                                <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
+                                <div class="user-info">
+                                    <span class="username">Nama Pengguna</span>
+                                    <span class="email">user.email@mail.com</span>
+                                </div>
+                            </div>
+                            <ul class="dropdown-links">
+                                <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
+                                <li><a href="pengaturan.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
+                                <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
+                                <li class="divider-item"></li>
+                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="team-grid">
-                <div class="team-member">
-                    <img src="..\assets\tentang_kami\bayu.jpg" alt="Bayu Laksana">
-                    <h3>Bayu Laksana Al-Hasani</h3>
-                    <span>Founder & CEO</span>
+        </nav>
+
+        <header class="about-header fade-in">
+            <div class="header-content">
+                <h1>Di Balik Rasa <a class="banner-brand"><strong>Saji<span class="banner-brand-highlight">Le</strong></span></a></h1>
+                <p>Perjalanan kami menghadirkan cita rasa Nusantara langsung ke meja makan Anda.</p>
+            </div>
+        </header>
+
+        <div class="main-wrapper">
+            
+            <section class="split-section fade-in">
+                <div class="split-text">
+                    <h2 class="highlight-text">Berawal dari Dapur Kecil</h2>
+                    <p class="sub-text">
+                        <a class="text-brand"><strong>Saji<span class="text-brand-highlight">Le</strong></span></a> (sebelumnya dikenal sebagai <a class="text-brand"><strong>MBADOK<span class="text-brand-highlight">LE</strong></span></a>) lahir dari keinginan sederhana: membuat masakan enak bisa diakses oleh siapa saja. Kami percaya bahwa makanan bukan sekadar kebutuhan, melainkan jembatan yang menyatukan keluarga dan teman.
+                    </p>
+                    <p class="sub-text">
+                        Dimulai pada tahun 2025, kami berkomitmen untuk menyediakan katalog kuliner terlengkap dan kursus memasak yang mudah dipahami, bahkan untuk pemula sekalipun.
+                    </p>
                 </div>
-                <div class="team-member">
-                    <img src="..\assets\tentang_kami\rian.jpg" alt="Adrian Haryadi">
-                    <h3>Adrian Haryadi</h3>
-                    <span>Head Chef</span>
+                <div class="split-image">
+                    <img src="https://placehold.co/600x400/2ecc71/fff?text=Dapur+Kami" alt="Sejarah SajiLe">
                 </div>
-                <div class="team-member">
-                    <img src="https://placehold.co/150x150/777/fff?text=Hafidz" alt="Hafidz Jalaludin">
-                    <h3>Hafidz Jalaluddin Syah</h3>
-                    <span>Sous Chef</span>
+            </section>
+
+            <section class="text-center-section fade-in">
+                <h2 class="big-title">Misi Kami</h2>
+                <p class="subtitle">Apa yang mendorong kami terus berinovasi setiap hari.</p>
+            </section>
+
+            <section class="features-grid fade-in">
+                <div class="feature-card">
+                    <div class="icon-wrapper"><i class="fas fa-heart"></i></div>
+                    <h3>Cinta Masakan Lokal</h3>
+                    <p>Melestarikan resep warisan Nusantara agar tidak hilang ditelan zaman.</p>
                 </div>
-                <div class="team-member">
-                    <img src="..\assets\tentang_kami\denis.jpg" alt="Denis Muhammad">
-                    <h3>Denis M. Widarianto</h3>
-                    <span>Tech Lead & UI/UX</span>
+                <div class="feature-card">
+                    <div class="icon-wrapper"><i class="fas fa-graduation-cap"></i></div>
+                    <h3>Edukasi Kuliner</h3>
+                    <p>Membantu siapa saja menjadi koki handal melalui panduan "TOLE" AI kami.</p>
                 </div>
-                <div class="team-member">
-                    <img src="..\assets\tentang_kami\dhanya.jpg" alt="I Gusti Ngurah">
-                    <h3>I.G.N. Dhanya Avanindra</h3>
-                    <span>Marketing Lead</span>
+                <div class="feature-card">
+                    <div class="icon-wrapper"><i class="fas fa-users"></i></div>
+                    <h3>Komunitas Positif</h3>
+                    <p>Membangun wadah bagi pecinta kuliner untuk berbagi dan saling menginspirasi.</p>
+                </div>
+            </section>
+
+            <div class="divider">
+                <span class="divider-icon"><i class="fas fa-user-friends"></i></span>
+            </div>
+
+            <section class="team-section fade-in">
+                <div class="text-center-section">
+                    <h2 class="big-title">Tim Kami</h2>
+                    <p class="subtitle">Orang-orang hebat di balik layar <a class="our-crew-brand"><strong>Saji<span class="our-crew-brand-highlight">Le</strong></span></a>.</p>
+                </div>
+                
+                <div class="team-grid">
+                    <div class="team-member">
+                        <img src="..\assets\tentang_kami\bayu.jpg" alt="Bayu Laksana">
+                        <h3>Bayu Laksana Al-Hasani</h3>
+                        <span>Founder & CEO</span>
+                    </div>
+                    <div class="team-member">
+                        <img src="..\assets\tentang_kami\rian.jpg" alt="Adrian Haryadi">
+                        <h3>Adrian Haryadi</h3>
+                        <span>Head Chef</span>
+                    </div>
+                    <div class="team-member">
+                        <img src="https://placehold.co/150x150/777/fff?text=Hafidz" alt="Hafidz Jalaludin">
+                        <h3>Hafidz Jalaluddin Syah</h3>
+                        <span>Sous Chef</span>
+                    </div>
+                    <div class="team-member">
+                        <img src="..\assets\tentang_kami\denis.jpg" alt="Denis Muhammad">
+                        <h3>Denis M. Widarianto</h3>
+                        <span>Tech Lead & UI/UX</span>
+                    </div>
+                    <div class="team-member">
+                        <img src="..\assets\tentang_kami\dhanya.jpg" alt="I Gusti Ngurah">
+                        <h3>I.G.N. Dhanya Avanindra</h3>
+                        <span>Marketing Lead</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cta-banner fade-in">
+                <div class="cta-content">
+                    <h2>Ingin Berkolaborasi?</h2>
+                    <p>Kami selalu terbuka untuk ide-ide segar dan kerjasama baru.</p>
+                    <a href="mailto:sajile@gmail.com" class="btn-cta">Hubungi Kami</a>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Tentang <a class="footer-head-brand"><strong>Saji<span class="footer-head-brand-highlight">Le</strong></span></a></h4>
+                    <p><a class="footer-body-brand"><strong>Saji<span class="footer-body-brand-highlight">Le</strong></span></a> adalah platform kuliner yang berfokus pada resep lokal Indonesia, kursus memasak, dan pengembangan komunitas.</p>
+                    <address>
+                        Jl. Jendral Sudirman No. 123<br>
+                        Jakarta Pusat, Indonesia<br>
+                        Kode Pos 10210
+                    </address>
+                </div>
+                <div class="footer-section">
+                    <h4>Tautan Cepat</h4>
+                    <ul>
+                        <li><a href="..\index.html">Beranda</a></li>
+                        <li><a href="daftar_makanan.html">Menu Populer</a></li>
+                        <li><a href="resep.html">Koleksi Resep</a></li>
+                        <li><a href="favorit.html">Favorit Saya</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Dukungan & Bantuan</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Syarat dan Ketentuan</a></li>
+                        <li><a href="#">Kebijakan Privasi</a></li>
+                        <li><a href="mailto:sajile@gmail.com">Kontak Kami</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Ikuti Kami</h4>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook" class="fa-brands fa-facebook-f"></a>
+                        <a href="#" aria-label="Twitter" class="fa-brands fa-twitter"></a>
+                        <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                        <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest-p"></a>
+                    </div>
+                    <p style="margin-top: 15px;">Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a></p>
                 </div>
             </div>
-        </section>
-
-        <section class="cta-banner fade-in">
-            <div class="cta-content">
-                <h2>Ingin Berkolaborasi?</h2>
-                <p>Kami selalu terbuka untuk ide-ide segar dan kerjasama baru.</p>
-                <a href="mailto:sajile@gmail.com" class="btn-cta">Hubungi Kami</a>
+            <div class="footer-bottom">
+                <p>&copy; 2025 SajiLe. Dikelola oleh Tim SajiLe (ex-MBADOKLE) Indonesia. Semua hak dilindungi.</p>
             </div>
-        </section>
-
-    </div>
-
-    <footer class="site-footer">
-        <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
-        <p><a href="tentang_kami.html">Tentang Kami</a> | Email: sajile@gmail.com | Whatsapp: 0812-3456-7890</p>
-        <p>Dikelola oleh Tim SajiLe (ex-MBADOKLE) Indonesia</p>
-    </footer>
-
-    <script src="..\js\tentang_kami.js"></script>
-</body>
+        </footer>
+        
+        <script type="module" src="../js/authManager.js"></script>
+        <script type="module" src="../js/tentang_kami.js"></script>
+    </body>
 </html>

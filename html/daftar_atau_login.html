@@ -1,83 +1,86 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk atau Daftar - SajiLe</title>
-    <link rel="stylesheet" href="..\css\daftar_atau_login.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Masuk atau Daftar - SajiLe</title>
+        <link rel="stylesheet" href="..\css\daftar_atau_login.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    <body>
 
-    <a href="beranda.html" class="back-home-btn"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
+        <a href="..\index.html" class="back-home-btn"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
 
-    <div class="container" id="container">
-        
-        <div class="form-container sign-up-container">
-            <form action="#">
-                <h1>Buat Akun</h1>
-                <div class="social-container">
-                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social"><i class="fab fa-google"></i></a>
-                    <a href="#" class="social"><i class="fab fa-tiktok"></i></a>
-                </div>
-                <span>atau gunakan email untuk pendaftaran</span>
-                <div class="input-group">
-                    <i class="fas fa-user"></i>
-                    <input type="text" placeholder="Nama Lengkap" required />
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" placeholder="Email" required />
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Password" required />
-                </div>
-                <button type="submit">Daftar</button>
-            </form>
-        </div>
+        <div class="container" id="container">
+            
+            <div class="form-container sign-up-container">
+                <form id="form_register" action="#">
+                    <h1>Buat Akun</h1>
+                    <div class="social-container">
+                        <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social"><i class="fab fa-google"></i></a>
+                        <a href="#" class="social"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                    <span>atau gunakan email untuk pendaftaran</span>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Nama Lengkap" id="registerUsername" required />
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Email" id="registerEmail" required />
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" id="registerPassword" required />
+                    </div>
+                    <div id="authMessage" style="margin-top: 10px; font-weight: 600;"></div>
+                    <button type="submit">Daftar</button>
+                </form>
+            </div>
 
-        <div class="form-container sign-in-container">
-            <form action="#">
-                <h1>Masuk</h1>
-                <div class="social-container">
-                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social"><i class="fab fa-google"></i></a>
-                    <a href="#" class="social"><i class="fab fa-tiktok"></i></a>
-                </div>
-                <span>atau gunakan akun anda</span>
-                <div class="input-group">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" placeholder="Email" required />
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Password" id="loginPass" required />
-                    <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
-                </div>
-                <a href="#" class="forgot-pass">Lupa kata sandi?</a>
-                <button type="submit">Masuk</button>
-            </form>
-        </div>
+            <div class="form-container sign-in-container">
+                <form id="form_login" action="#">
+                    <h1>Masuk</h1>
+                    <div class="social-container">
+                        <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social"><i class="fab fa-google"></i></a>
+                        <a href="#" class="social"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                    <span>atau gunakan akun anda</span>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Email" id="loginEmail" required />
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" id="loginPass" required />
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+                    </div>
+                    <a href="#" class="forgot-pass">Lupa kata sandi?</a>
+                    <div id="loginMessage" style="margin-top: 10px; font-weight: 600;"></div>
+                    <button type="submit">Masuk</button>
+                </form>
+            </div>
 
-        <div class="overlay-container">
-            <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <h1>Selamat Datang Kembali!</h1>
-                    <p>Terus terhubung dengan kami untuk melihat resep terbaru hari ini.</p>
-                    <button class="ghost" id="signIn">Masuk</button>
-                </div>
-                <div class="overlay-panel overlay-right">
-                    <h1>Halo, Koki Handal!</h1>
-                    <p>Daftarkan dirimu dan mulai perjalanan memasak yang lebih seru bersama SajiLe.</p>
-                    <button class="ghost" id="signUp">Daftar</button>
+            <div class="overlay-container">
+                <div class="overlay">
+                    <div class="overlay-panel overlay-left">
+                        <h1>Selamat Datang Kembali!</h1>
+                        <p>Terus terhubung dengan kami untuk melihat resep terbaru hari ini.</p>
+                        <button class="ghost" id="signIn">Masuk</button>
+                    </div>
+                    <div class="overlay-panel overlay-right">
+                        <h1>Halo, Koki Handal!</h1>
+                        <p>Daftarkan dirimu dan mulai perjalanan memasak yang lebih seru bersama SajiLe.</p>
+                        <button class="ghost" id="signUp">Daftar</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="..\js\daftar_atau_login.js"></script>
-</body>
+        <script type="module" src="../js/authManager.js"></script>
+        <script type="module" src="../js/daftar_atau_login.js"></script>
+    </body>
 </html>

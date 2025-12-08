@@ -22,6 +22,10 @@ body {
     height: 100vh;
     margin: 0;
     position: relative;
+    user-select: none; /* Mencegah seleksi teks */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge lama */
 }
 
 /* Gelapkan background gambar agar form menonjol */

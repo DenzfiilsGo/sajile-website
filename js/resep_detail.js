@@ -1,135 +1,197 @@
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- 1. Dark Mode Toggle ---
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    const icon = themeToggle.querySelector('i');
+// Blokir seleksi teks via JavaScript
+document.addEventListener('selectstart', function(e) {
+    e.preventDefault(); // Mencegah aksi default seleksi
+});
 
-    if(localStorage.getItem('theme') === 'dark') {
-        body.setAttribute('data-theme', 'dark');
-        icon.classList.remove('fa-moon');
-        icon.classList.add('fa-sun');
+// Opsional: Blokir drag teks/gambar
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Deklarasi Fungsi dan Variabel
+    const navAuthLinks = document.querySelector('.nav-auth-links'); // Container tombol Masuk
+    const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper'); // Container Profil
+    const logoutBtn = document.getElementById('logout-btn');
+
+
+    // =======================================================
+    // 1. LOGIKA CEK LOGIN
+    // =======================================================
+    // Ambil URL backend dari /backend_url.json (fallback ke localhost)
+    async function loadBackendBaseUrl() {
+        const DEFAULT = 'http://localhost:5000'; // fallback lokal
+        try {
+            const res = await fetch('/backend_url.json', { cache: 'no-cache' });
+            if (!res.ok) return DEFAULT;
+            const data = await res.json();
+            if (!data || !data.url) return DEFAULT;
+            // pastikan tidak ada trailing slash
+            return data.url.replace(/\/$/, '');
+        } catch (err) {
+            console.warn('Gagal memuat backend_url.json, gunakan fallback:', err);
+            return DEFAULT;
+        }
     }
 
-    themeToggle.addEventListener('click', () => {
-        if (body.getAttribute('data-theme') === 'dark') {
-            body.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
-            icon.classList.remove('fa-sun');
-            icon.classList.add('fa-moon');
-        } else {
-            body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-            icon.classList.remove('fa-moon');
-            icon.classList.add('fa-sun');
+    const BACKEND_BASE_URL = await loadBackendBaseUrl();
+    console.log('Menggunakan backend base URL:', BACKEND_BASE_URL);
+    const API_RECIPES_URL = `${BACKEND_BASE_URL}/api/recipes`;
+    
+    const token = localStorage.getItem('authToken'); // Kunci yang dikonfirmasi benar
+    
+    // Helper: cek apakah token JWT telah kedaluwarsa (decode payload tanpa library)
+    function isTokenExpired(jwtToken) {
+        if (!jwtToken) return true;
+        try {
+            const parts = jwtToken.split('.');
+            if (parts.length !== 3) return true;
+            const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+            if (!payload.exp) return false;
+            // exp is in seconds
+            return payload.exp * 1000 < Date.now();
+        } catch (err) {
+            console.warn('Gagal decode token untuk cek expiry', err);
+            return false; // jika gagal decode, jangan assume expired (kecuali anda mau)
         }
-    });
+    }
 
-    // --- 2. Scroll Animation (Fade In) ---
-    const observerOptions = {
-        threshold: 0.15 
-    };
+    function forceLogoutAndRedirect(message = 'Sesi Anda berakhir. Silakan login kembali.') {
+        try {
+            localStorage.removeItem('authToken');
+        } catch (e) {}
+        alert(message);
+        // beri jeda singkat supaya alert terbaca lalu redirect
+        setTimeout(() => {
+            window.location.href = 'daftar_atau_login.html';
+        }, 300);
+    }
 
-    const observer = new IntersectionObserver((entries, observer) => {
+    function checkLoginState() {
+        const token = localStorage.getItem('authToken'); // Gunakan 'authToken'
+
+        if (token) {
+            // User Login: Sembunyikan tombol masuk, Tampilkan profil
+            if (navAuthLinks) navAuthLinks.style.display = 'none';
+            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'block';
+        } else {
+            // User Belum Login: Tampilkan tombol masuk, Sembunyikan profil
+            if (navAuthLinks) navAuthLinks.style.display = 'block';
+            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
+        }
+    }
+
+    // Panggil saat halaman dimuat
+    checkLoginState();
+    isTokenExpired(token); // Cek apakah token sudah expired
+
+    // Logika Logout
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm("Yakin ingin keluar?")) {
+                localStorage.removeItem('authToken');
+                window.location.reload(); // Refresh untuk update UI
+            }
+        });
+    }
+
+    // Toggle Dropdown Profil (Untuk Desktop)
+    const profilePicBtn = document.getElementById('profile-pic-btn');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    
+    if (profilePicBtn && profileDropdown) {
+        profilePicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('active');
+        });
+        document.addEventListener('click', (e) => {
+            if (!profileDropdown.contains(e.target) && !profilePicBtn.contains(e.target)) {
+                profileDropdown.classList.remove('active');
+            }
+        });
+    }
+
+    // ========================================================
+    // 2. LOGIKA MODAL PERINGATAN KUSTOM (DIPINDAHKAN KE ATAS)
+    // ========================================================
+    const modal = document.getElementById('custom-alert-modal');
+    const modalOkBtn = document.getElementById('modal-ok-btn');
+    const uploadedFileSizeElement = document.getElementById('uploaded-file-size');
+
+    // Menampilkan Modal Kustom
+    function showCustomAlert(uploadedSizeKB) {
+        uploadedFileSizeElement.textContent = uploadedSizeKB.toFixed(2) + " KB";
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Nonaktifkan scrolling
+    }
+
+    // Event Listener untuk tombol "Oke" pada modal
+    if(modalOkBtn) {
+        modalOkBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Aktifkan kembali scrolling
+        });
+    }
+
+    // =======================================================
+    // 3. STANDAR WAJIB: NAVBAR, HAMBURGER & DARK MODE
+    // (Tidak ada perubahan di bagian ini)
+    // =======================================================
+    const body = document.body;
+    const themeToggle = document.getElementById('theme-toggle');
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const navMenu = document.getElementById('nav-menu');
+
+    // A. Dark Mode Logic
+    if (themeToggle) {
+        const icon = themeToggle.querySelector('i');
+        const savedTheme = localStorage.getItem('sajile_theme') || 'light'; 
+        
+        body.dataset.theme = savedTheme;
+        
+        if (icon) {
+            icon.classList.toggle('fa-sun', savedTheme === 'dark');
+            icon.classList.toggle('fa-moon', savedTheme === 'light');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.dataset.theme;
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.dataset.theme = newTheme;
+            localStorage.setItem('sajile_theme', newTheme);
+
+            if (icon) {
+                icon.classList.toggle('fa-moon');
+                icon.classList.toggle('fa-sun');
+            }
+        });
+    }
+
+    // B. Hamburger Menu Logic
+    if (hamburgerBtn && navMenu) {
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            
+            const isExpanded = navMenu.classList.contains('active');
+            hamburgerBtn.setAttribute('aria-expanded', isExpanded);
+        });
+    }
+
+    // ========================================================
+    // 4. STANDAR WAJIB: FADE IN ANIMATION
+    // ========================================================
+    const observerOptions = { threshold: 0.15 };
+
+    const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
             entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
+            obs.unobserve(entry.target);
         });
     }, observerOptions);
 
-    const fadeElements = document.querySelectorAll('.fade-in');
-    fadeElements.forEach(el => observer.observe(el));
-    
-    // --- 3. Tombol Save/Favorite Logic ---
-    const btnSave = document.getElementById('btn-save');
-    const heartIcon = btnSave.querySelector('i');
-
-    // Cek status di localStorage saat memuat (simulasi)
-    let isSaved = localStorage.getItem('rendang_favorite') === 'true';
-    updateSaveButton();
-
-    btnSave.addEventListener('click', () => {
-        isSaved = !isSaved; // Toggle status
-        localStorage.setItem('rendang_favorite', isSaved);
-        updateSaveButton();
-        
-        if (isSaved) {
-            console.log("Resep disimpan ke Favorit!");
-        } else {
-            console.log("Resep dihapus dari Favorit!");
-        }
-    });
-
-    function updateSaveButton() {
-        if (isSaved) {
-            btnSave.classList.add('active');
-            heartIcon.classList.remove('far'); // Hati kosong
-            heartIcon.classList.add('fas'); // Hati penuh
-            btnSave.innerHTML = `<i class="fas fa-heart"></i> Tersimpan`;
-        } else {
-            btnSave.classList.remove('active');
-            heartIcon.classList.remove('fas'); // Hati penuh
-            heartIcon.classList.add('far'); // Hati kosong
-            btnSave.innerHTML = `<i class="far fa-heart"></i> Simpan ke Favorit`;
-        }
-    }
-    
-    // --- 4. Kalkulator Porsi (Serving Calculator) Logic ---
-    const btnIncrease = document.getElementById('increase-serving');
-    const btnDecrease = document.getElementById('decrease-serving');
-    const multiplierDisplay = document.getElementById('serving-multiplier');
-    const ingredientsList = document.getElementById('ingredients-list');
-    const servingSize = document.getElementById('serving-size');
-
-    let multiplier = 1;
-    const baseServing = 6; // Porsi awal resep
-
-    // Fungsi untuk mengupdate kuantitas bahan
-    function updateIngredients() {
-        const listItems = ingredientsList.querySelectorAll('li');
-        listItems.forEach(item => {
-            const originalQty = parseFloat(item.getAttribute('data-original-qty'));
-            const qtyElement = item.querySelector('.qty');
-            
-            // Mengekstrak unit dari teks (misal: "1000 gr" -> " gr")
-            const textContent = qtyElement.textContent;
-            const unitMatch = textContent.match(/[a-zA-Z\s]+$/); // Cari unit di akhir string
-            const unit = unitMatch ? unitMatch[0].trim() : '';
-
-            // Hitung kuantitas baru
-            const newQty = (originalQty * multiplier);
-
-            // Tampilkan kuantitas baru dan update porsi di metadata
-            qtyElement.textContent = `${newQty} ${unit}`;
-        });
-        
-        multiplierDisplay.textContent = `${multiplier}x`;
-        servingSize.textContent = `${baseServing * multiplier}`;
-    }
-
-    btnIncrease.addEventListener('click', () => {
-        if (multiplier < 4) { // Batasi maksimal 4x
-            multiplier++;
-            updateIngredients();
-        }
-    });
-
-    btnDecrease.addEventListener('click', () => {
-        if (multiplier > 1) { // Batasi minimal 1x
-            multiplier--;
-            updateIngredients();
-        }
-    });
-    
-    // --- 5. Print Recipe Logic ---
-    const btnPrint = document.getElementById('btn-print');
-    btnPrint.addEventListener('click', () => {
-        // Logika print (Menggunakan window.print() yang memicu dialog cetak browser)
-        window.print(); 
-        console.log("Mencetak resep...");
-        
-        // Di lingkungan nyata, CSS khusus untuk print akan digunakan
-    });
-
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 });

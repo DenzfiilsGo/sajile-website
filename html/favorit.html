@@ -1,145 +1,171 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resep Favorit - SajiLe</title>
-    <!-- Pastikan path CSS ini benar -->
-    <link rel="stylesheet" href="..\css\favorit.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Resep Favorit - SajiLe</title>
+        <link rel="stylesheet" href="..\css\favorit.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    <body data-logged-in="false">
 
-    <!-- NAV BAR (SAMA DENGAN FILE LAIN) -->
-    <nav class="navbar">
-        <div class="nav-brand">Saji<span class="brand-highlight">Le</span></div>
-        <ul class="nav-links">
-            <li><a href="..\index.html">Beranda</a></li>
-            <li><a href="daftar_makanan.html">Menu</a></li>
-            <li><a href="resep.html">Resep</a></li>
-            <li><a href="favorit.html">Favorit</a></li>
-        </ul>
-        <div class="nav-actions">
-            <button id="theme-toggle" class="btn-icon"><i class="fas fa-moon"></i></button>
-            <a href="daftar_atau_login.html" class="btn-primary">Masuk/Daftar</a>
-            <div class="profile-pic">
-                <img src="https://placehold.co/40x40/png" alt="Profil">
-            </div>
-        </div>
-        <div class="hamburger">
-            <i class="fas fa-bars"></i>
-        </div>
-    </nav>
-
-    <div class="main-wrapper">
-        
-        <!-- HEADER HALAMAN -->
-        <header class="page-header fade-in">
-            <h1>Daftar Resep Favoritku</h1>
-            <p>Kelola koleksi resep pilihanmu, siap dimasak kapan saja!</p>
-        </header>
-
-        <!-- CONTAINER UNTUK EMPTY STATE (Belum Login / Kosong) -->
-        <section id="empty-state">
-            <!-- Konten diisi oleh JavaScript (favorit.js) -->
-        </section>
-
-        <!-- CONTAINER UTAMA UNTUK KONTEN RESEP -->
-        <section id="favorit-content">
-            <div class="recipe-grid">
-                
-                <!-- Recipe Card 1 (Daging) -->
-                <a href="resep_detail.html" class="recipe-card fade-in">
-                    <!-- Tombol Hapus Favorit -->
-                    <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
-                    <div class="card-image">
-                        <img src="https://placehold.co/400x300/e8e8e8/333?text=RENDANG+DAGING" alt="Rendang Daging Sapi">
-                    </div>
-                    <div class="card-info">
-                        <h3>Rendang Daging Sapi Khas Minang</h3>
-                        <p class="duration"><i class="far fa-clock"></i> 3 Jam</p>
-                    </div>
-                </a>
-
-                <!-- Recipe Card 2 (Sayuran) -->
-                <a href="resep_detail.html" class="recipe-card fade-in delay-1">
-                    <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
-                    <div class="card-image">
-                        <img src="https://placehold.co/400x300/e8e8e8/333?text=CAPCAY+KUAH" alt="Capcay Kuah">
-                    </div>
-                    <div class="card-info">
-                        <h3>Capcay Kuah Seafood Premium</h3>
-                        <p class="duration"><i class="far fa-clock"></i> 25 Menit</p>
-                    </div>
-                </a>
-                
-                <!-- Recipe Card 3 (Dessert) -->
-                <a href="resep_detail.html" class="recipe-card fade-in delay-2">
-                    <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
-                    <div class="card-image">
-                        <img src="https://placehold.co/400x300/e8e8e8/333?text=KUE+APE" alt="Kue Ape">
-                    </div>
-                    <div class="card-info">
-                        <h3>Kue Ape Pandan Original</h3>
-                        <p class="duration"><i class="far fa-clock"></i> 40 Menit</p>
-                    </div>
-                </a>
-                
-                <!-- Recipe Card 4 (Ikan) -->
-                <a href="resep_detail.html" class="recipe-card fade-in delay-3">
-                    <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
-                    <div class="card-image">
-                        <img src="https://placehold.co/400x300/e8e8e8/333?text=IKAN+BAKAR" alt="Ikan Bakar Sambal Dabu-Dabu">
-                    </div>
-                    <div class="card-info">
-                        <h3>Ikan Bakar Sambal Dabu-Dabu</h3>
-                        <p class="duration"><i class="far fa-clock"></i> 55 Menit</p>
-                    </div>
-                </a>
-                
-                <!-- Recipe Card 5 (Ayam) -->
-                <a href="resep_detail.html" class="recipe-card fade-in delay-4">
-                    <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
-                    <div class="card-image">
-                        <img src="https://placehold.co/400x300/e8e8e8/333?text=AYAM+BAKAR" alt="Ayam Bakar Madu">
-                    </div>
-                    <div class="card-info">
-                        <h3>Ayam Bakar Madu Pedas</h3>
-                        <p class="duration"><i class="far fa-clock"></i> 70 Menit</p>
-                    </div>
-                </a>
-                
-                <!-- Recipe Card 6 (Gorengan) -->
-                <a href="resep_detail.html" class="recipe-card fade-in delay-5">
-                    <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
-                    <div class="card-image">
-                        <img src="https://placehold.co/400x300/e8e8e8/333?text=TEMPE+MENDOAN" alt="Tempe Mendoan">
-                    </div>
-                    <div class="card-info">
-                        <h3>Tempe Mendoan Original</h3>
-                        <p class="duration"><i class="far fa-clock"></i> 15 Menit</p>
-                    </div>
-                </a>
-
-            </div> 
+        <nav class="navbar">
+            <a class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
             
-            <div class="load-more-btn-container fade-in delay-6" style="text-align: center; margin-top: 40px;">
-                <button class="btn-primary">Muat Lebih Banyak Favorit</button>
-            </div>
+            <button class="hamburger" id="hamburger-btn" aria-label="Buka Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
             
-        </section>
+            <div class="nav-menu-container" id="nav-menu"> 
+                <ul class="nav-links">
+                    <li><a href="..\index.html">Beranda</a></li>
+                    <li><a href="daftar_makanan.html">Menu</a></li>
+                    <li><a href="resep.html">Resep</a></li>
+                    <li><a href="favorit.html" class="active">Favorit</a></li> 
+                </ul>
+                
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="btn-icon" aria-label="Ganti Tema">
+                        <i class="fas fa-moon"></i>
+                        <span class="mobile-only-text">Tema Gelap/Terang</span>
+                    </button>
 
-    </div>
+                    <div class="nav-auth-links logged-out-only">
+                        <a href="daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
+                    </div>
+                    
+                    <div class="profile-dropdown-wrapper logged-in-only">
+                        <div class="profile-pic" id="profile-pic-btn">
+                            <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna" onerror="this.onerror=null; this.src='https://placehold.co/40x40/3498db/fff?text=U'">
+                        </div>
+                        
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <div class="dropdown-header">
+                                <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
+                                <div class="user-info">
+                                    <span class="username">Nama Pengguna</span>
+                                    <span class="email">user.email@mail.com</span>
+                                </div>
+                            </div>
+                            <ul class="dropdown-links">
+                                <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
+                                <li><a href="pengaturan.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
+                                <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
+                                <li class="divider-item"></li>
+                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-    <!-- FOOTER (SAMA DENGAN FILE LAIN) -->
-    <footer class="site-footer">
-        <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
-        <p><a href="tentang_kami.html">Tentang Kami</a> | Email: sajile@gmail.com | Whatsapp: 0812-3456-7890</p>
-        <p>Dikelola oleh Tim SajiLe (ex-MBADOKLE) Indonesia</p>
-    </footer>
+        <div class="main-wrapper">
+            
+            <header class="page-header fade-in">
+                <h1>Daftar Resep Favoritku</h1>
+                <p>Kelola koleksi resep pilihanmu, siap dimasak kapan saja!</p>
+            </header>
 
-    <!-- Pastikan path JS ini benar -->
-    <script src="..\js\favorit.js"></script> 
-</body>
+            <section id="login-required-state" style="display: none; padding: 40px; text-align: center;">
+                <i class="fas fa-lock fa-3x" style="color: var(--color-primary-dark);"></i>
+                <h2>Akses Dibatasi</h2>
+                <p>Anda harus masuk (login) untuk melihat dan mengelola daftar resep favorit.</p>
+                <a href="daftar_atau_login.html" class="btn-primary" style="margin-top: 15px;">Masuk Sekarang</a>
+            </section>
+            
+            <section id="empty-state">
+            </section>
+
+            <section id="favorit-content">
+                <div class="recipe-grid">
+                    
+                    <a href="resep_detail.html" class="recipe-card fade-in">
+                        <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
+                        <div class="card-image">
+                            <img src="https://placehold.co/400x300/e8e8e8/333?text=RENDANG+DAGING" alt="Rendang Daging Sapi">
+                        </div>
+                        <div class="card-info">
+                            <h3>Rendang Daging Sapi Khas Minang</h3>
+                            <p class="duration"><i class="far fa-clock"></i> 3 Jam</p>
+                        </div>
+                    </a>
+
+                    <a href="resep_detail.html" class="recipe-card fade-in delay-1">
+                        <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
+                        <div class="card-image">
+                            <img src="https://placehold.co/400x300/e8e8e8/333?text=CAPCAY+KUAH" alt="Capcay Kuah">
+                        </div>
+                        <div class="card-info">
+                            <h3>Capcay Kuah Seafood Premium</h3>
+                            <p class="duration"><i class="far fa-clock"></i> 25 Menit</p>
+                        </div>
+                    </a>
+                    
+                    <a href="resep_detail.html" class="recipe-card fade-in delay-2">
+                        <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
+                        <div class="card-image">
+                            <img src="https://placehold.co/400x300/e8e8e8/333?text=KUE+APE" alt="Kue Ape">
+                        </div>
+                        <div class="card-info">
+                            <h3>Kue Ape Pandan Original</h3>
+                            <p class="duration"><i class="far fa-clock"></i> 40 Menit</p>
+                        </div>
+                    </a>
+                    
+                    <a href="resep_detail.html" class="recipe-card fade-in delay-3">
+                        <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
+                        <div class="card-image">
+                            <img src="https://placehold.co/400x300/e8e8e8/333?text=IKAN+BAKAR" alt="Ikan Bakar Sambal Dabu-Dabu">
+                        </div>
+                        <div class="card-info">
+                            <h3>Ikan Bakar Sambal Dabu-Dabu</h3>
+                            <p class="duration"><i class="far fa-clock"></i> 55 Menit</p>
+                        </div>
+                    </a>
+                    
+                    <a href="resep_detail.html" class="recipe-card fade-in delay-4">
+                        <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
+                        <div class="card-image">
+                            <img src="https://placehold.co/400x300/e8e8e8/333?text=AYAM+BAKAR" alt="Ayam Bakar Madu">
+                        </div>
+                        <div class="card-info">
+                            <h3>Ayam Bakar Madu Pedas</h3>
+                            <p class="duration"><i class="far fa-clock"></i> 70 Menit</p>
+                        </div>
+                    </a>
+                    
+                    <a href="resep_detail.html" class="recipe-card fade-in delay-5">
+                        <button class="btn-remove-fav" aria-label="Hapus dari Favorit"><i class="fas fa-times"></i></button>
+                        <div class="card-image">
+                            <img src="https://placehold.co/400x300/e8e8e8/333?text=TEMPE+MENDOAN" alt="Tempe Mendoan">
+                        </div>
+                        <div class="card-info">
+                            <h3>Tempe Mendoan Original</h3>
+                            <p class="duration"><i class="far fa-clock"></i> 15 Menit</p>
+                        </div>
+                    </a>
+
+                </div> 
+                
+                <div class="load-more-btn-container fade-in delay-6" style="text-align: center; margin-top: 40px; margin-bottom: 40px">
+                    <button class="btn-primary">Muat Lebih Banyak Favorit</button>
+                </div>
+                
+            </section>
+
+        </div>
+
+        <footer class="site-footer">
+            <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
+            <p><a href="tentang_kami.html" class="about-we">Tentang Kami</a> | Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> | Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a></p>
+            <p>Dikelola oleh Tim <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</strong></span></a> (ex-MBADOKLE) Indonesia</p>
+        </footer>
+
+        <script type="module" src="../js/authManager.js"></script>
+        <script type="module" src="../js/favorit.js"></script> 
+    </body>
 </html>

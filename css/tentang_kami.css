@@ -1,8 +1,10 @@
-/* --- 1. COPY BASE VARIABLES & RESET --- */
+/* =========================================
+   1. BASE VARIABLES & RESET
+   ========================================= */
 :root {
-    --primary-color: #2ecc71; /* Hijau segar khas makanan */
+    --hover-button: #98FB98;
+    --primary-color: #2ecc71;
     --primary-dark: #27ae60;
-    --accent-color: #3498db;
     --bg-color: #ffffff;
     --text-color: #333333;
     --text-light: #666666;
@@ -11,6 +13,7 @@
     --nav-height: 70px;
     --transition: all 0.3s ease; 
     --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
+    --accent-color: #3498db; 
 }
 
 /* Dark Mode Variables */
@@ -30,99 +33,504 @@ body {
     color: var(--text-color);
     transition: background-color var(--color-transition), color var(--color-transition);
     overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    user-select: none; /* Mencegah seleksi teks */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge lama */
 }
 
-/* --- 2. NAVBAR & FOOTER --- */
+/* Agar konten utama mengambil sisa ruang */
+.main-wrapper { 
+    flex-grow: 1;
+    max-width: 1400px;
+    margin: 0 auto; 
+    padding: 0 20px;
+    width: 100%;
+}
+
+
+/* =========================================
+   2. NAVBAR STYLING (FIXED & SAFE - STANDAR WAJIB)
+   ========================================= */
 .navbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 5%; height: var(--nav-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    height: var(--nav-height);
     background-color: var(--bg-color);
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    position: sticky; top: 0; z-index: 1000;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     transition: background-color var(--color-transition), box-shadow var(--color-transition);
 }
-.nav-brand { font-size: 1.5rem; font-weight: 700; letter-spacing: 1px; }
+
+.nav-brand { 
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    flex-shrink: 0; 
+    color: var(--user-name-color); /* Menggunakan variabel baru */
+}
 .brand-highlight { color: var(--primary-color); }
-.nav-links { display: flex; list-style: none; gap: 25px; }
-.nav-links a { text-decoration: none; color: var(--text-color); font-weight: 500; transition: color var(--color-transition); }
-.nav-links a:hover { color: var(--primary-color); }
-.nav-actions { display: flex; align-items: center; gap: 15px; }
-.btn-primary { background-color: var(--primary-color); color: white; padding: 8px 20px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: var(--transition); }
-.btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
-.btn-icon { background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--text-color); transition: color var(--color-transition); }
-.profile-pic img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
-.hamburger { display: none; }
 
-/* Footer Styling */
+/* --- Container Menu (Desktop Mode) --- */
+.nav-menu-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    margin: 0 auto;
+}
+
+.nav-links a { 
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.nav-links a::after {
+    content: ''; position: absolute; width: 0; height: 2px;
+    bottom: -5px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary-color); }
+
+.nav-actions { 
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.btn-primary { 
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+.btn-primary:hover {
+    background-color: transparent; border-color: var(--primary-color); color: var(--primary-color);
+}
+
+.btn-icon { 
+    background: none; border: none; font-size: 1.2rem; cursor: pointer; 
+    color: var(--text-color); padding: 5px; border-radius: 50%;
+    transition: color var(--color-transition), background-color var(--transition); 
+}
+.btn-icon:hover { background-color: rgba(0,0,0,0.05); color: #7296AB; }
+
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+/* Tambahan: Sembunyikan item mobile di desktop */
+.mobile-only-text, .profile-pic.mobile-only { display: none; } 
+/* Tambahan: Tampilkan item desktop di desktop */
+.profile-pic.desktop-only { display: block; }
+
+/* Hamburger Button */
+.hamburger {
+    display: none; cursor: pointer; background: none; border: none; padding: 10px; z-index: 1001;
+}
+.bar {
+    display: block; width: 25px; height: 3px; margin: 5px auto;
+    background-color: var(--text-color); transition: all 0.3s ease-in-out; border-radius: 3px;
+}
+/* Animasi Hamburger ke X */
+.hamburger.active .bar:nth-child(2) { opacity: 0; }
+.hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* =========================================
+    3. DROPDOWN PROFILE STYLING (STANDAR WAJIB)
+    ========================================= */
+.profile-dropdown-wrapper { position: relative; }
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.profile-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 30px); /* Jarak dari nav-actions */
+    right: -60px; /* Penyesuaian posisi kanan */
+    width: 300px;
+    background-color: var(--dropdown-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 15px 0;
+    z-index: 990;
+    
+    /* State Awal (Sembunyi) */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Kelas yang akan ditambahkan via JavaScript */
+.profile-dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    padding: 0 15px 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+.dropdown-header img {
+    width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+    margin-right: 10px; border: 2px solid var(--primary-color);
+}
+.user-info {
+    display: flex; flex-direction: column;
+}
+.username {
+    font-weight: 600; color: var(--text-color); font-size: 1rem;
+}
+.email {
+    font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.dropdown-links {
+    list-style: none; padding: 0; margin: 0;
+}
+.dropdown-links li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dropdown-links li a:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--primary-dark);
+}
+.dropdown-links li a i {
+    margin-right: 10px; width: 20px; text-align: center;
+}
+.dropdown-links li a.logout {
+    color: #e74c3c;
+}
+.dropdown-links li a.logout:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #c0392b;
+}
+
+.divider-item {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 5px 0;
+}
+
+.mobile-only-text { display: none; } /* Teks penjelasan icon di desktop sembunyi */
+
+/* =========================================
+   3. BREAKPOINT AMAN & DROPDOWN (Fixed - STANDAR WAJIB)
+   ========================================= */
+@media (max-width: 1024px) { 
+    .navbar { padding: 0 20px; }
+    .hamburger { display: block; }
+    
+    /* Sembunyikan icon profil desktop */
+    .profile-pic.desktop-only { display: none; }
+
+    /* Ubah Container jadi Dropdown Vertical */
+    .nav-menu-container {
+        position: absolute;
+        top: var(--nav-height); /* Menggunakan variabel nav-height */
+        left: 0;
+        width: 100%;
+        margin: 0;
+        
+        /* Flex Column untuk Vertical Menu */
+        flex-direction: column;
+        background-color: var(--bg-color);
+        padding: 30px 20px;
+        
+        /* Style Dropdown */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        
+        /* STATE AWAL: Hidden & Slide Up */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        
+        /* TRANSISI SUPER HALUS */
+        transition: opacity 0.4s ease, 
+                    transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                    visibility 0.4s ease,
+                    background-color var(--color-transition);
+    }
+
+    /* KELAS ACTIVE (Saat hamburger diklik) */
+    .nav-menu-container.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Reset Link Styles */
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .nav-links a {
+        display: block; font-size: 1.2rem; padding: 10px 0;
+    }
+    .nav-links a::after { bottom: 5px; } /* Sesuaikan posisi garis bawah */
+
+    /* Actions di Bawah */
+    .nav-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+        border-top: 1px solid var(--text-light);
+        padding-top: 25px;
+    }
+    
+    /* Tombol Theme jadi baris panjang */
+    .btn-icon {
+        width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
+        border: 1px solid #ddd; border-radius: 10px; padding: 10px;
+    }
+    .mobile-only-text { display: inline; font-size: 1rem; font-weight: 500; }
+    
+    .btn-primary { width: 100%; text-align: center; padding: 12px; }
+    
+    /* Foto profil paling atas dropdown */
+    .profile-pic.mobile-only { 
+        display: block; 
+        order: -1; 
+        margin-bottom: 10px; 
+    } 
+    .profile-pic.mobile-only img { width: 80px; height: 80px; }
+    /* Tambahan: Pastikan profil desktop disembunyikan */
+    .profile-pic { order: initial; margin-bottom: initial; }
+}
+
+
+/* =========================================
+   4. FOOTER STYLING (STANDAR WAJIB)
+   ========================================= */
 .site-footer {
-    background-color: #e8f5e9;
-    padding: 30px 20px;
+    background-color: #f0f0f0; /* Warna dasar footer terang */
+    padding: 40px 20px 20px;
+    border-top: 5px solid var(--primary-color);
+    color: var(--text-color);
+    transition: background-color var(--color-transition), border-top-color var(--color-transition);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap; 
+    gap: 30px;
+}
+
+.footer-section {
+    min-width: 200px;
+    flex: 1;
+    margin-bottom: 20px;
+}
+
+.footer-head-brand {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+}
+
+.footer-head-brand-highlight { color: var(--primary-color); }
+
+.footer-body-brand {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+}
+
+.footer-body-brand-highlight { color: var(--primary-color); }
+
+.footer-section h4 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+.footer-section p, .footer-section address {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 8px;
+    transition: color var(--transition);
+}
+
+.footer-section ul li a:hover {
+    color: var(--primary-color);
+    transform: translateX(3px); 
+}
+
+/* Social Media Icons */
+.social-icons a {
+    color: #fff;
+    background-color: var(--text-light); 
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1rem;
+    margin-right: 10px;
+    transition: background-color var(--transition);
+}
+
+.social-icons a:hover {
+    background-color: var(--primary-color);
+}
+/* Social media khusus */
+.social-icons a.fa-facebook-f { background-color: #3b5998; }
+.social-icons a.fa-twitter { background-color: #1da1f2; }
+.social-icons a.fa-instagram { background-color: #e4405f; }
+.social-icons a.fa-pinterest-p { background-color: #bd081c; }
+
+.contact-we {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--transition);
+}
+.contact-we:hover { color: var(--primary-color); }
+
+.footer-bottom {
     text-align: center;
-    border-top: 4px solid var(--primary-color);
-    color: #555;
-    transition: background-color var(--color-transition), color var(--color-transition), border-top-color var(--color-transition);
+    padding-top: 20px;
+    margin-top: 30px;
+    border-top: 1px solid #ddd;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    transition: border-top var(--color-transition);
 }
-.site-footer a { 
-    color: var(--text-light); 
-    text-decoration: none; 
-    font-weight: 600; 
-    transition: color var(--transition); 
+
+.footer-bottom a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
 }
-.site-footer a:hover { color: var(--primary-color); }
 
-/* Dark Mode Overrides for Footer */
-[data-theme="dark"] .site-footer { background-color: #0f0f0f; color: #aaa; }
-[data-theme="dark"] .site-footer a { color: #ccc; }
-
-/* --- 3. LAYOUT UMUM --- */
-.main-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-.text-center-section { text-align: center; margin: 60px 0 40px; }
-.big-title { font-size: 2.5rem; margin-bottom: 15px; font-weight: 700; }
-.subtitle { font-size: 1.1rem; color: var(--text-light); transition: color var(--color-transition); line-height: 1.6; }
-.divider { position: relative; height: 1px; background-color: #e0e0e0; margin: 60px 0; display: flex; justify-content: center; align-items: center; transition: background-color var(--color-transition); }
-.divider-icon { background-color: var(--bg-color); padding: 0 15px; color: var(--primary-color); font-size: 1.5rem; transition: background-color var(--color-transition); }
-
-/* --- 4. STYLING KHUSUS TENTANG KAMI --- */
+/* =========================================
+   5. STYLING KHUSUS TENTANG KAMI
+   ========================================= */
 
 /* About Header */
 .about-header {
     text-align: center;
     padding: 80px 20px;
     background-color: var(--card-bg);
-    border-bottom: 1px solid #eee;
     margin-bottom: 40px;
-    /* Transisi background header */
-    transition: transform 0.3s ease, 
-                background-color var(--transition), 
-                box-shadow var(--transition);
+    transition: transform 0.3s ease, background-color var(--transition), box-shadow var(--transition);
 }
 [data-theme="dark"] .about-header { border-bottom: 1px solid #333; }
+
+.header-content {
+    background-color: var(--card-bg);
+    transition: background-color var(--color-transition);
+}
 
 .header-content h1 {
     font-size: 3rem; 
     color: var(--primary-dark); 
     margin-bottom: 10px;
-    /* KUNCI: Transisi Warna Teks */
-    transition: transform 0.3s ease, 
-                color var(--color-transition),
+    transition: transform 0.3s ease, color var(--color-transition);
 }
-
-/* TRIK VISUAL: Ubah sedikit warna H1 saat Dark Mode agar animasi berjalan */
+.banner-brand {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+}
+.banner-brand-highlight { color: var(--primary-color); }
 [data-theme="dark"] .header-content h1 {
-    color: var(--primary-color); /* Jadi sedikit lebih terang (hijau muda) saat gelap */
+    color: var(--primary-color); 
 }
 
 .header-content p {
     font-size: 1.2rem; 
     color: var(--text-light);
-    /* KUNCI: Transisi Warna Teks */
-    transition: transform 0.3s ease, 
-                color var(--color-transition),
+    transition: transform 0.3s ease, color var(--color-transition);
 }
+
+/* Layout Umum Konten */
+.text-center-section { text-align: center; margin: 60px 0 40px; }
+.big-title { font-size: 2.5rem; margin-bottom: 15px; font-weight: 700; }
+.subtitle { font-size: 1.1rem; color: var(--text-light); transition: color var(--color-transition); line-height: 1.6; }
+.divider { position: relative; height: 1px; background-color: #e0e0e0; margin: 60px 0; display: flex; justify-content: center; align-items: center; transition: background-color var(--color-transition); }
+.divider-icon { background-color: var(--bg-color); padding: 0 15px; color: var(--primary-color); font-size: 1.5rem; transition: background-color var(--color-transition); }
 
 /* Split Section */
 .split-section { display: flex; align-items: center; gap: 50px; margin-bottom: 60px; }
 .split-text { flex: 1; }
+
+.text-brand {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+}
+.text-brand-highlight {
+    color: var(--primary-color);
+}
+
 .split-image { flex: 1; }
 .split-image img { width: 100%; border-radius: 20px; box-shadow: var(--card-shadow); transition: var(--transition); }
 .highlight-text { font-size: 2rem; margin-bottom: 15px; color: var(--primary-color); }
@@ -143,6 +551,16 @@ body {
     display: grid; 
     grid-template-columns: repeat(5, 1fr); 
     gap: 20px;
+}
+
+.our-crew-brand {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+}
+.our-crew-brand-highlight {
+    color: var(--primary-color);
 }
 
 .team-member { 
@@ -183,21 +601,85 @@ body {
 .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-/* Responsive */
+
+/* =========================================
+   6. RESPONSIVE DESIGN LANJUTAN
+   ========================================= */
+/* Nav Bar Responsive sudah dihandle di section 3 */
+
+@media (max-width: 1200px) {
+    .team-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
 @media (max-width: 1024px) {
+    /* Footer */
+    .footer-content {
+        justify-content: space-around;
+    }
+    .footer-section {
+        flex-basis: 40%;
+    }
+    /* Konten Khusus */
     .team-grid { grid-template-columns: repeat(3, 1fr); }
+    .split-section { flex-direction: column; text-align: center; gap: 30px; }
 }
 
 @media (max-width: 768px) {
-    .navbar { padding: 0 20px; }
-    .nav-links, .nav-actions { display: none; }
-    .hamburger { display: block; font-size: 1.5rem; }
-    .split-section { flex-direction: column; text-align: center; }
     .features-grid { grid-template-columns: 1fr; } 
     .team-grid { grid-template-columns: repeat(2, 1fr); } 
     .header-content h1 { font-size: 2rem; }
+    
+    /* Footer Mobile */
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+    }
+    .footer-section {
+        flex-basis: 100%;
+        max-width: 300px;
+    }
+    .footer-section ul li a { text-align: center; }
+    .social-icons { margin-top: 15px; }
+    .social-icons a { margin: 0 5px; }
 }
 
 @media (max-width: 480px) {
     .team-grid { grid-template-columns: 1fr; } 
+    .big-title { font-size: 2rem; }
+}
+
+
+/* =========================================
+   7. DARK MODE OVERRIDES (DISINKRONKAN)
+   ========================================= */
+/* Navbar, Link, Icon, Bar */
+[data-theme="dark"] .navbar { background-color: #1a1a1a; box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .nav-brand { color: #BB86FC; }
+[data-theme="dark"] .nav-links a { color: #cccccc; }
+[data-theme="dark"] .nav-links a:hover,
+[data-theme="dark"] .nav-links a.active { color: var(--primary-color); }
+[data-theme="dark"] .btn-icon { color: #e0e0e0; }
+[data-theme="dark"] .btn-icon:hover { background-color: rgba(255, 255, 255, 0.05); color: #FFE87C; }
+[data-theme="dark"] .bar { background-color: #e0e0e0; }
+
+/* Footer Dark Mode */
+[data-theme="dark"] .site-footer { 
+    background-color: #1a1a1a; 
+    color: #bbb; 
+    border-top-color: var(--primary-dark); 
+}
+[data-theme="dark"] .footer-section h4 {
+    color: var(--primary-color);
+}
+[data-theme="dark"] .footer-section ul li a {
+    color: #bbb;
+}
+[data-theme="dark"] .contact-we { color: #999999; }
+[data-theme="dark"] .contact-we:hover { color: var(--primary-color); }
+[data-theme="dark"] .footer-bottom {
+    border-top-color: #333;
+    color: #bbb;
+    transition: border-top-color var(--color-transition);
 }

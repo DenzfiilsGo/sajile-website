@@ -1,16 +1,16 @@
-/* --- 1. BASE VARIABLES & RESET (Sama dengan resep.css) --- */
+/* =========================================
+   1. BASE VARIABLES & RESET
+   ========================================= */
 :root {
-    --primary-color: #2ecc71; 
+    --hover-button: #98FB98;
+    --primary-color: #2ecc71;
     --primary-dark: #27ae60;
-    --accent-color: #3498db;
     --bg-color: #ffffff;
     --text-color: #333333;
     --text-light: #666666;
     --card-bg: #f9f9f9;
     --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
     --nav-height: 70px;
-    
-    /* Transisi Konsisten */
     --transition: all 0.3s ease; 
     --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
 }
@@ -26,90 +26,336 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
+body { 
     font-family: 'Poppins', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    transition: background-color var(--color-transition), color var(--color-transition);
+    transition: background-color var(--color-transition), color var(--color-transition); 
     overflow-x: hidden;
-    min-height: 100vh; /* Penting untuk footer di halaman pendek */
+    min-height: 100vh; /* Agar footer di bawah */
     display: flex;
     flex-direction: column;
+    user-select: none; /* Mencegah seleksi teks */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge lama */
 }
 
-/* Agar footer selalu di bawah */
+/* Agar konten utama mengambil sisa ruang */
 .main-wrapper { 
     flex-grow: 1;
     max-width: 1200px; 
     margin: 0 auto; 
     padding: 0 20px;
-    width: 100%; /* Penting untuk flex grow */
+    width: 100%;
 }
 
-/* --- 2. BASE UTILITIES (Navbar, Footer, Buttons) --- */
+/* =========================================
+   2. NAVBAR STYLING (FIXED & SAFE - STANDAR WAJIB)
+   ========================================= */
 .navbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 5%; height: var(--nav-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    height: var(--nav-height);
     background-color: var(--bg-color);
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    position: sticky; top: 0; z-index: 1000;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     transition: background-color var(--color-transition), box-shadow var(--color-transition);
 }
-.nav-brand { font-size: 1.5rem; font-weight: 700; letter-spacing: 1px; }
+
+.nav-brand { 
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+}
 .brand-highlight { color: var(--primary-color); }
-.nav-links { display: flex; list-style: none; gap: 25px; }
-.nav-links a { text-decoration: none; color: var(--text-color); font-weight: 500; transition: color var(--color-transition); }
-.nav-links a:hover { color: var(--primary-color); }
-.nav-actions { display: flex; align-items: center; gap: 15px; }
+
+/* --- Container Menu (Desktop Mode) --- */
+.nav-menu-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    margin: 0 auto;
+}
+
+.nav-links a { 
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.nav-links a::after {
+    content: ''; position: absolute; width: 0; height: 2px;
+    bottom: -5px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary-color); }
+
+.nav-actions { 
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+/* Tombol */
 .btn-primary { 
-    background-color: var(--primary-color); 
-    color: white; 
-    padding: 8px 20px; 
-    border-radius: 25px; 
-    text-decoration: none; 
-    font-weight: 600; 
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
     transition: var(--transition);
-    border: none;
+    border: 2px solid transparent;
     cursor: pointer;
 }
-.btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+.btn-primary:hover {
+    background-color: transparent; border-color: var(--primary-color); color: var(--primary-color);
+}
+.btn-primary:active {
+    transform: scale(1.1);
+}
 .btn-icon { 
-    background: none; 
-    border: none; 
-    cursor: pointer; 
-    font-size: 1.2rem; 
-    color: var(--text-color); 
-    transition: color var(--color-transition); 
+    background: none; border: none; font-size: 1.2rem; cursor: pointer; 
+    color: var(--text-color); padding: 5px; border-radius: 50%;
+    transition: color var(--color-transition), background-color var(--transition); 
 }
-.profile-pic img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
-.hamburger { display: none; }
+.btn-icon:hover { background-color: rgba(0,0,0,0.05); color: #7296AB; }
 
-/* Footer Styling */
-.site-footer {
-    background-color: #e8f5e9;
-    padding: 30px 20px;
-    text-align: center;
-    border-top: 4px solid var(--primary-color);
-    color: #555;
-    transition: background-color var(--color-transition), color var(--color-transition), border-top-color var(--color-transition);
-    margin-top: 50px; /* Jarak dari konten utama */
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
 }
-.site-footer a { 
-    color: var(--text-light); 
-    text-decoration: none; 
-    font-weight: 600; 
-    transition: color var(--transition); 
+
+/* Visibilitas item di desktop */
+.mobile-only-text, .profile-pic.mobile-only { display: none; } 
+.profile-pic.desktop-only { display: block; }
+
+/* Hamburger Button */
+.hamburger {
+    display: none; cursor: pointer; background: none; border: none; padding: 10px; z-index: 1001;
 }
-.site-footer a:hover { color: var(--primary-color); }
-[data-theme="dark"] .site-footer { 
-    background-color: #0f0f0f; 
-    color: #aaa; 
-    border-top-color: var(--primary-dark); 
+.bar {
+    display: block; width: 25px; height: 3px; margin: 5px auto;
+    background-color: var(--text-color); transition: all 0.3s ease-in-out; border-radius: 3px;
 }
-[data-theme="dark"] .site-footer a { color: #ccc; }
+/* Animasi Hamburger ke X */
+.hamburger.active .bar:nth-child(2) { opacity: 0; }
+.hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* =========================================
+   TAMBAHAN WAJIB: PROFILE DROPDOWN & LOGIC
+   (Bagian ini hilang di skrip sebelumnya)
+   ========================================= */
+
+/* Kontrol Tampilan Berdasarkan Status Login */
+body[data-logged-in="true"] .logged-out-only { display: none !important; }
+body[data-logged-in="false"] .logged-in-only { display: none !important; }
+
+/* =========================================
+    3. DROPDOWN PROFILE STYLING (STANDAR WAJIB)
+    ========================================= */
+.profile-dropdown-wrapper { position: relative; }
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.profile-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 30px); /* Jarak dari nav-actions */
+    right: -60px; /* Penyesuaian posisi kanan */
+    width: 300px;
+    background-color: var(--dropdown-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 15px 0;
+    z-index: 990;
+    
+    /* State Awal (Sembunyi) */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Kelas yang akan ditambahkan via JavaScript */
+.profile-dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    padding: 0 15px 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+.dropdown-header img {
+    width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+    margin-right: 10px; border: 2px solid var(--primary-color);
+}
+.user-info {
+    display: flex; flex-direction: column;
+}
+.username {
+    font-weight: 600; color: var(--text-color); font-size: 1rem;
+}
+.email {
+    font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.dropdown-links {
+    list-style: none; padding: 0; margin: 0;
+}
+.dropdown-links li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dropdown-links li a:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--primary-dark);
+}
+.dropdown-links li a i {
+    margin-right: 10px; width: 20px; text-align: center;
+}
+.dropdown-links li a.logout {
+    color: #e74c3c;
+}
+.dropdown-links li a.logout:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #c0392b;
+}
+
+.divider-item {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 5px 0;
+}
+
+.mobile-only-text { display: none; } /* Teks penjelasan icon di desktop sembunyi */
+
+/* Dark Mode Penyesuaian untuk Dropdown */
+[data-theme="dark"] .profile-dropdown-menu {
+    background-color: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* =========================================
+   3. BREAKPOINT AMAN & DROPDOWN (Fixed - STANDAR WAJIB)
+   ========================================= */
+@media (max-width: 1024px) { 
+    .navbar { padding: 0 20px; }
+    .hamburger { display: block; }
+    
+    /* Sembunyikan icon profil desktop */
+    .profile-pic.desktop-only { display: none; }
+
+    /* Ubah Container jadi Dropdown Vertical */
+    .nav-menu-container {
+        position: absolute;
+        top: var(--nav-height); 
+        left: 0;
+        width: 100%;
+        margin: 0;
+        flex-direction: column;
+        background-color: var(--bg-color);
+        padding: 30px 20px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        
+        /* STATE AWAL: Hidden & Slide Up */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        
+        /* TRANSISI SUPER HALUS */
+        transition: opacity 0.4s ease, 
+                    transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                    visibility 0.4s ease,
+                    background-color var(--color-transition);
+    }
+
+    /* KELAS ACTIVE (Saat hamburger diklik) */
+    .nav-menu-container.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Reset Link Styles */
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .nav-links a {
+        display: block; font-size: 1.2rem; padding: 10px 0;
+    }
+    .nav-links a::after { bottom: 5px; } /* Sesuaikan posisi garis bawah */
+    
+    /* Actions di Bawah */
+    .nav-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+        border-top: 1px solid var(--text-light);
+        padding-top: 25px;
+    }
+    
+    /* Tombol Theme jadi baris panjang */
+    .btn-icon {
+        width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
+        border: 1px solid #ddd; border-radius: 10px; padding: 10px;
+    }
+    .mobile-only-text { display: inline; font-size: 1rem; font-weight: 500; }
+    
+    .btn-primary { width: 100%; text-align: center; padding: 12px; }
+    
+    /* Foto profil paling atas dropdown */
+    .profile-pic.mobile-only { 
+        display: block; 
+        order: -1; 
+        margin-bottom: 10px; 
+    } 
+    .profile-pic.mobile-only img { width: 80px; height: 80px; }
+}
 
 
-/* --- 3. STYLING KHUSUS FAVORIT & RESEP GRID --- */
+/* =========================================
+   4. STYLING KHUSUS FAVORIT & RESEP GRID
+   ========================================= */
 
 .page-header {
     text-align: center;
@@ -120,14 +366,16 @@ body {
 .page-header h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--primary-dark); /* Menggunakan dark-primary agar lebih tegas */
+    transition: color var(--color-transition);
 }
 .page-header p {
     font-size: 1.1rem;
     color: var(--text-light);
+    transition: color var(--color-transition);
 }
 
-/* Empty State Styling (Penting untuk halaman Favorit) */
+/* --- Empty State Styling --- */
 #empty-state {
     min-height: 400px;
     display: flex;
@@ -135,29 +383,31 @@ body {
     justify-content: center;
     text-align: center;
     padding: 50px 20px;
+    /* Akan di-toggle display: none/flex oleh JS */
 }
 
 .empty-message {
     max-width: 400px;
     padding: 30px;
-    border: 2px dashed #ccc;
+    border: 2px dashed var(--text-light);
     border-radius: 15px;
     background-color: var(--card-bg);
     transition: all var(--color-transition);
 }
 
-[data-theme="dark"] .empty-message { border-color: #333; }
+[data-theme="dark"] .empty-message { border-color: #555; }
 
 .icon-large {
     font-size: 4rem;
     color: var(--primary-color);
     margin-bottom: 20px;
+    transition: color var(--color-transition);
 }
 .empty-message h2 { margin-bottom: 10px; font-weight: 600; }
 .empty-message p { margin-bottom: 25px; color: var(--text-light); }
 
 
-/* Recipe Grid (Sama dengan resep.css) */
+/* --- Recipe Grid dan Card (Similiar dengan Daftar Menu) --- */
 .recipe-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 4 kolom desktop */
@@ -172,7 +422,7 @@ body {
     border-radius: 15px;
     overflow: hidden;
     box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color var(--color-transition), opacity 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, background-color var(--color-transition);
 }
 
 .recipe-card:hover {
@@ -181,7 +431,6 @@ body {
 }
 
 .card-image {
-    position: relative;
     height: 180px;
 }
 
@@ -199,16 +448,22 @@ body {
     font-size: 1.1rem;
     color: var(--text-color);
     margin-bottom: 5px;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    transition: color var(--color-transition);
 }
 
 .card-info .duration {
     font-size: 0.9rem;
     color: var(--text-light);
+    transition: color var(--color-transition);
 }
 
 .card-info .duration i {
     color: var(--primary-color);
     margin-right: 5px;
+    transition: color var(--color-transition);
 }
 
 /* Tombol Hapus Favorit */
@@ -228,16 +483,22 @@ body {
     cursor: pointer;
     font-size: 1.1rem;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.3s ease;
     z-index: 10;
 }
 .btn-remove-fav:hover {
     background-color: #c0392b;
     transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-/* Animations (Sama dengan resep.css) */
-.fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+
+/* --- Scroll Fade In Animation --- */
+.fade-in { 
+    opacity: 0; 
+    transform: translateY(30px); 
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out; 
+}
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 .delay-1 { transition-delay: 0.05s; }
 .delay-2 { transition-delay: 0.10s; }
@@ -245,28 +506,103 @@ body {
 .delay-4 { transition-delay: 0.20s; }
 .delay-5 { transition-delay: 0.25s; }
 .delay-6 { transition-delay: 0.30s; }
-.delay-7 { transition-delay: 0.35s; }
-.delay-8 { transition-delay: 0.40s; }
-.delay-9 { transition-delay: 0.45s; }
 
 
-/* --- 4. RESPONSIVE DESIGN --- */
+/* --- Footer Styling --- */
+.site-footer {
+    background-color: #e8f5e9;
+    padding: 30px 20px;
+    text-align: center;
+    border-top: 4px solid var(--primary-color);
+    color: #555;
+    transition: background-color var(--color-transition), color var(--color-transition), border-top-color var(--color-transition);
+    margin-top: auto; /* Agar selalu di bawah */
+}
+.site-footer p { margin-bottom: 5px; }
+.site-footer p:last-child { margin-bottom: 0; }
 
-@media (max-width: 1024px) {
+.about-we { 
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.about-we::after {
+    content: ''; position: absolute; width: 0; height: 1px;
+    bottom: -1px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.about-we:hover::after, .about-we.active::after { width: 100%; }
+.about-we:hover, .about-we.active { color: var(--primary-color); }
+
+.contact-we { 
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.contact-we::after {
+    content: ''; position: absolute; width: 0; height: 1px;
+    bottom: -1px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.contact-we:hover::after, .contact-we.active::after { width: 100%; }
+.contact-we:hover, .contact-we.active { color: var(--primary-color); }
+
+.footer-brand {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+}
+.footer-brand-highlight {
+    color: var(--primary-color);
+}
+
+/* --- Dark Mode Overrides --- */
+[data-theme="dark"] .navbar { background-color: #1a1a1a; box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .nav-brand { color: #BB86FC; }
+[data-theme="dark"] .nav-links a { color: #cccccc; }
+[data-theme="dark"] .nav-links a:hover, 
+[data-theme="dark"] .nav-links a.active { color: var(--primary-color); }
+[data-theme="dark"] .btn-icon { color: #e0e0e0; }
+[data-theme="dark"] .btn-icon:hover { background-color: rgba(255, 255, 255, 0.05); color: #FFE87C; }
+[data-theme="dark"] .bar { background-color: #e0e0e0; }
+
+[data-theme="dark"] .empty-message { border-color: #555; }
+[data-theme="dark"] .site-footer { 
+    background-color: #0f0f0f; 
+    color: #aaa; 
+    border-top-color: var(--primary-dark); 
+}
+[data-theme="dark"] .about-we { color: #999999; }
+[data-theme="dark"] .about-we:hover { color: var(--primary-color); }
+[data-theme="dark"] .contact-we { color: #999999; }
+[data-theme="dark"] .contact-we:hover { color: var(--primary-color); }
+[data-theme="dark"] .footer-brand { color: #BB86FC; }
+
+
+/* --- 5. RESPONSIVE DESIGN --- */
+
+@media (max-width: 1200px) { /* Grid 4 kolom sampai 1200px */
     .recipe-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 768px) {
-    .navbar { padding: 0 20px; }
-    .nav-links, .nav-actions { display: none; }
-    .hamburger { display: block; font-size: 1.5rem; }
+    .recipe-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
     .page-header h1 { font-size: 2rem; }
-    .recipe-grid { grid-template-columns: repeat(2, 1fr); }
-    .empty-message { padding: 20px; }
+    .page-header p { font-size: 1rem; }
 }
 
 @media (max-width: 480px) {
     .recipe-grid { grid-template-columns: 1fr; }
+    .page-header { padding: 30px 10px 15px; margin-bottom: 25px; }
     .page-header h1 { font-size: 1.8rem; }
     .icon-large { font-size: 3rem; }
 }

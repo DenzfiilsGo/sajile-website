@@ -1,31 +1,251 @@
-// Ambil elemen dari DOM
-const signUpButton = document.getElementById('signUp');
-const signInButton = document.getElementById('signIn');
-const container = document.getElementById('container');
+// bagian atas: impor dan inisialisasi
+// ⭐ IMPORT API URL DARI FILE CONFIG.JS ⭐
+import { API_BASE_URL } from './config.js'; // PASTIKAN PATH INI BENAR
+import { saveAuthToken } from './authManager.js';
 
-// Event Listener untuk tombol di Overlay
-signUpButton.addEventListener('click', () => {
-    // Menambah class untuk mengaktifkan animasi geser ke kanan (Tampilkan Register)
-    container.classList.add("right-panel-active");
+// Blokir seleksi teks via JavaScript
+document.addEventListener('selectstart', function(e) {
+    e.preventDefault(); // Mencegah aksi default seleksi
 });
 
-signInButton.addEventListener('click', () => {
-    // Menghapus class untuk mengembalikan ke posisi awal (Tampilkan Login)
-    container.classList.remove("right-panel-active");
+// Opsional: Blokir drag teks/gambar
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
 });
 
-// Fitur Tambahan: Toggle Password Visibility (Mata)
-function togglePassword() {
-    const passwordInput = document.getElementById('loginPass');
-    const toggleIcon = document.querySelector('.toggle-password');
+console.log("[DaftarLogin] ✅ Script loaded, checking DOM state...");
 
-    if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = "password";
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
+console.log('Menggunakan backend base URL:', API_BASE_URL);
+const API_BACKEND_URL = `${API_BASE_URL}/auth`;
+
+// ===== MAIN INITIALIZATION FUNCTION =====
+function initDaftarLogin() {
+    console.log("[DaftarLogin] 🚀 Initializing (DOM ready)...");
+    
+    // ===== GRAB ELEMEN DARI DOM (SEKARANG AMAN) =====
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.getElementById('container');
+    const loginMessageDiv = document.getElementById('loginMessage');
+    const registerMessageDiv = document.getElementById('authMessage');
+    const registerForm = document.getElementById('form_register');
+    const loginForm = document.getElementById('form_login');
+    
+    console.log("[DaftarLogin] Elements found:", { 
+        signUpButton: !!signUpButton, 
+        signInButton: !!signInButton, 
+        container: !!container,
+        registerForm: !!registerForm,
+        loginForm: !!loginForm
+    });
+
+    // ===== 1. CEK LOGIN AWAL =====
+    function checkInitialLogin() {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            console.log("[DaftarLogin] ✅ User sudah login, redirect ke index.html");
+            window.location.replace('../index.html');
+        } else {
+            console.log("[DaftarLogin] ℹ️ No token found, user bisa login");
+        }
     }
+    
+    checkInitialLogin();
+
+    // ===== 2. TOGGLE FORM =====
+    if (signUpButton) {
+        signUpButton.addEventListener('click', () => {
+            console.log("[DaftarLogin] 📋 Switch to Register form");
+            container.classList.add("right-panel-active");
+            loginMessageDiv.textContent = '';
+            registerMessageDiv.textContent = '';
+        });
+    }
+
+    if (signInButton) {
+        signInButton.addEventListener('click', () => {
+            console.log("[DaftarLogin] 📋 Switch to Login form");
+            container.classList.remove("right-panel-active");
+            loginMessageDiv.textContent = '';
+            registerMessageDiv.textContent = '';
+        });
+    }
+
+    // ===== 3. TOGGLE PASSWORD VISIBILITY =====
+    window.togglePassword = function() {
+        const passwordInput = document.getElementById('loginPass');
+        const toggleIcon = document.querySelector('.toggle-password');
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = "password";
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    };
+
+    // ===== 4. REGISTRASI HANDLER =====
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log("[DaftarLogin] 📝 Register form submitted");
+            
+            const registerUsernameInput = document.getElementById('registerUsername');
+            const registerEmailInput = document.getElementById('registerEmail');
+            const registerPasswordInput = document.getElementById('registerPassword');
+            
+            const username = registerUsernameInput.value.trim();
+            const email = registerEmailInput.value.trim();
+            const password = registerPasswordInput.value.trim();
+
+            if (!username || !email || password.length < 6) {
+                registerMessageDiv.style.color = 'red';
+                registerMessageDiv.textContent = 'Harap isi semua kolom dan Password minimal 6 karakter.';
+                return;
+            }
+
+            const submitBtn = registerForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Memproses...';
+            registerMessageDiv.textContent = '⏳ Menghubungkan ke server...';
+            registerMessageDiv.style.color = '#FFA500';
+
+            try {
+                const response = await fetch(`${API_BACKEND_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password }),
+                });
+
+                const data = await response.json();
+                console.log("[DaftarLogin] Register response:", { ok: response.ok, data });
+
+                if (response.ok) {
+                    registerMessageDiv.style.color = 'green';
+                    registerMessageDiv.textContent = 'Registrasi berhasil! Silahkan masuk.';
+                    registerForm.reset();
+                    
+                    console.log("[DaftarLogin] 💾 Saving token & user from register...");
+                    saveAuthToken(data.token, data.user);
+
+                    setTimeout(() => {
+                        container.classList.remove("right-panel-active");
+                        loginMessageDiv.textContent = 'Akun berhasil dibuat. Silakan masukkan password Anda.';
+                        loginMessageDiv.style.color = 'green';
+                        document.getElementById('loginEmail').value = email;
+                    }, 1500);
+                } else {
+                    registerMessageDiv.style.color = 'red';
+                    registerMessageDiv.textContent = `Gagal Daftar: ${data.msg || 'Terjadi kesalahan'}`;
+                }
+            } catch (error) {
+                console.error("[DaftarLogin] Register error:", error);
+                registerMessageDiv.style.color = 'red';
+                registerMessageDiv.textContent = '❌ Gagal koneksi ke server';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'DAFTAR';
+            }
+        });
+    }
+
+    // ===== 5. LOGIN HANDLER =====
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log("[DaftarLogin] 🔐 Login form submitted");
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPass').value.trim();
+
+            if (!email || !password) {
+                loginMessageDiv.style.color = 'red';
+                loginMessageDiv.textContent = 'Email dan Password harus diisi.';
+                return;
+            }
+
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Memproses...';
+            loginMessageDiv.textContent = '⏳ Menghubungkan ke server...';
+            loginMessageDiv.style.color = '#FFA500';
+
+            try {
+                const response = await fetch(`${API_BACKEND_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+                console.log("[DaftarLogin] Login response:", data);
+
+                if (!response.ok) {
+                    loginMessageDiv.style.color = 'red';
+                    loginMessageDiv.textContent = data.msg || "Gagal masuk!";
+                    return;
+                }
+
+                // Backend mengirim: { token: ... }
+                const token = data.token;
+                if (!token) {
+                    loginMessageDiv.textContent = "Token tidak ditemukan!";
+                    return;
+                }
+                const user = data.user;
+                if (!user) {
+                    loginMessageDiv.textContent = "Data user tidak ditemukan!";
+                    return;
+                }
+
+                // 🔥 Simpan token dulu
+                localStorage.setItem("authToken", token);
+                localStorage.setItem('authUser', user);
+
+                // 🔥 Ambil data user dari backend
+                const resUser = await fetch(`${API_BACKEND_URL}/auth`, {
+                    method: "GET",
+                    headers: { 
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                const userData = await resUser.json();
+                console.log("[DaftarLogin] User fetched:", userData);
+
+                // 🔥 Simpan authUser lengkap
+                localStorage.setItem("authUser", JSON.stringify(userData));
+
+                loginMessageDiv.style.color = 'green';
+                loginMessageDiv.textContent = 'Masuk berhasil! Mengalihkan...';
+
+                setTimeout(() => window.location.replace('../index.html'), 400);
+
+            } catch (error) {
+                console.error("[DaftarLogin] Login error:", error);
+                loginMessageDiv.style.color = 'red';
+                loginMessageDiv.textContent = '❌ Gagal koneksi ke server';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'MASUK';
+            }
+        });
+    }
+
+    console.log("[DaftarLogin] ✅ Initialization complete");
 }
+
+// ⭐ PERBAIKAN: Cek apakah DOM sudah ready
+if (document.readyState === 'loading') {
+    // DOM belum ready, tunggu event
+    document.addEventListener('DOMContentLoaded', initDaftarLogin);
+} else {
+    // DOM sudah ready, langsung jalankan
+    console.log("[DaftarLogin] ⚡ DOM sudah ready, init langsung...");
+    initDaftarLogin();
+}
+
+console.log("[DaftarLogin] Script end - waiting for potential DOMContentLoaded or init immediately");
