@@ -1,165 +1,222 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SajiLe - Debug (Beta)- Temukan Rasa Terbaikmu</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SajiLe - Debug (Beta) - Temukan Rasa Terbaikmu</title>
 
-    <!-- PERINTAH KRUSIAL: BLOKIR GOOGLE CRAWLER SEMENTARA -->
-    <meta name="robots" content="noindex, nofollow">
-    
-    <link rel="stylesheet" href="css\beranda.css">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
+        <meta name="robots" content="noindex, nofollow">
 
-    <nav class="navbar">
-        <div class="nav-brand">Saji<span class="brand-highlight">Le</span></div>
-        <ul class="nav-links">
-            <li><a href="#" class="active">Beranda</a></li>
-            <li><a href="html\daftar_makanan.html">Menu</a></li>
-            <li><a href="html\resep.html">Resep</a></li>
-            <li><a href="html\favorit.html">Favorit</a></li> </ul>
-        <div class="nav-actions">
-            <button id="theme-toggle" class="btn-icon"><i class="fas fa-moon"></i></button>
-            
-            <a href="html\daftar_atau_login.html" class="btn-primary">Masuk/Daftar</a>
-            
-            <div class="profile-pic">
-                <img src="https://placehold.co/40x40/png" alt="Profil">
+        <link rel="stylesheet" href="css/beranda.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+
+    <body data-logged-in="false">
+
+        <nav class="navbar">
+            <a class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
+
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <div class="nav-menu-container" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="index.html" class="active">Beranda</a></li>
+                    <li><a href="html/daftar_makanan.html">Menu</a></li>
+                    <li><a href="html/resep.html">Resep</a></li>
+                    <li><a href="html/favorit.html">Favorit</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="btn-icon">
+                        <i class="fas fa-moon"></i>
+                        <span class="mobile-only-text">Mode Gelap</span>
+                    </button>
+                    
+                    <div class="nav-auth-links logged-out-only">
+                        <a href="html/daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
+                    </div>
+                    
+                    <div class="profile-dropdown-wrapper logged-in-only">
+                        <div class="profile-pic" id="profile-pic-btn">
+                            <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna" onerror="this.onerror=null; this.src='https://placehold.co/40x40/3498db/fff?text=U'">
+                        </div>
+                        
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <div class="dropdown-header">
+                                <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
+                                <div class="user-info">
+                                    <span class="username">Nama Pengguna</span>
+                                    <span class="email">user.email@mail.com</span>
+                                </div>
+                            </div>
+                            <ul class="dropdown-links">
+                                <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
+                                <li><a href="pengaturan.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
+                                <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
+                                <li class="divider-item"></li>
+                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </nav>
+
+        <header class="hero-slider">
+            <div class="slider-container">
+                <div class="slide active" style="background-image: url('https://placehold.co/1200x400/333/fff?text=Promo+Spesial+Hari+Ini');"></div>
+                <div class="slide" style="background-image: url('https://placehold.co/1200x400/555/fff?text=Resep+Nusantara+Terbaru');"></div>
+                <div class="slide" style="background-image: url('https://placehold.co/1200x400/777/fff?text=Diskon+Kursus+Memasak');"></div>
+            </div>
+            <div class="slider-dots"></div>
+        </header>
+
+        <div class="main-wrapper">
+
+            <section class="text-center-section fade-in">
+                <h1 class="big-title">Ratusan Pilihan Menu, Satu Tempat.</h1>
+                <p class="subtitle">
+                    Temukan makanan terenak tanpa ribet. <br>
+                    <a class="text-brand"><strong>Saji<span class="text-brand-highlight">Le</span></strong></a> siap bantu kamu memilih hidangan terbaik.
+                </p>
+            </section>
+
+            <section class="features-grid fade-in">
+                <div class="feature-card">
+                    <div class="img-placeholder"></div>
+                    <h3>Yang Sedang Tren</h3>
+                    <p>Menu paling dicari minggu ini.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="img-placeholder"></div>
+                    <h3>Ramah Kantong</h3>
+                    <p>Masak enak tanpa bikin dompet jebol.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="img-placeholder"></div>
+                    <h3>Cita Rasa Lokal</h3>
+                    <p>Kenikmatan asli rempah Indonesia.</p>
+                </div>
+            </section>
+
+            <div class="divider">
+                <span class="divider-icon"><i class="fas fa-utensils"></i></span>
+            </div>
+
+            <section class="split-section fade-in">
+                <div class="split-text">
+                    <h2 class="highlight-text">Mulai Pola Makan Sehatmu!</h2>
+                    <p class="sub-text">Temukan ribuan resep bernutrisi tinggi yang lezat dan mudah dimasak untuk energimu hari ini.</p>
+                    <a href="html/definisi_makanan_bergizi.html" class="btn-secondary" style="text-decoration:none; display:inline-block;">
+                        Pelajari Gizi Seimbang
+                    </a>
+                </div>
+                <div class="split-image interactable">
+                    <img src="https://placehold.co/600x350/2ecc71/fff?text=Healthy+Food+Banner" 
+                        alt="Makanan Sehat"
+                        onerror="this.onerror=null; this.src='https://placehold.co/600x350/2ecc71/fff?text=Healthy+Food+Banner'">
+                </div>
+            </section>
+
+            <section class="food-grid-section fade-in">
+                <div class="section-header">
+                    <h2 class="highlight-tag">Coba Juga!</h2>
+                </div>
+
+                <div class="grid-5-col">
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Nasi Goreng</div></div>
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Sate Ayam</div></div>
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Rendang</div></div>
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Soto</div></div>
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Bakso</div></div>
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Gado-Gado</div></div>
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Pempek</div></div>
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Gudeg</div></div>
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Rawon</div></div>
+                    <div class="food-card"><div class="fc-img"></div><div class="fc-info">Opor</div></div>
+                </div>
+            </section>
+
+            <div class="divider">
+                <span class="divider-icon"><i class="fas fa-book-open"></i></span>
+            </div>
+
+            <section class="text-center-section fade-in">
+                <h2 class="big-title">Kuasai Dapur dengan Kursus Gratis</h2>
+                <p class="subtitle">Lebih dari puluhan pilihan teknik memasak tersedia!</p>
+                <small class="helper-text">
+                    <i class="fas fa-robot"></i> Kursus berbasis video dipandu asisten AI <strong>"TOLE"</strong> siap membantumu!
+                </small>
+            </section>
+
+            <div class="course-banner fade-in">
+                <h2>PILIHAN KURSUS TERBAIK</h2>
+            </div>
+
+            <section class="course-container fade-in">
+                <div class="grid-5-col">
+                    <div class="course-card"><div class="cc-img"></div><span>Basic Knife</span></div>
+                    <div class="course-card"><div class="cc-img"></div><span>Sauce Making</span></div>
+                    <div class="course-card"><div class="cc-img"></div><span>Baking 101</span></div>
+                    <div class="course-card"><div class="cc-img"></div><span>Grilling</span></div>
+                    <div class="course-card"><div class="cc-img"></div><span>Vegan Cook</span></div>
+                    <div class="course-card"><div class="cc-img"></div><span>Italian</span></div>
+                    <div class="course-card"><div class="cc-img"></div><span>Japanese</span></div>
+                    <div class="course-card"><div class="cc-img"></div><span>Pastry</span></div>
+                    <div class="course-card"><div class="cc-img"></div><span>Plating</span></div>
+                    <div class="course-card"><div class="cc-img"></div><span>Food Photo</span></div>
+                </div>
+            </section>
+
+            <section class="split-section reverse fade-in">
+                <div class="split-image">
+                    <img src="https://placehold.co/500x400/3498db/fff?text=Fitur+Favorit"
+                        alt="Simpan Resep"
+                        onerror="this.onerror=null; this.src='https://placehold.co/500x400/3498db/fff?text=Fitur+Favorit'">
+                </div>
+
+                <div class="split-text">
+                    <h2 class="highlight-text">Simpan Resep Favoritmu!</h2>
+                    <p class="sub-text">
+                        Jangan biarkan resep enak hilang. Kumpulkan koleksi pribadimu dalam satu tempat.
+                        Dengan fitur <strong>Favorit</strong>, atur dan temukan kembali inspirasi masakmu kapan saja.
+                    </p>
+                </div>
+            </section>
+
+            <section class="cta-banner fade-in">
+                <div class="cta-content">
+                    <h2>Buka Semua Resep & Fitur dengan Satu Klik!</h2>
+                    <p>Login atau daftar sekarang untuk merasakan pengalaman memasak yang lebih lengkap, interaktif, dan seru.</p>
+
+                    <a href="html/daftar_atau_login.html" class="btn-cta">Mulai Sekarang</a>
+                </div>
+            </section>
+
         </div>
-        <div class="hamburger">
-            <i class="fas fa-bars"></i>
-        </div>
-    </nav>
 
-    <header class="hero-slider">
-        <div class="slider-container">
-            <div class="slide active" style="background-image: url('https://placehold.co/1200x400/333/fff?text=Promo+Spesial+Hari+Ini');"></div>
-            <div class="slide" style="background-image: url('https://placehold.co/1200x400/555/fff?text=Resep+Nusantara+Terbaru');"></div>
-            <div class="slide" style="background-image: url('https://placehold.co/1200x400/777/fff?text=Diskon+Kursus+Memasak');"></div>
-        </div>
-        <div class="slider-dots"></div> 
-    </header>
+        <footer class="site-footer">
+            <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
+            <p>
+                <a href="html/tentang_kami.html" class="about-we">Tentang Kami</a> | 
+                Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> |
+                Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a>
+            </p>
+            <p>
+                Dikelola oleh Tim 
+                <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</span></strong></a> 
+                (ex-<a class="footer-brand"><strong>MBADOK<span class="footer-brand-highlight">Le</span></strong></a>) Indonesia
+            </p>
+        </footer>
 
-    <div class="main-wrapper">
-        
-        <section class="text-center-section fade-in">
-            <h1 class="big-title">Ratusan Pilihan Menu, Satu Tempat.</h1>
-            <p class="subtitle">Temukan makanan terenak tanpa ribet. <br> <strong>SajiLe</strong> siap bantu kamu memilih hidangan terbaik.</p>
-        </section>
+        <!-- SCRIPT WAJIB -->
+        <script type="module" src="js/authManager.js"></script>
+        <script type="module" src="js/beranda.js"></script>
 
-        <section class="features-grid fade-in">
-            <div class="feature-card">
-                <div class="img-placeholder"></div>
-                <h3>Yang Sedang Tren</h3>
-                <p>Menu paling dicari minggu ini.</p>
-            </div>
-            <div class="feature-card">
-                <div class="img-placeholder"></div>
-                <h3>Ramah Kantong</h3>
-                <p>Masak enak tanpa bikin dompet jebol.</p>
-            </div>
-            <div class="feature-card">
-                <div class="img-placeholder"></div>
-                <h3>Cita Rasa Lokal</h3>
-                <p>Kenikmatan asli rempah Indonesia.</p>
-            </div>
-        </section>
-
-        <div class="divider">
-            <span class="divider-icon"><i class="fas fa-utensils"></i></span>
-        </div>
-
-        <section class="split-section fade-in">
-            <div class="split-text">
-                <h2 class="highlight-text">Mulai Pola Makan Sehatmu!</h2>
-                <p class="sub-text">Temukan ribuan resep bernutrisi tinggi yang lezat dan mudah dimasak untuk energimu hari ini.</p>
-                <button class="btn-secondary">Lihat Menu Sehat</button>
-            </div>
-            <div class="split-image interactable">
-                <img src="https://placehold.co/600x350/2ecc71/fff?text=Healthy+Food+Banner" alt="Makanan Sehat">
-            </div>
-        </section>
-
-        <section class="food-grid-section fade-in">
-            <div class="section-header">
-                <h2 class="highlight-tag">Coba Juga!</h2>
-            </div>
-            <div class="grid-5-col">
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Nasi Goreng</div></div>
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Sate Ayam</div></div>
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Rendang</div></div>
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Soto</div></div>
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Bakso</div></div>
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Gado-Gado</div></div>
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Pempek</div></div>
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Gudeg</div></div>
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Rawon</div></div>
-                <div class="food-card"><div class="fc-img"></div><div class="fc-info">Opor</div></div>
-            </div>
-        </section>
-
-        <div class="divider">
-            <span class="divider-icon"><i class="fas fa-book-open"></i></span>
-        </div>
-
-        <section class="text-center-section fade-in">
-            <h2 class="big-title">Kuasai Dapur dengan Kursus Gratis</h2>
-            <p class="subtitle">Lebih dari puluhan pilihan teknik memasak tersedia!</p>
-            <small class="helper-text"><i class="fas fa-robot"></i> Kursus berbasis video dipandu asisten AI <strong>"TOLE"</strong> siap membantumu!</small>
-        </section>
-
-        <div class="course-banner fade-in">
-            <h2>PILIHAN KURSUS TERBAIK</h2>
-        </div>
-
-        <section class="course-container fade-in">
-            <div class="grid-5-col">
-                 <div class="course-card"><div class="cc-img"></div><span>Basic Knife</span></div>
-                 <div class="course-card"><div class="cc-img"></div><span>Sauce Making</span></div>
-                 <div class="course-card"><div class="cc-img"></div><span>Baking 101</span></div>
-                 <div class="course-card"><div class="cc-img"></div><span>Grilling</span></div>
-                 <div class="course-card"><div class="cc-img"></div><span>Vegan Cook</span></div>
-                 <div class="course-card"><div class="cc-img"></div><span>Italian</span></div>
-                 <div class="course-card"><div class="cc-img"></div><span>Japanese</span></div>
-                 <div class="course-card"><div class="cc-img"></div><span>Pastry</span></div>
-                 <div class="course-card"><div class="cc-img"></div><span>Plating</span></div>
-                 <div class="course-card"><div class="cc-img"></div><span>Food Photo</span></div>
-            </div>
-        </section>
-
-        <section class="split-section reverse fade-in">
-            <div class="split-image">
-                <img src="https://placehold.co/500x400/3498db/fff?text=Fitur+Favorit" alt="Simpan Resep">
-            </div>
-            <div class="split-text">
-                <h2 class="highlight-text">Simpan Resep Favoritmu!</h2>
-                <p class="sub-text">Jangan biarkan resep enak hilang. Kumpulkan koleksi pribadimu dalam satu tempat. Dengan fitur <strong>Favorit</strong>, atur dan temukan kembali inspirasi masakmu kapan saja.</p>
-            </div>
-        </section>
-
-        <section class="cta-banner fade-in">
-            <div class="cta-content">
-                <h2>Buka Semua Resep & Fitur dengan Satu Klik!</h2>
-                <p>Login atau daftar sekarang untuk merasakan pengalaman memasak yang lebih lengkap, interaktif, dan seru.</p>
-                
-                <a href="html\daftar_atau_login.html" class="btn-cta">Mulai Sekarang</a>
-                
-            </div>
-        </section>
-
-    </div> 
-    
-    <footer class="site-footer">
-        <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
-        <p><a href="html\tentang_kami.html">Tentang Kami</a> | Email: sajile@gmail.com | Whatsapp: 0812-3456-7890</p>
-        <p>Email: sajile@gmail.com | Whatsapp: 0812-3456-7890</p>
-    </footer>
-
-    <script src="js\beranda.js"></script>
-</body>
+    </body>
 </html>

@@ -1,0 +1,34 @@
+# .gitignore (tambahkan/update di root project)
+# Ini mencegah backend_url.json (file dinamis) dari ter-commit
+
+# Backend URL yang berubah-ubah setiap sesi (jangan di-commit!)
+/backend_url.json
+/sajile-backend/backend_url.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Backend node_modules
+/sajile-backend/node_modules
+/node_modules
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build output (jika ada)
+/dist
+/build
