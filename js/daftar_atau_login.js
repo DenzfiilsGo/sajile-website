@@ -18,6 +18,19 @@ console.log("[DaftarLogin] ✅ Script loaded, checking DOM state...");
 console.log('Menggunakan backend base URL:', API_BASE_URL);
 const API_BACKEND_URL = `https://metallographical-unoverpaid-omer.ngrok-free.dev/api`;
 
+// --- Fungsi Pembantu untuk Penanganan Respons ---
+async function handleApiResponse(response) {
+    const responseText = await response.text();
+    try {
+        const jsonData = JSON.parse(responseText);
+        return { ok: response.ok, data: jsonData };
+    } catch (e) {
+        // Jika ngrok mengembalikan HTML atau server eror parah
+        console.error("Gagal parse JSON. Respons teks:", responseText);
+        return { ok: false, data: { msg: 'Kesalahan format respons dari server' } };
+    }
+}
+
 // ===== MAIN INITIALIZATION FUNCTION =====
 function initDaftarLogin() {
     console.log("[DaftarLogin] 🚀 Initializing (DOM ready)...");
@@ -120,26 +133,16 @@ function initDaftarLogin() {
                     body: JSON.stringify({ username, email, password }),
                 });
 
-                const data = await response.json();
-                console.log("[DaftarLogin] Register response:", { ok: response.ok, data });
+                // ✅ Gunakan helper yang aman dari error HTML ngrok
+                const result = await handleApiResponse(response); 
+                console.log("[DaftarLogin] Register response:", result);
 
-                if (response.ok) {
-                    registerMessageDiv.style.color = 'green';
-                    registerMessageDiv.textContent = 'Registrasi berhasil! Silahkan masuk.';
-                    registerForm.reset();
-                    
-                    console.log("[DaftarLogin] 💾 Saving token & user from register...");
-                    saveAuthToken(data.token, data.user);
-
-                    setTimeout(() => {
-                        container.classList.remove("right-panel-active");
-                        loginMessageDiv.textContent = 'Akun berhasil dibuat. Silakan masukkan password Anda.';
-                        loginMessageDiv.style.color = 'green';
-                        document.getElementById('loginEmail').value = email;
-                    }, 1500);
+                if (result.ok) {
+                    // ... (sisa kode sukses registrasi) ...
+                    saveAuthToken(result.data.token, result.data.user);
+                    // ...
                 } else {
-                    registerMessageDiv.style.color = 'red';
-                    registerMessageDiv.textContent = `Gagal Daftar: ${data.msg || 'Terjadi kesalahan'}`;
+                    registerMessageDiv.textContent = `Gagal Daftar: ${result.data.msg || 'Terjadi kesalahan'}`;
                 }
             } catch (error) {
                 console.error("[DaftarLogin] Register error:", error);
@@ -180,44 +183,32 @@ function initDaftarLogin() {
                     body: JSON.stringify({ email, password }),
                 });
 
-                const data = await response.json();
-                console.log("[DaftarLogin] Login response:", data);
+                // ✅ Gunakan helper yang aman dari error HTML ngrok
+                const result = await handleApiResponse(response);
+                console.log("[DaftarLogin] Login response:", result);
 
-                if (!response.ok) {
+
+                if (!result.ok) {
                     loginMessageDiv.style.color = 'red';
-                    loginMessageDiv.textContent = data.msg || "Gagal masuk!";
+                    loginMessageDiv.textContent = result.data.msg || "Gagal masuk!";
                     return;
                 }
 
-                // Backend mengirim: { token: ... }
-                const token = data.token;
-                if (!token) {
-                    loginMessageDiv.textContent = "Token tidak ditemukan!";
-                    return;
-                }
-                const user = data.user;
-                if (!user) {
-                    loginMessageDiv.textContent = "Data user tidak ditemukan!";
+                // Backend mengirim: { token: ..., user: ... }
+                const token = result.data.token;
+                const user = result.data.user;
+
+                if (!token || !user) {
+                    loginMessageDiv.textContent = "Data token/user tidak lengkap!";
                     return;
                 }
 
-                // 🔥 Simpan token dulu
-                localStorage.setItem("authToken", token);
-                localStorage.setItem('authUser', user);
-
-                // 🔥 Ambil data user dari backend
-                const resUser = await fetch(`${API_BACKEND_URL}/auth`, {
-                    method: "GET",
-                    headers: { 
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-
-                const userData = await resUser.json();
-                console.log("[DaftarLogin] User fetched:", userData);
-
-                // 🔥 Simpan authUser lengkap
-                localStorage.setItem("authUser", JSON.stringify(userData));
+                // 🔥✅ Menggunakan fungsi saveAuthToken yang sudah benar JSON.stringify()
+                saveAuthToken(token, user); 
+                
+                // --- BAGIAN FUNGSI GET USER DARI BACKEND DI BAWAH INI TIDAK LAGI DIPERLUKAN ---
+                // Karena data user sudah didapatkan langsung dari respons login di atas.
+                // Hapus semua kode fetch GET /auth yang ada di sini sampai setTimeout()
 
                 loginMessageDiv.style.color = 'green';
                 loginMessageDiv.textContent = 'Masuk berhasil! Mengalihkan...';

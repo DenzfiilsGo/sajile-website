@@ -12,51 +12,6 @@ function removeAuthTokenWrapper(e) {
     removeAuthToken();
 }
 
-// ===== SIMPAN TOKEN & USER =====
-export const saveAuthToken = (token, user = null) => {
-    localStorage.setItem("authToken", token);
-    if (user) localStorage.setItem("authUser", JSON.stringify(user));
-    updateAuthUI();
-};
-
-// ===== AMBIL TOKEN =====
-export const getAuthToken = () => localStorage.getItem("authToken");
-// ===== AMBIL DATA USER =====
-export const getAuthUser = () => {
-    const userStr = localStorage.getItem(USER_KEY);
-    try {
-        return userStr ? JSON.parse(userStr) : null;
-    } catch (e) {
-        console.error("[AuthManager] ❌ Parse error:", e);
-        return null;
-    }
-};
-
-// ===== VALIDASI TOKEN (ambil user terbaru) =====
-export const validateToken = async () => {
-    const token = getAuthToken();
-    if (!token) return null;
-
-    try {
-        const res = await fetch(`https://metallographical-unoverpaid-omer.ngrok-free.dev/api/auth`, {
-            method: "GET",
-            headers: { 
-                "Authorization": `Bearer ${token}` 
-            }
-        });
-
-        if (!res.ok) return null;
-
-        const user = await res.json();
-        localStorage.setItem("authUser", JSON.stringify(user));
-
-        return user;
-
-    } catch (e) {
-        console.error("[AuthManager] validateToken error:", e);
-        return null;
-    }
-};
 
 // ===== UPDATE UI =====
 export const updateAuthUI = () => {
@@ -80,6 +35,70 @@ export const updateAuthUI = () => {
         if (picSmall) picSmall.src = user.profilePictureUrl ?? "assets/default-avatar.png";
     }
 };
+
+
+// ===== SIMPAN TOKEN & USER =====
+export const saveAuthToken = (token, user = null) => {
+    localStorage.setItem("authToken", token);
+    if (user) localStorage.setItem("authUser", JSON.stringify(user));
+    updateAuthUI();
+};
+
+// ===== AMBIL TOKEN =====
+export const getAuthToken = () => localStorage.getItem("authToken");
+// ===== AMBIL DATA USER =====
+export const getAuthUser = () => {
+    const userStr = localStorage.getItem(USER_KEY);
+    try {
+        return userStr ? JSON.parse(userStr) : null;
+    } catch (e) {
+        console.error("[AuthManager] ❌ Parse error:", e);
+        return null;
+    }
+};
+
+// authManager.js: UPDATE FUNGSI validateToken
+async function validateToken() {
+    const apiUrl = `https://metallographical-unoverpaid-omer.ngrok-free.dev/api/auth`;
+    
+    // ✅ Mengambil token dari localStorage (fungsi yang sudah kita buat)
+    const token = getAuthToken(); 
+
+    if (!token) {
+        console.log("[AuthManager] Tidak ada token di localStorage, melewati validasi.");
+        return null;
+    }
+
+    try {
+        const res = await fetch(apiUrl, {
+            method: "GET",
+            headers: { 
+                Authorization: `Bearer ${token}`,
+                'Accept': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        const responseBodyText = await res.text();
+
+        if (!res.ok) {
+            console.error(`Status HTTP ${res.status}: Gagal otentikasi.`, responseBodyText);
+            removeAuthToken(); // Hapus token busuk jika gagal otentikasi
+            throw new Error("Permintaan gagal di server.");
+        }
+        
+        const data = JSON.parse(responseBodyText);
+        console.log('Token Valid. Data JSON:', data);
+        localStorage.setItem('authUser', JSON.stringify(data));
+        return data;
+
+    } catch (error) {
+        console.error("[AuthManager] validateToken error:", error);
+        return null;
+    }
+}
+
+validateToken();
 
 // ===== INIT =====
 function initAuthManager() {
