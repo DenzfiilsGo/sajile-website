@@ -16,7 +16,7 @@ document.addEventListener('dragstart', function(e) {
 console.log("[DaftarLogin] ✅ Script loaded, checking DOM state...");
 
 console.log('Menggunakan backend base URL:', API_BASE_URL);
-const API_BACKEND_URL = `${API_BASE_URL}/auth`;
+const API_BACKEND_URL = `https://metallographical-unoverpaid-omer.ngrok-free.dev/api`;
 
 // ===== MAIN INITIALIZATION FUNCTION =====
 function initDaftarLogin() {
@@ -114,7 +114,7 @@ function initDaftarLogin() {
             registerMessageDiv.style.color = '#FFA500';
 
             try {
-                const response = await fetch(`${API_BACKEND_URL}/register`, {
+                const response = await fetch(`${API_BACKEND_URL}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, email, password }),
@@ -174,7 +174,7 @@ function initDaftarLogin() {
             loginMessageDiv.style.color = '#FFA500';
 
             try {
-                const response = await fetch(`${API_BACKEND_URL}/login`, {
+                const response = await fetch(`${API_BACKEND_URL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password }),

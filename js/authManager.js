@@ -38,7 +38,7 @@ export const validateToken = async () => {
     if (!token) return null;
 
     try {
-        const res = await fetch(API_AUTH_URL, {
+        const res = await fetch(`https://metallographical-unoverpaid-omer.ngrok-free.dev/api/auth`, {
             method: "GET",
             headers: { 
                 "Authorization": `Bearer ${token}` 

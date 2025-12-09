@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const profileDropdown = document.getElementById('profile-dropdown');
 
     console.log('Menggunakan backend base URL:', API_BASE_URL);
-    const API_BACKEND_URL = `${API_BASE_URL}/auth`;
+    const API_BACKEND_URL = `https://metallographical-unoverpaid-omer.ngrok-free.dev/api`;
 
     // --- 3. LOGIKA OTENTIKASI (AUTH & USER DATA) ---
     
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Ambil data terbaru dari server
         try {
-            const res = await fetch(`${API_BACKEND_URL}`, {
+            const res = await fetch(`${API_BACKEND_URL}/auth`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`
