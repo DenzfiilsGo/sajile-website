@@ -1,6 +1,8 @@
-// bagian atas: impor dan inisialisasi
+// P5 Project/js/beranda.js
+
 // ⭐ IMPORT API URL DARI FILE CONFIG.JS ⭐
-import { API_BASE_URL } from './config.js'; // PASTIKAN PATH INI BENAR
+// Pastikan file config.js berada di lokasi yang benar
+import { API_AUTH_URL, API_BASE_URL } from './config.js';
 
 // =======================================================
 // GLOBAL EVENT LISTENERS
@@ -17,138 +19,164 @@ document.addEventListener('dragstart', function(e) {
 });
 
 // =======================================================
+// FUNGSI UTAMA: UPDATE UI PROFIL (FOTO, NAMA, EMAIL)
+// =======================================================
+
+/**
+ * Mengambil data pengguna dari localStorage dan memperbarui
+ * foto profil, username, dan email pada navbar dropdown.
+ */
+function updateUserProfileUI() {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    if (userDataJSON) {
+        try {
+            const userData = JSON.parse(userDataJSON);
+            
+            // 1. Update Profile Picture (ID harus 'profile-pic-img')
+            const profilePicImg = document.getElementById('profile-pic-img');
+            if (profilePicImg && userData.profilePictureUrl) {
+                profilePicImg.src = userData.profilePictureUrl;
+                
+                // Tambahkan error handler untuk berjaga-jaga jika URL eksternal gagal
+                profilePicImg.onerror = () => {
+                    console.warn("Gagal memuat foto profil eksternal. Menggunakan default HTML.");
+                    // Biarkan browser menggunakan src default yang sudah ada di HTML
+                };
+            }
+            
+            // 2. Update Username (ID atau Class)
+            const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+            if (usernameEl && userData.username) {
+                usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+                usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
+            }
+                
+            // 3. Update Email (ID atau Class)
+            const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+            if (emailEl && userData.email) {
+                emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+                emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+            }
+                
+        } catch (error) {
+            console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
+        }
+    }
+}
+
+// =======================================================
+// FUNGSI UTAMA: CEK STATUS LOGIN DAN TAMPILKAN UI YANG SESUAI
+// =======================================================
+
+async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authToken'
+    const token = localStorage.getItem('authToken');
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    // Asumsi: Token valid jika ada dan data pengguna ada
+    if (token && userDataJSON) {
+        // Logika sederhana: anggap token dan data di LS valid
+        if (navAuthLinks) navAuthLinks.style.display = 'none';
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (body) body.dataset.loggedIn = 'true';
+
+        // ⭐ Panggil fungsi untuk memperbarui UI profil ⭐
+        updateUserProfileUI();
+    } else {
+        // Pengguna belum login
+        if (navAuthLinks) navAuthLinks.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
+        if (body) body.dataset.loggedIn = 'false';
+    }
+}
+
+// =======================================================
 // MAIN LOGIC (DOMContentLoaded)
 // =======================================================
 document.addEventListener('DOMContentLoaded', async () => {
     // --- 1. DEKLARASI VARIABEL DOM UTAMA ---
+    const body = document.body;
     const navAuthLinks = document.querySelector('.nav-auth-links'); // Container tombol Masuk
     const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper'); // Container Profil
     const logoutBtn = document.getElementById('logout-btn');
     const profilePicBtn = document.getElementById('profile-pic-btn');
     const profileDropdown = document.getElementById('profile-dropdown');
-
-    console.log('Menggunakan backend base URL:', API_BASE_URL);
-    const API_BACKEND_URL = `https://metallographical-unoverpaid-omer.ngrok-free.dev/api`;
-
-    // --- 3. LOGIKA OTENTIKASI (AUTH & USER DATA) ---
     
-    // Helper: Tampilkan UI berdasarkan status login
-    function updateAuthUI(isLoggedIn, userData = null) {
-        if (isLoggedIn) {
-            // Sembunyikan tombol masuk, Tampilkan profil
-            if (navAuthLinks) navAuthLinks.style.display = 'none';
-            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'block';
+    // Navbar Elements
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const navMenu = document.getElementById('nav-menu');
+    const navLinks = navMenu ? navMenu.querySelectorAll('.nav-links a') : []; 
+    const themeToggle = document.getElementById('theme-toggle');
 
-            // Update Foto Profil & Username (jika ada elemennya)
-            if (userData && profilePicBtn) {
-                // Gunakan URL dari backend (Gravatar) atau fallback
-                profilePicBtn.src = userData.profilePictureUrl || 'assets/default-avatar.png';
-                
-                // Handler jika gambar error/broken link -> kembali ke default
-                profilePicBtn.onerror = function() {
-                    this.src = 'assets/default-avatar.png';
-                };
+    // --- Helper function untuk penanganan respons API yang aman ---
+    async function handleApiResponseSecure(response) {
+        const responseText = await response.text();
+        if (!response.ok) {
+            try {
+                const errorData = JSON.parse(responseText);
+                return { ok: false, data: errorData };
+            } catch (e) {
+                return { ok: false, data: { msg: 'Kesalahan jaringan atau server.' } };
             }
-        } else {
-            // Tampilkan tombol masuk, Sembunyikan profil
-            if (navAuthLinks) navAuthLinks.style.display = 'block';
-            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
         }
-    }
-
-    async function verifyAndFetchUser() {
-        const token = localStorage.getItem("authToken");
-
-        if (!token) {
-            updateAuthUI(false);
-            return;
-        }
-
-        // UI optimistik
-        let cachedUser = null;
-        const cached = localStorage.getItem("authUser");
-        if (cached) {
-            try { 
-                cachedUser = JSON.parse(cached);
-                updateAuthUI(true, cachedUser);
-            } catch {}
-        }
-
-        // Ambil data terbaru dari server
         try {
-            const res = await fetch(`${API_BACKEND_URL}/auth`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-
-            if (!res.ok) {
-                if (res.status === 401) return performLogout(false);
-                return;
-            }
-
-            const latest = await res.json();
-            localStorage.setItem("authUser", JSON.stringify(latest));
-
-            updateAuthUI(true, latest);
-
-        } catch (err) {
-            console.error("Fetch user error:", err);
+            const jsonData = JSON.parse(responseText);
+            return { ok: true, data: jsonData };
+        } catch (e) {
+            // Jika respons OK tapi tidak ada konten (204 No Content)
+            return { ok: true, data: null };
         }
     }
+    
+    // --- 2. Cek Status Login Saat Halaman Dimuat ---
+    checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
 
-
-    // Fungsi Logout
-    function performLogout(withConfirmation = true) {
-        if (withConfirmation) {
-            if (!confirm("Yakin ingin keluar?")) return;
-        }
-        
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user'); // Hapus data user juga
-        window.location.reload();
-    }
-
-    // Panggil fungsi utama saat load
-    verifyAndFetchUser();
-
-    // Event Listener Tombol Logout
+    // --- 3. Logika Logout ---
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            performLogout(true);
+            // Hapus semua data otentikasi
+            // ✅ PERBAIKAN: Menggunakan kunci 'authToken' dan 'authUser'
+            localStorage.removeItem('authToken'); 
+            localStorage.removeItem('authUser');
+            
+            // Redirect ke halaman login atau beranda
+            window.location.href = './index.html'; 
         });
     }
 
-    // --- 4. DROPDOWN PROFIL (Desktop) ---
+    // =======================================================
+    // 4. STANDAR WAJIB: LOGIKA NAVBAR & DARK MODE
+    // =======================================================
+
+    // A. Dropdown Menu Profil
     if (profilePicBtn && profileDropdown) {
-        profilePicBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('active');
+        profilePicBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); // Penting untuk mencegah event close di bawah
+            profileDropdown.classList.toggle('active'); 
         });
-        document.addEventListener('click', (e) => {
-            if (!profileDropdown.contains(e.target) && !profilePicBtn.contains(e.target)) {
+        
+        // Tutup dropdown jika mengklik di luar
+        document.addEventListener('click', (e) => { 
+            if (profileDropdown && profilePicBtn && 
+                !profileDropdown.contains(e.target) && 
+                !profilePicBtn.contains(e.target)) 
+            {
                 profileDropdown.classList.remove('active');
             }
         });
     }
 
-    // =======================================================
-    // 7. UI STANDAR: THEME & HAMBURGER
-    // =======================================================
-    const body = document.body;
-    const themeToggle = document.getElementById('theme-toggle');
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const navMenu = document.getElementById('nav-menu');
-
-    // A. Dark Mode Logic
+    // B. Dark Mode Toggle
     if (themeToggle) {
         const icon = themeToggle.querySelector('i');
+        // ⭐ Gunakan kunci LS yang konsisten: sajile_theme
         const savedTheme = localStorage.getItem('sajile_theme') || 'light'; 
         
         body.dataset.theme = savedTheme;
-        
         if (icon) {
             icon.classList.toggle('fa-sun', savedTheme === 'dark');
             icon.classList.toggle('fa-moon', savedTheme === 'light');
@@ -157,7 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         themeToggle.addEventListener('click', () => {
             const currentTheme = body.dataset.theme;
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
+                
             body.dataset.theme = newTheme;
             localStorage.setItem('sajile_theme', newTheme);
 
@@ -168,20 +196,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // B. Hamburger Menu Logic
+    // C. Hamburger Menu Logic (Vertikal Dropdown)
     if (hamburgerBtn && navMenu) {
         hamburgerBtn.addEventListener('click', () => {
             hamburgerBtn.classList.toggle('active');
             navMenu.classList.toggle('active');
-            
+                
             const isExpanded = navMenu.classList.contains('active');
             hamburgerBtn.setAttribute('aria-expanded', isExpanded);
+            
+            // Kontrol overflow body
+            if (isExpanded) {
+                 if (window.innerWidth <= 768) { // Asumsi breakpoint mobile
+                    document.body.style.overflow = 'hidden'; 
+                }
+            } else {
+                document.body.style.overflow = ''; 
+            }
         });
     }
+    
+    // Tutup menu jika link di dalam dropdown diklik
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            setTimeout(() => {
+                if(hamburgerBtn) hamburgerBtn.classList.remove('active');
+                if(navMenu) navMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            }, 300);
+        });
+    });
 
-    // ========================================================
-    // 8. ANIMASI FADE IN
-    // ========================================================
+    // =======================================================
+    // 5. ANIMASI FADE IN (STANDAR WAJIB)
+    // =======================================================
     const observerOptions = { threshold: 0.15 };
 
     const observer = new IntersectionObserver((entries, obs) => {
@@ -192,5 +240,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }, observerOptions);
 
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+    });
 });

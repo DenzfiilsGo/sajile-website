@@ -8,30 +8,124 @@ document.addEventListener('dragstart', function(e) {
     e.preventDefault();
 });
 
-document.addEventListener('DOMContentLoaded', async () => {
+// =======================================================
+// FUNGSI UTAMA: UPDATE UI PROFIL (FOTO, NAMA, EMAIL)
+// =======================================================
 
-    // =======================================================
-    // 1. LOGIKA CEK LOGIN
-    // =======================================================
-    // Ambil URL backend dari /backend_url.json (fallback ke localhost)
-    async function loadBackendBaseUrl() {
-        const DEFAULT = 'http://localhost:5000'; // fallback lokal
+/**
+ * Mengambil data pengguna dari localStorage dan memperbarui
+ * foto profil, username, dan email pada navbar dropdown.
+ */
+function updateUserProfileUI() {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    if (userDataJSON) {
         try {
-            const res = await fetch('/backend_url.json', { cache: 'no-cache' });
-            if (!res.ok) return DEFAULT;
-            const data = await res.json();
-            if (!data || !data.url) return DEFAULT;
-            // pastikan tidak ada trailing slash
-            return data.url.replace(/\/$/, '');
-        } catch (err) {
-            console.warn('Gagal memuat backend_url.json, gunakan fallback:', err);
-            return DEFAULT;
+            const userData = JSON.parse(userDataJSON);
+            
+            // 1. Update Profile Picture (ID harus 'profile-pic-img')
+            const profilePicImg = document.getElementById('profile-pic-img');
+            if (profilePicImg && userData.profilePictureUrl) {
+                profilePicImg.src = userData.profilePictureUrl;
+                
+                // Tambahkan error handler untuk berjaga-jaga jika URL eksternal gagal
+                profilePicImg.onerror = () => {
+                    console.warn("Gagal memuat foto profil eksternal. Menggunakan default HTML.");
+                    // Biarkan browser menggunakan src default yang sudah ada di HTML
+                };
+            }
+            
+            // 2. Update Username (ID atau Class)
+            const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+            if (usernameEl && userData.username) {
+                usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+                usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
+            }
+                
+            // 3. Update Email (ID atau Class)
+            const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+            if (emailEl && userData.email) {
+                emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+                emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+            }
+                
+        } catch (error) {
+            console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
         }
     }
+}
 
-    const BACKEND_BASE_URL = await loadBackendBaseUrl();
-    console.log('Menggunakan backend base URL:', BACKEND_BASE_URL);
-    const API_AUTH_URL = `${BACKEND_BASE_URL}/api/auth`; 
+// =======================================================
+// FUNGSI UTAMA: CEK STATUS LOGIN DAN TAMPILKAN UI YANG SESUAI
+// =======================================================
+
+async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authToken'
+    const token = localStorage.getItem('authToken');
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    // Asumsi: Token valid jika ada dan data pengguna ada
+    if (token && userDataJSON) {
+        // Logika sederhana: anggap token dan data di LS valid
+        if (navAuthLinks) navAuthLinks.style.display = 'none';
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (body) body.dataset.loggedIn = 'true';
+
+        // ⭐ Panggil fungsi untuk memperbarui UI profil ⭐
+        updateUserProfileUI();
+    } else {
+        // Pengguna belum login
+        if (navAuthLinks) navAuthLinks.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
+        if (body) body.dataset.loggedIn = 'false';
+    }
+}
+
+// P5 Project/html/daftar_makanan.js (asumsi lokasi relatif)
+
+// ⭐ IMPORT API URL DARI FILE CONFIG.JS ⭐
+// Sesuaikan path import ini jika lokasi file berbeda dari '../js/config.js'
+import { API_AUTH_URL, API_BASE_URL } from '../js/config.js'; 
+
+// =======================================================
+// GLOBAL EVENT LISTENERS (Sama seperti sebelumnya)
+// =======================================================
+document.addEventListener('selectstart', function(e) {
+    e.preventDefault();
+});
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+    // --- Helper function untuk penanganan respons API yang aman ---
+    // Fungsi ini sama persis dengan yang ada di beranda.js/daftar_atau_login.js
+    async function handleApiResponseSecure(response) {
+        const responseText = await response.text();
+        if (!response.ok) {
+            try {
+                const errorData = JSON.parse(responseText);
+                return { ok: false, data: errorData };
+            } catch (e) {
+                return { ok: false, data: { msg: 'Kesalahan jaringan atau server.' } };
+            }
+        }
+        try {
+            const jsonData = JSON.parse(responseText);
+            return { ok: true, data: jsonData };
+        } catch (e) {
+            console.error("Gagal parse JSON. Respons teks:", responseText);
+            return { ok: false, data: { msg: 'Kesalahan format respons dari server' } };
+        }
+    }
+    
+    // HAPUS SEMUA LOGIKA loadBackendBaseUrl() YANG LAMA DI SINI
+    // const BACKEND_BASE_URL = await loadBackendBaseUrl(); // Hapus ini
+    // console.log('Menggunakan backend base URL:', BACKEND_BASE_URL); // Hapus ini
+    // const API_AUTH_URL = `${BACKEND_BASE_URL}/api/auth`; // Hapus ini
 
     // === 1. Ambil Elemen DOM yang Dibutuhkan ===
     const body = document.body;
@@ -40,29 +134,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     const themeToggle = document.getElementById('theme-toggle');
     
     // Profile Dropdown (Logged In)
+    const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper'); // Container Profil
+    const navAuthLinks = document.querySelector('.nav-auth-links'); // Container tombol Masuk
     const profilePicBtn = document.getElementById('profile-pic-btn');
     const profileDropdown = document.getElementById('profile-dropdown');
     const logoutBtn = document.getElementById('logout-btn');
 
+    // --- 2. Cek Status Login Saat Halaman Dimuat ---
+    checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
+
     // === 2. FUNGSI UTAMA UNTUK STATUS LOGIN ===
 
-    /**
-     * Fungsi untuk menentukan dan mengatur status masuk pengguna pada elemen <body>.
-     * Mengatur atribut data-logged-in untuk kontrol CSS/DOM.
-     */
     function setLoginStatus(isLoggedIn) {
         body.setAttribute('data-logged-in', isLoggedIn ? 'true' : 'false');
-        
         if (profileDropdown) {
             profileDropdown.classList.remove('active');
         }
     }
 
-    /**
-     * Cek token di LocalStorage dan panggil API Render untuk verifikasi.
-     */
     async function checkLoginStatus() {
-        const token = localStorage.getItem('authToken'); // Ambil token yang disimpan saat login
+        const token = localStorage.getItem('authToken');
 
         if (!token) {
             setLoginStatus(false);
@@ -70,48 +161,57 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // Panggil endpoint verifikasi/data profil Anda di Render
-            const response = await fetch(`${API_AUTH_URL}/verify`, { // Asumsi ada endpoint /api/auth/verify
+            // ✅ Menggunakan API_AUTH_URL yang diimpor dari config.js
+            const response = await fetch(API_AUTH_URL, { 
                 method: 'GET',
                 headers: {
-                    // Mengirimkan token ke backend Render untuk verifikasi
                     'Authorization': `Bearer ${token}` 
-                }
+                },
+                credentials: 'include'
             });
             
-            if (response.ok) {
-                // Token valid. Pengguna terautentikasi.
+            // ✅ Menggunakan helper penanganan respons yang aman
+            const result = await handleApiResponseSecure(response);
+
+            if (result.ok) {
                 setLoginStatus(true);
-                // Opsional: Anda bisa memanggil response.json() untuk mendapatkan dan menampilkan nama pengguna di dropdown
+                // Opsional: Perbarui UI dengan user data (result.data) jika diperlukan
+                localStorage.setItem('authUser', JSON.stringify(result.data));
             } else {
-                // Token tidak valid (misalnya expired). Hapus token.
                 localStorage.removeItem('authToken');
+                localStorage.removeItem('authUser'); // ✅ Hapus user data juga
                 setLoginStatus(false);
             }
 
         } catch (error) {
-            // Error koneksi (Render sedang sleep, dll.)
-            console.error('Koneksi ke Render gagal saat verifikasi:', error);
-            // Biarkan status body tetap 'false' atau tangani sesuai UX yang diinginkan
+            console.error('Koneksi backend gagal saat verifikasi:', error);
             setLoginStatus(false);
         }
     }
 
-    // Panggil fungsi pengecekan status saat halaman dimuat
-    checkLoginStatus();
+    // PANGGIL FUNGSI INI HANYA JIKA URL BACKEND SUDAH DIMUAT
+    function initDaftarMakanan() {
+        console.log('Menggunakan backend base URL:', API_BASE_URL); // Log URL yang benar
+        checkLoginStatus();
+        // ... (fungsi lain yang perlu dijalankan saat init) ...
+        // Misalnya: loadFoodItems(); 
+    }
+
+    // Terapkan pola event listener dari beranda.js untuk menunggu URL dimuat
+    if (API_BASE_URL) {
+        initDaftarMakanan();
+    } else {
+        window.addEventListener('backend-url-changed', initDaftarMakanan);
+    }
+
 
     // === 3. Logika Logout ===
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (event) => {
             event.preventDefault();
-            
-            // Hapus token JWT dan data login lainnya
             localStorage.removeItem('authToken'); 
-            
-            // Ubah status dan muat ulang tampilan navbar
+            localStorage.removeItem('authUser'); // ✅ Pastikan menghapus key yang benar
             setLoginStatus(false);
-            
-            // Redirect ke halaman login setelah logout
             window.location.href = '../html/daftar_atau_login.html'; 
         });
     }

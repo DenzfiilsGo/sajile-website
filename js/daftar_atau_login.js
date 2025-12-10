@@ -16,7 +16,7 @@ document.addEventListener('dragstart', function(e) {
 console.log("[DaftarLogin] ✅ Script loaded, checking DOM state...");
 
 console.log('Menggunakan backend base URL:', API_BASE_URL);
-const API_BACKEND_URL = `https://metallographical-unoverpaid-omer.ngrok-free.dev/api`;
+let API_BACKEND_URL = API_BASE_URL;
 
 // --- Fungsi Pembantu untuk Penanganan Respons ---
 async function handleApiResponse(response) {
@@ -33,6 +33,17 @@ async function handleApiResponse(response) {
 
 // ===== MAIN INITIALIZATION FUNCTION =====
 function initDaftarLogin() {
+    // ⚠️ CEK PENTING: Pastikan URL sudah ada sebelum lanjut
+    if (!API_BACKEND_URL) {
+        // Jika config.js belum siap, ambil ulang nilainya (karena import bersifat live binding)
+        if (API_BASE_URL) {
+             API_BACKEND_URL = API_BASE_URL;
+        } else {
+             console.warn("[DaftarLogin] Menunggu URL Backend dari config.js...");
+             // Kita bisa tambahkan listener di sini atau biarkan user mencoba lagi nanti
+        }
+    }
+    console.log('[DaftarLogin] Menggunakan API URL:', API_BACKEND_URL);
     console.log("[DaftarLogin] 🚀 Initializing (DOM ready)...");
     
     // ===== GRAB ELEMEN DARI DOM (SEKARANG AMAN) =====
@@ -126,6 +137,8 @@ function initDaftarLogin() {
             registerMessageDiv.textContent = '⏳ Menghubungkan ke server...';
             registerMessageDiv.style.color = '#FFA500';
 
+            if (!API_BACKEND_URL) API_BACKEND_URL = API_BASE_URL;
+
             try {
                 const response = await fetch(`${API_BACKEND_URL}/auth/register`, {
                     method: 'POST',
@@ -175,6 +188,8 @@ function initDaftarLogin() {
             submitBtn.textContent = 'Memproses...';
             loginMessageDiv.textContent = '⏳ Menghubungkan ke server...';
             loginMessageDiv.style.color = '#FFA500';
+
+            if (!API_BACKEND_URL) API_BACKEND_URL = API_BASE_URL;
 
             try {
                 const response = await fetch(`${API_BACKEND_URL}/auth/login`, {
@@ -227,6 +242,31 @@ function initDaftarLogin() {
     }
 
     console.log("[DaftarLogin] ✅ Initialization complete");
+}
+
+// -------------------------------------------------------------
+// LOGIKA STARTUP YANG MENUNGGU URL (Standar Wajib Baru)
+// -------------------------------------------------------------
+const startApp = () => {
+    // Pastikan variabel lokal terupdate dari import
+    API_BACKEND_URL = API_BASE_URL; 
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDaftarLogin);
+    } else {
+        initDaftarLogin();
+    }
+};
+
+// Cek apakah URL sudah tersedia dari config.js
+if (API_BASE_URL) {
+    startApp();
+} else {
+    // Tunggu event dari config.js jika belum siap
+    window.addEventListener('backend-url-changed', () => {
+        console.log("⚡ [DaftarLogin] URL update detected from config.js");
+        startApp();
+    });
 }
 
 // ⭐ PERBAIKAN: Cek apakah DOM sudah ready

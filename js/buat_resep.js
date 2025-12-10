@@ -8,39 +8,159 @@ document.addEventListener('dragstart', function(e) {
     e.preventDefault();
 });
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Deklarasi Fungsi dan Variabel
-    const navAuthLinks = document.querySelector('.nav-auth-links'); // Container tombol Masuk
-    const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper'); // Container Profil
-    const logoutBtn = document.getElementById('logout-btn');
+// =======================================================
+// FUNGSI UTAMA: UPDATE UI PROFIL (FOTO, NAMA, EMAIL)
+// =======================================================
 
-
-    // =======================================================
-    // 1. LOGIKA CEK LOGIN
-    // =======================================================
-    // Ambil URL backend dari /backend_url.json (fallback ke localhost)
-    async function loadBackendBaseUrl() {
-        const DEFAULT = 'http://localhost:5000'; // fallback lokal
+/**
+ * Mengambil data pengguna dari localStorage dan memperbarui
+ * foto profil, username, dan email pada navbar dropdown.
+ */
+function updateUserProfileUI() {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    if (userDataJSON) {
         try {
-            const res = await fetch('/backend_url.json', { cache: 'no-cache' });
-            if (!res.ok) return DEFAULT;
-            const data = await res.json();
-            if (!data || !data.url) return DEFAULT;
-            // pastikan tidak ada trailing slash
-            return data.url.replace(/\/$/, '');
-        } catch (err) {
-            console.warn('Gagal memuat backend_url.json, gunakan fallback:', err);
-            return DEFAULT;
+            const userData = JSON.parse(userDataJSON);
+            
+            // 1. Update Profile Picture (ID harus 'profile-pic-img')
+            const profilePicImg = document.getElementById('profile-pic-img');
+            if (profilePicImg && userData.profilePictureUrl) {
+                profilePicImg.src = userData.profilePictureUrl;
+                
+                // Tambahkan error handler untuk berjaga-jaga jika URL eksternal gagal
+                profilePicImg.onerror = () => {
+                    console.warn("Gagal memuat foto profil eksternal. Menggunakan default HTML.");
+                    // Biarkan browser menggunakan src default yang sudah ada di HTML
+                };
+            }
+            
+            // 2. Update Username (ID atau Class)
+            const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+            if (usernameEl && userData.username) {
+                usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+                usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
+            }
+                
+            // 3. Update Email (ID atau Class)
+            const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+            if (emailEl && userData.email) {
+                emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+                emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+            }
+                
+        } catch (error) {
+            console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
+        }
+    }
+}
+
+// =======================================================
+// FUNGSI UTAMA: CEK STATUS LOGIN DAN TAMPILKAN UI YANG SESUAI
+// =======================================================
+
+async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authToken'
+    const token = localStorage.getItem('authToken');
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    // Asumsi: Token valid jika ada dan data pengguna ada
+    if (token && userDataJSON) {
+        // Logika sederhana: anggap token dan data di LS valid
+        if (navAuthLinks) navAuthLinks.style.display = 'none';
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (body) body.dataset.loggedIn = 'true';
+
+        // ⭐ Panggil fungsi untuk memperbarui UI profil ⭐
+        updateUserProfileUI();
+    } else {
+        // Pengguna belum login
+        if (navAuthLinks) navAuthLinks.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
+        if (body) body.dataset.loggedIn = 'false';
+    }
+}
+
+// ⭐ IMPORT API URL DARI FILE CONFIG.JS ⭐
+import { API_BASE_URL } from '../js/config.js';
+
+const MAX_FILE_SIZE_BYTES = 400 * 1024; // 400 KB
+
+// Asumsi Cropper sudah tersedia secara global melalui tag <script> di HTML
+let Cropper = window.Cropper;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // --- Elemen DOM ---
+    const body = document.body;
+    const navAuthLinks = document.querySelector('.nav-auth-links');
+    const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper');
+    const logoutBtn = document.getElementById('logout-btn');
+    const submitBtn = document.getElementById('submit-recipe-btn');
+
+    // Navbar Elements
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const navMenu = document.getElementById('nav-menu');
+    const themeToggle = document.getElementById('theme-toggle');
+    const profilePicBtn = document.getElementById('profile-pic-btn');
+    const profileDropdown = document.getElementById('profile-dropdown');
+
+    // ⭐⭐ ELEMEN ALERT MODAL ⭐⭐
+    const customAlertModal = document.getElementById('custom-alert-modal');
+    const modalMessage = document.getElementById('modal-message');
+    const modalOkBtn = document.getElementById('modal-ok-btn');
+    const uploadedFileSizeEl = document.getElementById('uploaded-file-size');
+    // ⭐⭐ END ELEMEN ALERT MODAL ⭐⭐
+
+    // Form Elements
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imageInput = document.getElementById('image');
+    const btnUpload = document.getElementById('btn-upload-image');
+    const previewHero = document.getElementById('image-preview-hero');
+    const dropZone = document.getElementById('image-upload-zone');
+    // Asumsi: const btnUpload = document.getElementById('btn-upload-image');
+
+    // ⭐⭐ ELEMEN CROP MODAL BARU ⭐⭐
+    const cropModal = document.getElementById('crop-modal');
+    const imageToCrop = document.getElementById('image-to-crop');
+    const cropConfirmBtn = document.getElementById('crop-confirm-btn');
+    const cropCancelBtn = document.getElementById('crop-cancel-btn');
+    const cropperToolbar = document.querySelector('.cropper-toolbar');
+
+    // ⭐⭐ VARIABEL GLOBAL CROPPER & FILE ⭐⭐
+    let cropper = null;
+    let originalFile = null; 
+    let croppedFileBlob = null; // File Blob yang sudah di-crop, ini yang akan di-submit
+
+    // --- Helper Response Aman ---
+    async function handleApiResponseSecure(response) {
+        const responseText = await response.text();
+        if (!response.ok) {
+            try {
+                const errorData = JSON.parse(responseText);
+                return { ok: false, data: errorData };
+            } catch (e) {
+                return { ok: false, data: { msg: 'Kesalahan jaringan atau server.' } };
+            }
+        }
+        try {
+            const jsonData = JSON.parse(responseText);
+            return { ok: true, data: jsonData };
+        } catch (e) {
+            console.error("Gagal parse JSON:", responseText);
+            return { ok: false, data: { msg: 'Kesalahan format respons dari server' } };
         }
     }
 
-    const BACKEND_BASE_URL = await loadBackendBaseUrl();
-    console.log('Menggunakan backend base URL:', BACKEND_BASE_URL);
-    const API_RECIPES_URL = `${BACKEND_BASE_URL}/api/recipes`;
-    
-    const token = localStorage.getItem('authToken'); // Kunci yang dikonfirmasi benar
-    
-    if (!token) {
+    // --- 2. Cek Status Login Saat Halaman Dimuat ---
+    checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
+
+    // --- Cek Token & User ---
+    const token = localStorage.getItem('authToken');
+    const userStr = localStorage.getItem('authUser');
+
+    if (!token || !userStr) {
         alert("Anda harus Login untuk mengunggah resep!");
         window.location.href = 'daftar_atau_login.html';
         return;
@@ -62,6 +182,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // Cek Status UI
+    if (navAuthLinks) navAuthLinks.style.display = 'none';
+    if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'block';
+
     function forceLogoutAndRedirect(message = 'Sesi Anda berakhir. Silakan login kembali.') {
         try {
             localStorage.removeItem('authToken');
@@ -73,22 +197,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 300);
     }
 
-    function checkLoginState() {
-        const token = localStorage.getItem('authToken'); // Gunakan 'authToken'
-
-        if (token) {
-            // User Login: Sembunyikan tombol masuk, Tampilkan profil
-            if (navAuthLinks) navAuthLinks.style.display = 'none';
-            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'block';
-        } else {
-            // User Belum Login: Tampilkan tombol masuk, Sembunyikan profil
-            if (navAuthLinks) navAuthLinks.style.display = 'block';
-            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
-        }
-    }
-
-    // Panggil saat halaman dimuat
-    checkLoginState();
     isTokenExpired(token); // Cek apakah token sudah expired
 
     // Logika Logout
@@ -97,15 +205,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             e.preventDefault();
             if (confirm("Yakin ingin keluar?")) {
                 localStorage.removeItem('authToken');
-                window.location.reload(); // Refresh untuk update UI
+                localStorage.removeItem('authUser');
+                window.location.reload();
             }
         });
     }
 
-    // Toggle Dropdown Profil (Untuk Desktop)
-    const profilePicBtn = document.getElementById('profile-pic-btn');
-    const profileDropdown = document.getElementById('profile-dropdown');
-    
     if (profilePicBtn && profileDropdown) {
         profilePicBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -121,69 +226,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ========================================================
     // 2. LOGIKA MODAL PERINGATAN KUSTOM (DIPINDAHKAN KE ATAS)
     // ========================================================
-    const modal = document.getElementById('custom-alert-modal');
-    const modalOkBtn = document.getElementById('modal-ok-btn');
-    const uploadedFileSizeElement = document.getElementById('uploaded-file-size');
 
-    // Menampilkan Modal Kustom
-    function showCustomAlert(uploadedSizeKB) {
-        uploadedFileSizeElement.textContent = uploadedSizeKB.toFixed(2) + " KB";
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Nonaktifkan scrolling
-    }
-
-    // Event Listener untuk tombol "Oke" pada modal
-    if(modalOkBtn) {
-        modalOkBtn.addEventListener('click', () => {
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto'; // Aktifkan kembali scrolling
-        });
-    }
-
-    // =======================================================
-    // 3. STANDAR WAJIB: NAVBAR, HAMBURGER & DARK MODE
-    // (Tidak ada perubahan di bagian ini)
-    // =======================================================
-    const body = document.body;
-    const themeToggle = document.getElementById('theme-toggle');
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const navMenu = document.getElementById('nav-menu');
-
-    // A. Dark Mode Logic
-    if (themeToggle) {
-        const icon = themeToggle.querySelector('i');
-        const savedTheme = localStorage.getItem('sajile_theme') || 'light'; 
-        
-        body.dataset.theme = savedTheme;
-        
-        if (icon) {
-            icon.classList.toggle('fa-sun', savedTheme === 'dark');
-            icon.classList.toggle('fa-moon', savedTheme === 'light');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = body.dataset.theme;
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    // --- Helper untuk menampilkan Alert Modal (Jika ukuran file terlalu besar) ---
+    function showAlertModal(uploadedSizeKB) {
+        if (customAlertModal && modalMessage && uploadedFileSizeEl) {
+            // Perbarui pesan dan ukuran yang diunggah
+            uploadedFileSizeEl.textContent = `${(uploadedSizeKB).toFixed(2)} KB`;
+            modalMessage.innerHTML = `Ukuran file Anda melebihi batas ${MAX_FILE_SIZE_BYTES/1024} KB. <br>Ukuran file yang diunggah: <span id="uploaded-file-size">${(uploadedSizeKB).toFixed(2)} KB</span>.`;
             
-            body.dataset.theme = newTheme;
-            localStorage.setItem('sajile_theme', newTheme);
+            customAlertModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; 
 
-            if (icon) {
-                icon.classList.toggle('fa-moon');
-                icon.classList.toggle('fa-sun');
+            if (modalOkBtn) {
+                modalOkBtn.onclick = () => {
+                    customAlertModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                };
             }
-        });
-    }
-
-    // B. Hamburger Menu Logic
-    if (hamburgerBtn && navMenu) {
-        hamburgerBtn.addEventListener('click', () => {
-            hamburgerBtn.classList.toggle('active');
-            navMenu.classList.toggle('active');
-            
-            const isExpanded = navMenu.classList.contains('active');
-            hamburgerBtn.setAttribute('aria-expanded', isExpanded);
-        });
+        }
     }
 
     // ========================================================
@@ -201,19 +261,148 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
+    // =======================================================
+    // ⭐ LOGIKA CROP FOTO UTAMA ⭐
+    // =======================================================
+
+    function openCropModal(file) {
+        if (!file || !cropModal || !imageToCrop) return;
+
+        originalFile = file;
+
+        // Buat URL sementara
+        const fileURL = URL.createObjectURL(file);
+        imageToCrop.src = fileURL;
+
+        cropModal.classList.add('active');
+        document.body.style.overflow = 'hidden'; 
+
+        // Hancurkan instance Cropper lama jika ada
+        if (cropper) {
+            cropper.destroy();
+        }
+
+        // ⭐ PERBAIKAN: Panggil Cropper melalui window.Cropper ⭐
+        setTimeout(() => {
+            if (window.Cropper) {
+                cropper = new window.Cropper(imageToCrop, {
+                    aspectRatio: 16 / 9, 
+                    viewMode: 1, 
+                    responsive: true,
+                    movable: true,
+                    zoomable: true,
+                    rotatable: true,
+                    scalable: true,
+                    autoCropArea: 0.9 
+                });
+            } else {
+                console.error("Cropper.js tidak ditemukan. Pastikan CDN dimuat dengan benar.");
+                cropCancelBtn.click(); // Tutup modal jika gagal
+            }
+        }, 300);
+    }
+
+    // --- Logika Tombol Toolbar ---
+    function attachCropperListeners() {
+        if (cropperToolbar) {
+            cropperToolbar.addEventListener('click', (e) => {
+                const button = e.target.closest('.tool-btn');
+                if (!button || button.classList.contains('disabled')) return;
+                
+                const method = button.getAttribute('data-method');
+                const option = button.getAttribute('data-option');
+                let value;
+
+                if (!cropper) return;
+                
+                switch (method) {
+                    case 'rotate':
+                        value = parseFloat(option);
+                        cropper.rotate(value);
+                        break;
+                    case 'scaleX':
+                        // Flip Horizontal
+                        value = parseFloat(button.getAttribute('data-value')) || 1;
+                        value = value === -1 ? 1 : -1;
+                        cropper.scaleX(value);
+                        button.setAttribute('data-value', value);
+                        break;
+                    case 'scaleY':
+                        // Flip Vertikal
+                        value = parseFloat(button.getAttribute('data-value')) || 1;
+                        value = value === -1 ? 1 : -1;
+                        cropper.scaleY(value);
+                        button.setAttribute('data-value', value);
+                        break;
+                    case 'reset':
+                        cropper.reset();
+                        document.querySelectorAll('.tool-btn[data-method^="scale"]').forEach(btn => btn.setAttribute('data-value', '1'));
+                        break;
+                    case 'clear':
+                        cropper.clear();
+                        break;
+                }
+            });
+        }
+    }
+
+    // --- Konfirmasi Crop ---
+    if (cropConfirmBtn) {
+        cropConfirmBtn.addEventListener('click', () => {
+            if (!cropper || !originalFile) return;
+            
+            // Dapatkan gambar yang sudah di-crop sebagai Blob
+            cropper.getCroppedCanvas().toBlob((blob) => {
+                if (!blob) {
+                    alert('Gagal membuat gambar yang di-crop.');
+                    return;
+                }
+                
+                // Buat objek File baru
+                const croppedFile = new File([blob], originalFile.name, { type: blob.type, lastModified: Date.now() });
+                croppedFileBlob = croppedFile; // Simpan file untuk di-submit
+
+                // Perbarui pratinjau dengan gambar yang sudah di-crop
+                renderPreview(croppedFile);
+
+                // Tutup & Bersihkan
+                cropper.destroy();
+                cropper = null;
+                cropModal.classList.remove('active');
+                document.body.style.overflow = '';
+                URL.revokeObjectURL(imageToCrop.src); 
+                
+            }, originalFile.type, 0.9); 
+        });
+    }
+
+    // --- Pembatalan Crop/Upload ---
+    if (cropCancelBtn) {
+        cropCancelBtn.addEventListener('click', () => {
+            // Tutup & Bersihkan
+            if(cropper) cropper.destroy();
+            cropper = null;
+            cropModal.classList.remove('active');
+            document.body.style.overflow = '';
+            URL.revokeObjectURL(imageToCrop.src);
+
+            // Bersihkan variabel file dan UI
+            imageInput.value = ''; 
+            originalFile = null;
+            croppedFileBlob = null;
+            
+            imagePreviewContainer.innerHTML = '';
+            document.getElementById('image-status').textContent = "Belum Ada Foto";
+            document.getElementById('image-status').style.color = 'var(--text-light)';
+        });
+    }
 
     // ========================================================
     // 5. LOGIKA FORMULIR DINAMIS & VALIDASI UKURAN FILE
     // ========================================================
     
-    // KONTANSTA BATAS UKURAN FILE: 100 KB (102400 Bytes)
-    const MAX_FILE_SIZE_BYTES = 102400; 
-
-    // --- A. Pratinjau Gambar (Hero & Form) ---
-    const imageInput = document.getElementById('image');
-    const btnUpload = document.getElementById('btn-upload-image');
-    const previewHero = document.getElementById('image-preview-hero');
-    const dropZone = document.getElementById('image-upload-zone');
+    // KONTANSTA BATAS UKURAN FILE: 400 KB (102400 Bytes)
+    const MAX_FILE_SIZE_BYTES = 400 * 1024; // 100 KB
 
     // Fungsi helper untuk render preview
     function renderPreview(file) {
@@ -226,7 +415,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const uploadedSizeKB = file.size / 1024;
             
             // PANGGIL MODAL KUSTOM (Akan berfungsi karena modal sudah diinisialisasi)
-            showCustomAlert(uploadedSizeKB); 
+            showAlertModal(uploadedSizeKB); 
 
             // Reset Input File (Penting agar file yang salah tidak terkirim)
             imageInput.value = '';
@@ -266,10 +455,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnUpload.addEventListener('click', () => imageInput.click());
     }
 
-    // 2. Event saat file dipilih via Input
+    // --- Ganti Event Listener Input File ---
     if(imageInput) {
         imageInput.addEventListener('change', (e) => {
-            if(e.target.files[0]) renderPreview(e.target.files[0]);
+            const file = e.target.files[0];
+            if(file) {
+                if (!file.type.startsWith('image/')) {
+                    alert('Hanya file gambar (JPEG/PNG) yang didukung.');
+                    imageInput.value = ''; // Reset input file
+                } else if (file.size > MAX_FILE_SIZE_BYTES) {
+                    // ⭐ LOGIKA CEK UKURAN FILE DIKEMBALIKAN ⭐
+                    const uploadedSizeKB = file.size / 1024;
+                    showAlertModal(uploadedSizeKB);
+                    imageInput.value = ''; // Reset input file
+                    // ⭐ END LOGIKA CEK UKURAN FILE ⭐
+                } else {
+                    openCropModal(file); 
+                }
+            }
         });
     }
 
@@ -292,14 +495,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
 
-        // Handle drop file
         dropZone.addEventListener('drop', (e) => {
-            const file = e.dataTransfer.files[0];
-            if (file) {
-                // HANYA assign file jika validasi berhasil
-                if(renderPreview(file)) {
-                    imageInput.files = e.dataTransfer.files; 
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            
+            if (e.dataTransfer.files.length) {
+                const file = e.dataTransfer.files[0];
+                if (!file.type.startsWith('image/')) {
+                    alert('Hanya file gambar yang didukung.');
+                    return;
+                } 
+                if (file.size > MAX_FILE_SIZE_BYTES) {
+                    const uploadedSizeKB = file.size / 1024;
+                    showAlertModal(uploadedSizeKB);
+                    return;
                 }
+                
+                imageInput.files = e.dataTransfer.files; 
+                openCropModal(file); 
             }
         });
         
@@ -426,177 +639,223 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 
-    // --- E. Update Field Count (Meta Bar) - Tidak Berubah ---
-    const form = document.getElementById('recipe-form');
-    if(form) {
-        form.addEventListener('input', () => {
-            const filled = form.querySelectorAll('input:valid, textarea:valid, select:valid').length;
-            const counter = document.getElementById('field-count');
-            if(counter) counter.textContent = filled;
-        });
+    // --- PERBARUI LOGIC SUBMIT FORM (PENTING!) ---
+    // Gunakan 'croppedFileBlob' yang sudah diisi saat konfirmasi crop
+    const recipeForm = document.getElementById('recipe-form'); // Asumsi form memiliki ID 'recipe-form'
+    if (recipeForm) {
+        recipeForm.addEventListener('submit', initSubmitHandler);
     }
 
 
     // ========================================================
     // 6. SUBMIT FORMULIR KE API (FINAL VALIDATION)
     // ========================================================
-    const submitBtn = document.getElementById('submit-recipe-btn');
-
-    if(submitBtn) {
-        // sebelum mulai proses upload (letakkan di paling atas handler submit)
-        const token = localStorage.getItem('authToken');
-        if (!token || isTokenExpired(token)) {
-            forceLogoutAndRedirect('Token Anda sudah kedaluwarsa. Silakan login ulang untuk mengunggah resep.');
-            return;
-        }
-        
-        submitBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengunggah...';
-            submitBtn.disabled = true;
+    // ========================================================
+    // 6. SUBMIT FORMULIR KE API (VERSI AMAN)
+    // ========================================================
+    
+    async function initSubmitHandler() {
+        if(submitBtn) {
+            // sebelum mulai proses upload (letakkan di paling atas handler submit)
+            const token = localStorage.getItem('authToken');
+            if (!token || isTokenExpired(token)) {
+                forceLogoutAndRedirect('Token Anda sudah kedaluwarsa. Silakan login ulang untuk mengunggah resep.');
+                return;
+            }
             
-            try {
-                const formData = new FormData();
-                
-                // --- 1. Kumpulkan Data dan Validasi Field Sederhana WAJIB ---
-                const title = document.getElementById('title').value.trim();
-                const description = document.getElementById('description').value.trim();
-                const category = document.getElementById('category').value;
-                const servingSizeElement = document.getElementById('serving_size');
-                const cookTimeElement = document.getElementById('cook-time');
-                const prepTimeElement = document.getElementById('prep-time');
-                
-                // 💡 Perubahan: Lakukan pemeriksaan null dan berikan nilai default jika elemen tidak ditemukan
-                const servingSize = servingSizeElement ? servingSizeElement.value.trim() : '4'; 
-                const cookTime = cookTimeElement ? cookTimeElement.value.trim() : '30';
-                const prepTime = prepTimeElement ? prepTimeElement.value.trim() : '15';
-
-                if (!title || !description || !category || !servingSize || !cookTime || !prepTime) {
-                    throw new Error("Harap isi SEMUA informasi dasar resep (judul, deskripsi, kategori, porsi, waktu masak & persiapan).");
-                }
-                
-                // Append Simple Fields
-                formData.append('title', title);
-                formData.append('description', description);
-                formData.append('category', category);
-                formData.append('servingSize', servingSize);
-                formData.append('cookTime', cookTime);
-                formData.append('prepTime', prepTime);
-
-                
-                // --- 2. Validasi & Kumpulkan Gambar WAJIB ---
-                const imageInput = document.getElementById('image');
-                const uploadedFile = imageInput.files[0];
-                
-                if(!uploadedFile) {
-                    throw new Error("Wajib menyertakan foto resep!");
-                }
-                
-                // Batas ukuran file 100 KB (102400 bytes)
-                const MAX_FILE_SIZE_BYTES = 102400; 
-                if (uploadedFile.size > MAX_FILE_SIZE_BYTES) {
-                    // Cukup dilempar karena showCustomAlert sudah dipanggil saat pemilihan file
-                    throw new Error(`Foto melebihi batas 100 KB. Mohon pilih ulang foto.`);
-                }
-
-                formData.append('image', uploadedFile);
-
-                
-                // --- 3. Validasi & Kumpulkan Konten Array (Bahan, Alat, Langkah) WAJIB ---
-                
-                // Bahan-bahan (Ingredients)
-                const ingredientElements = document.querySelectorAll('.ingredient-input-group');
-                const ingredients = [];
-                ingredientElements.forEach(group => {
-                    const qty = group.querySelector('[name="ingredient_qty"]').value.trim();
-                    const unit = group.querySelector('[name="ingredient_unit"]').value.trim();
-                    const name = group.querySelector('[name="ingredient_name"]').value.trim();
-                    // Hanya tambahkan jika NAMA dan JUMLAH terisi.
-                    if (name && qty) { 
-                        ingredients.push({ quantity: qty, unit: unit, name: name });
-                    }
-                });
-
-                if (ingredients.length === 0) {
-                    throw new Error("Resep harus memiliki minimal satu Bahan yang lengkap (Jumlah dan Nama Bahan).");
-                }
-                formData.append('ingredients', JSON.stringify(ingredients));
-
-                
-                // Alat-alat (Tools)
-                const toolElements = document.querySelectorAll('.tool-input-group');
-                const tools = [];
-                toolElements.forEach(group => {
-                    const name = group.querySelector('[name="tool_name"]').value.trim();
-                    if (name) {
-                        tools.push(name);
-                    }
-                });
-
-                if (tools.length === 0) {
-                    throw new Error("Resep harus memiliki minimal satu Alat yang digunakan.");
-                }
-                formData.append('tools', JSON.stringify(tools));
-
-                
-                // Langkah-langkah (Steps)
-                const stepElements = document.querySelectorAll('[name="step_description"]');
-                const steps = Array.from(stepElements).map(el => el.value.trim()).filter(s => s !== "");
-
-                if (steps.length === 0) {
-                    throw new Error("Resep harus memiliki minimal satu Langkah (Deskripsi Langkah).");
-                }
-                formData.append('steps', JSON.stringify(steps));
-                
-
-                // --- 4. Kirim ke API ---
-                const response = await fetch(API_RECIPES_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}` 
-                    },
-                    body: formData
-                });
-
-                // Coba parse JSON, tapi aman jika response kosong/invalid
-                let result = null;
-                try {
-                    result = await response.json();
-                } catch (e) {
-                    // ignore JSON parse error
-                }
-
-                if (response.ok) {
-                    alert("Resep berhasil diunggah! Mengalihkan...");
-                    window.location.href = `resep_detail.html?id=${result && (result.id || result.recipe?._id) || ''}`;
+            submitBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                // Cek file gambar yang sudah di-crop
+                if (!croppedFileBlob) {
+                    alert('Harap unggah dan konfirmasi crop foto resep Anda.');
                     return;
                 }
-
-                // Jika server mengembalikan 401 (Unauthorized) => token kemungkinan kedaluwarsa / invalid
-                if (response.status === 401) {
-                    const serverMsg = result && (result.msg || result.message) ? (result.msg || result.message) : 'Sesi tidak valid.';
-                    if (/kedaluwarsa|expired|token/i.test(serverMsg)) {
-                        // Token expired
-                        forceLogoutAndRedirect('Token kedaluwarsa. Silakan login ulang.');
-                        return;
-                    } else {
-                        // Token invalid (signature mismatch etc.) — juga logout untuk keamanan
-                        forceLogoutAndRedirect('Token tidak valid. Silakan login ulang.');
-                        return;
-                    }
+                // Cek Token lagi saat klik
+                const currentToken = localStorage.getItem('authToken');
+                if (!currentToken || isTokenExpired(currentToken)) {
+                    alert('Sesi berakhir. Silakan login ulang.');
+                    window.location.href = 'daftar_atau_login.html';
+                    return;
                 }
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengunggah...';
+                submitBtn.disabled = true;
+                
+                try {
+                    // Buat FormData baru
+                    const formData = new FormData(recipeForm);
+                    // Hapus file lama dari FormData jika ada
+                    formData.delete('image');
+                    
+                    // --- 1. Kumpulkan Data dan Validasi Field Sederhana WAJIB ---
+                    const title = document.getElementById('title').value.trim();
+                    const description = document.getElementById('description').value.trim();
+                    const category = document.getElementById('category').value;
+                    const servingSizeElement = document.getElementById('serving_size');
+                    const cookTimeElement = document.getElementById('cook-time');
+                    const prepTimeElement = document.getElementById('prep-time');
+                    
+                    // 💡 Perubahan: Lakukan pemeriksaan null dan berikan nilai default jika elemen tidak ditemukan
+                    const servingSize = servingSizeElement ? servingSizeElement.value.trim() : '4'; 
+                    const cookTime = cookTimeElement ? cookTimeElement.value.trim() : '30';
+                    const prepTime = prepTimeElement ? prepTimeElement.value.trim() : '15';
 
-                // untuk error lain, munculkan pesan dari server bila ada
-                throw new Error((result && (result.msg || result.message)) || 'Gagal mengunggah resep.');
+                    if (!title || !description || !category || !servingSize || !cookTime || !prepTime) {
+                        throw new Error("Harap isi SEMUA informasi dasar resep (judul, deskripsi, kategori, porsi, waktu masak & persiapan).");
+                    }
+                    
+                    // Append Simple Fields
+                    formData.append('title', title);
+                    formData.append('description', description);
+                    formData.append('category', category);
+                    formData.append('servingSize', servingSize);
+                    formData.append('cookTime', cookTime);
+                    formData.append('prepTime', prepTime);
 
-            } catch (error) {
-                console.error(error);
-                alert("Terjadi kesalahan: " + error.message);
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
+                    
+                    // --- 2. Validasi & Kumpulkan Gambar WAJIB ---
+                    const imageInput = document.getElementById('image');
+                    const uploadedFile = imageInput.files[0];
+                    
+                    if(!uploadedFile) {
+                        throw new Error("Wajib menyertakan foto resep!");
+                    }
+                    
+                    // Batas ukuran file 100 KB (102400 bytes)
+                    const MAX_FILE_SIZE_BYTES = 102400; 
+                    if (uploadedFile.size > MAX_FILE_SIZE_BYTES) {
+                        // Cukup dilempar karena showCustomAlert sudah dipanggil saat pemilihan file
+                        throw new Error(`Foto melebihi batas 100 KB. Mohon pilih ulang foto.`);
+                    }
+
+                    // ⭐ APPEND FILE YANG SUDAH DI-CROP ⭐
+                    formData.append('image', croppedFileBlob, croppedFileBlob.name);
+                    // ⭐ END PERUBAHAN SUBMIT ⭐
+                    
+                    // --- 3. Validasi & Kumpulkan Konten Array (Bahan, Alat, Langkah) WAJIB ---
+                    
+                    // Bahan-bahan (Ingredients)
+                    const ingredientElements = document.querySelectorAll('.ingredient-input-group');
+                    const ingredients = [];
+                    ingredientElements.forEach(group => {
+                        const qty = group.querySelector('[name="ingredient_qty"]').value.trim();
+                        const unit = group.querySelector('[name="ingredient_unit"]').value.trim();
+                        const name = group.querySelector('[name="ingredient_name"]').value.trim();
+                        // Hanya tambahkan jika NAMA dan JUMLAH terisi.
+                        if (name && qty) { 
+                            ingredients.push({ quantity: qty, unit: unit, name: name });
+                        }
+                    });
+
+                    if (ingredients.length === 0) {
+                        throw new Error("Resep harus memiliki minimal satu Bahan yang lengkap (Jumlah dan Nama Bahan).");
+                    }
+                    formData.append('ingredients', JSON.stringify(ingredients));
+
+                    
+                    // Alat-alat (Tools)
+                    const toolElements = document.querySelectorAll('.tool-input-group');
+                    const tools = [];
+                    toolElements.forEach(group => {
+                        const name = group.querySelector('[name="tool_name"]').value.trim();
+                        if (name) {
+                            tools.push(name);
+                        }
+                    });
+
+                    if (tools.length === 0) {
+                        throw new Error("Resep harus memiliki minimal satu Alat yang digunakan.");
+                    }
+                    formData.append('tools', JSON.stringify(tools));
+
+                    
+                    // Langkah-langkah (Steps)
+                    const stepElements = document.querySelectorAll('[name="step_description"]');
+                    const steps = Array.from(stepElements).map(el => el.value.trim()).filter(s => s !== "");
+
+                    if (steps.length === 0) {
+                        throw new Error("Resep harus memiliki minimal satu Langkah (Deskripsi Langkah).");
+                    }
+                    formData.append('steps', JSON.stringify(steps));
+                    
+                    // --- 2. FETCH KE API DINAMIS ---
+                    const API_RECIPES_URL = `${API_BASE_URL}/recipes`;
+                    const response = await fetch(API_RECIPES_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${currentToken}` 
+                        },
+                        body: formData,
+                        credentials: 'include'
+                    });
+
+                    // Gunakan Helper Aman
+                    const result = await handleApiResponseSecure(response);
+
+                    if (result.ok) {
+                        alert("Resep berhasil diunggah! Mengalihkan...");
+                        window.location.href = `resep_detail.html?id=${result.data.id || result.data.recipe?._id}`;
+                    } else {
+                        throw new Error(result.data.msg || "Gagal mengunggah resep.");
+                    }
+
+                    // Jika server mengembalikan 401 (Unauthorized) => token kemungkinan kedaluwarsa / invalid
+                    if (response.status === 401) {
+                        const serverMsg = result && (result.msg || result.message) ? (result.msg || result.message) : 'Sesi tidak valid.';
+                        if (/kedaluwarsa|expired|token/i.test(serverMsg)) {
+                            // Token expired
+                            forceLogoutAndRedirect('Token kedaluwarsa. Silakan login ulang.');
+                            return;
+                        } else {
+                            // Token invalid (signature mismatch etc.) — juga logout untuk keamanan
+                            forceLogoutAndRedirect('Token tidak valid. Silakan login ulang.');
+                            return;
+                        }
+                    }
+
+                    // untuk error lain, munculkan pesan dari server bila ada
+                    throw new Error((result && (result.msg || result.message)) || 'Gagal mengunggah resep.');
+
+                } catch (error) {
+                    console.error(error);
+                    alert("Terjadi kesalahan: " + error.message);
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+    }
+
+    // --- STARTUP LOGIC ---
+    // Kita perlu menunggu API_BASE_URL sebelum mengizinkan submit (meskipun form bisa diisi dulu)
+    if (API_BASE_URL) {
+        initSubmitHandler();
+    } else {
+        window.addEventListener('backend-url-changed', initSubmitHandler);
+    }
+
+    // --- Navbar & Dark Mode (Standar) ---
+    // (Tempel logika Navbar & Dark Mode standar di sini)
+    if (hamburgerBtn && navMenu) {
+        hamburgerBtn.addEventListener('click', () => { hamburgerBtn.classList.toggle('active'); navMenu.classList.toggle('active'); });
+    }
+    if (profilePicBtn && profileDropdown) {
+        profilePicBtn.addEventListener('click', (e) => { e.stopPropagation(); profileDropdown.classList.toggle('active'); });
+        document.addEventListener('click', (e) => { if (!profileDropdown.contains(e.target) && !profilePicBtn.contains(e.target)) profileDropdown.classList.remove('active'); });
+    }
+    if (themeToggle) {
+        const savedTheme = localStorage.getItem('sajile_theme') || 'light';
+        document.body.dataset.theme = savedTheme;
+        const icon = themeToggle.querySelector('i');
+        if(icon) { icon.classList.toggle('fa-sun', savedTheme === 'dark'); icon.classList.toggle('fa-moon', savedTheme === 'light'); }
+        themeToggle.addEventListener('click', () => {
+            const newTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            document.body.dataset.theme = newTheme;
+            localStorage.setItem('sajile_theme', newTheme);
+            if(icon) { icon.classList.toggle('fa-moon'); icon.classList.toggle('fa-sun'); }
         });
     }
 
+    // Panggil event listener Cropper saat DOM dimuat
+    attachCropperListeners();
 });

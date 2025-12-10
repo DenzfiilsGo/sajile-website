@@ -8,30 +8,93 @@ document.addEventListener('dragstart', function(e) {
     e.preventDefault();
 });
 
-document.addEventListener('DOMContentLoaded', async () => {
+// =======================================================
+// FUNGSI UTAMA: UPDATE UI PROFIL (FOTO, NAMA, EMAIL)
+// =======================================================
+
+/**
+ * Mengambil data pengguna dari localStorage dan memperbarui
+ * foto profil, username, dan email pada navbar dropdown.
+ */
+function updateUserProfileUI() {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
     
-    // =======================================================
-    // 1. LOGIKA CEK LOGIN
-    // =======================================================
-    // Ambil URL backend dari /backend_url.json (fallback ke localhost)
-    async function loadBackendBaseUrl() {
-        const DEFAULT = 'http://localhost:5000'; // fallback lokal
+    if (userDataJSON) {
         try {
-            const res = await fetch('/backend_url.json', { cache: 'no-cache' });
-            if (!res.ok) return DEFAULT;
-            const data = await res.json();
-            if (!data || !data.url) return DEFAULT;
-            // pastikan tidak ada trailing slash
-            return data.url.replace(/\/$/, '');
-        } catch (err) {
-            console.warn('Gagal memuat backend_url.json, gunakan fallback:', err);
-            return DEFAULT;
+            const userData = JSON.parse(userDataJSON);
+            
+            // 1. Update Profile Picture (ID harus 'profile-pic-img')
+            const profilePicImg = document.getElementById('profile-pic-img');
+            if (profilePicImg && userData.profilePictureUrl) {
+                profilePicImg.src = userData.profilePictureUrl;
+                
+                // Tambahkan error handler untuk berjaga-jaga jika URL eksternal gagal
+                profilePicImg.onerror = () => {
+                    console.warn("Gagal memuat foto profil eksternal. Menggunakan default HTML.");
+                    // Biarkan browser menggunakan src default yang sudah ada di HTML
+                };
+            }
+            
+            // 2. Update Username (ID atau Class)
+            const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+            if (usernameEl && userData.username) {
+                usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+                usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
+            }
+                
+            // 3. Update Email (ID atau Class)
+            const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+            if (emailEl && userData.email) {
+                emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+                emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+            }
+                
+        } catch (error) {
+            console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
         }
     }
+}
 
-    const BACKEND_BASE_URL = await loadBackendBaseUrl();
-    console.log('Menggunakan backend base URL:', BACKEND_BASE_URL);
-    const API_RECIPES_URL = `https://metallographical-unoverpaid-omer.ngrok-free.dev/api/recipes`;
+// =======================================================
+// FUNGSI UTAMA: CEK STATUS LOGIN DAN TAMPILKAN UI YANG SESUAI
+// =======================================================
+
+async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authToken'
+    const token = localStorage.getItem('authToken');
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    // Asumsi: Token valid jika ada dan data pengguna ada
+    if (token && userDataJSON) {
+        // Logika sederhana: anggap token dan data di LS valid
+        if (navAuthLinks) navAuthLinks.style.display = 'none';
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (body) body.dataset.loggedIn = 'true';
+
+        // ⭐ Panggil fungsi untuk memperbarui UI profil ⭐
+        updateUserProfileUI();
+    } else {
+        // Pengguna belum login
+        if (navAuthLinks) navAuthLinks.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
+        if (body) body.dataset.loggedIn = 'false';
+    }
+}
+
+// P5 Project/html/resep.js (Sesuaikan path import jika perlu)
+
+// ⭐ IMPORT API URL DARI FILE CONFIG.JS ⭐
+import { PUBLIC_BACKEND_URL, API_AUTH_URL, API_BASE_URL } from '../js/config.js'; 
+
+// Blokir seleksi teks via JavaScript (Sama)
+document.addEventListener('selectstart', function(e) { e.preventDefault(); });
+document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // ✅ Gunakan API_BASE_URL yang diimpor dari config.js
+    const API_RECIPES_URL = `${API_BASE_URL}/recipes`; // URL resep kita sekarang dinamis
     const RECIPES_PER_PAGE = 9;
     
     // --- Elemen DOM ---
@@ -41,134 +104,104 @@ document.addEventListener('DOMContentLoaded', async () => {
     const navLinks = navMenu ? navMenu.querySelectorAll('.nav-links a') : []; 
     const themeToggle = document.getElementById('theme-toggle');
     const filterTags = document.querySelectorAll('.filter-tags .tag');
-    const recipeGrid = document.getElementById('recipe-grid'); // Elemen untuk menampung resep
-    const recipeCountDisplay = document.getElementById('recipe-count-display'); // Misalnya untuk "Menampilkan X Resep"
+    const recipeGrid = document.querySelector('.recipe-grid');
+    const recipeContainer = recipeGrid;
+    const recipeCountDisplay = document.getElementById('recipe-count-display');
 
-    let currentPage = 0; // Mulai dari halaman 0 (offset 0)
+    let currentPage = 0;
     let totalRecipes = 0;
     let isLoading = false;
     let currentFilter = 'Semua';
     
-    
-    const recipeContainer = document.getElementById('recipe-container');
     const loadMoreBtnContainer = document.querySelector('.load-more-btn-container');
     const loadMoreBtn = loadMoreBtnContainer ? loadMoreBtnContainer.querySelector('.btn-primary') : null;
 
-    // ... (Setelah deklarasi elemen DOM di baris 16) ...
-    
+    const observerOptions = { threshold: 0.15 }; 
+
+    const observer = new IntersectionObserver((entries, observerInstance) => { // Rename observer param to avoid confusion
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('visible');
+            observerInstance.unobserve(entry.target); // Use the instance param
+        });
+    }, observerOptions);
+
     // ========================================================
-    // LOGIKA CEK STATUS LOGIN (NAVBAR UI) - TAMBAHAN BARU
+    // LOGIKA CEK STATUS LOGIN (NAVBAR UI) - Diperbaiki
     // ========================================================
-    const navAuthLinks = document.querySelector('.nav-auth-links'); // Container tombol Masuk
-    const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper'); // Container Profil
+    const navAuthLinks = document.querySelector('.nav-auth-links');
+    const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper');
     const logoutBtn = document.getElementById('logout-btn');
 
-    function checkLoginState() {
-        const token = localStorage.getItem('authToken'); // Gunakan 'authToken'
+    // --- 2. Cek Status Login Saat Halaman Dimuat ---
+    checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
 
-        if (token) {
-            // User Login: Sembunyikan tombol masuk, Tampilkan profil
-            if (navAuthLinks) navAuthLinks.style.display = 'none';
-            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'block';
-        } else {
-            // User Belum Login: Tampilkan tombol masuk, Sembunyikan profil
-            if (navAuthLinks) navAuthLinks.style.display = 'block';
-            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
-        }
-    }
-
-    // Panggil saat halaman dimuat
-    checkLoginState();
-
-    // Logika Logout
+    // Logika Logout (Diperbaiki key localStorage)
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (confirm("Yakin ingin keluar?")) {
                 localStorage.removeItem('authToken');
-                window.location.reload(); // Refresh untuk update UI
+                localStorage.removeItem('authUser'); // ✅ Hapus user data juga
+                window.location.reload();
             }
         });
     }
+    // ... (Logika Toggle Dropdown Profil, Scroll Animation sama) ...
 
-    // Toggle Dropdown Profil (Untuk Desktop)
-    const profilePicBtn = document.getElementById('profile-pic-btn');
-    const profileDropdown = document.getElementById('profile-dropdown');
-    
-    if (profilePicBtn && profileDropdown) {
-        profilePicBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('active');
-        });
-        document.addEventListener('click', (e) => {
-            if (!profileDropdown.contains(e.target) && !profilePicBtn.contains(e.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        });
-    }
-    
-    // --- 3. Scroll Animation (Fade In) (Dibiarkan, namun dire-observe setelah render) ---
-    const observerOptions = { threshold: 0.15 }; 
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-        });
-    }, observerOptions);
-
-    const fadeElements = document.querySelectorAll('.fade-in');
-    fadeElements.forEach(el => observer.observe(el));
-
-    // ... (Lanjutkan ke kode fetchRecipes dst) ...
 
     // ========================================================
     // FUNGSI UTAMA UNTUK MENGAMBIL DATA RESEP
     // ========================================================
     
-    /**
-     * Mengambil resep dari API berdasarkan filter, pencarian, dan pagination.
-     * @param {string} filter Kategori filter yang aktif.
-     * @param {number} page Halaman yang diminta (untuk offset).
-     * @param {boolean} append Jika true, tambahkan ke grid; jika false, hapus grid lama.
-     */
+    // --- Helper function untuk penanganan respons API yang aman (sama seperti di beranda.js) ---
+    async function handleApiResponseSecure(response) {
+        const responseText = await response.text();
+        if (!response.ok) {
+            try {
+                const errorData = JSON.parse(responseText);
+                return { ok: false, data: errorData };
+            } catch (e) {
+                return { ok: false, data: { msg: 'Kesalahan jaringan atau server.' } };
+            }
+        }
+        try {
+            const jsonData = JSON.parse(responseText);
+            return { ok: true, data: jsonData };
+        } catch (e) {
+            console.error("Gagal parse JSON. Respons teks:", responseText);
+            return { ok: false, data: { msg: 'Kesalahan format respons dari server' } };
+        }
+    }
+    
 
     async function fetchRecipes() {
-        if (isLoading) return; // Cegah double-click
+        if (isLoading) return;
         isLoading = true;
         
-        // Hitung offset: (halaman saat ini) * (resep per halaman)
         const offset = currentPage * RECIPES_PER_PAGE; 
         
-        // Tampilkan indikator loading (opsional)
         if (loadMoreBtn) loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
 
         try {
-            const url = `${API_RECIPES_URL}?limit=${RECIPES_PER_PAGE}&offset=${offset}`;
+            // URL resep sudah menggunakan API_BASE_URL yang dimuat dari config.js
+            const url = `${API_BASE_URL}/recipes?limit=${RECIPES_PER_PAGE}&offset=${offset}`;
             console.log('Fetching:', url);
             
-            const res = await fetch(url, { cache: 'no-cache' });
+            const res = await fetch(url, { 
+                cache: 'no-cache',
+                credentials: 'include' // ✅ Tambahkan ini untuk konsistensi CORS
+            });
 
-            if (!res.ok) {
-                // Coba ambil pesan error dari body respons (asumsi backend kirim JSON 500)
-                let errorMsg = `Gagal memuat resep: ${res.status} ${res.statusText}`;
-                try {
-                    const errorData = await res.json();
-                    if (errorData.msg) {
-                        errorMsg = errorData.msg; // Gunakan pesan error dari backend
-                    } else if (errorData.error) {
-                        errorMsg = errorData.error; // Atau detail error
-                    }
-                } catch (jsonError) {
-                    // Jika gagal parsing JSON (artinya responsnya adalah HTML!)
-                    console.error('Respon API bukan JSON:', await res.text()); 
-                    errorMsg = 'Kesalahan server tidak dikenal. API tidak merespons JSON.';
-                }
-                throw new Error(errorMsg); // Lempar error yang lebih spesifik
+            // ✅ Gunakan helper penanganan respons yang aman
+            const result = await handleApiResponseSecure(res);
+
+            if (!result.ok) {
+                // Tangani error menggunakan pesan dari helper
+                throw new Error(result.data.msg || 'Gagal memuat resep.');
             }
 
-            const data = await res.json();
+            const data = result.data; // Data JSON yang sudah di-parse
             const recipes = data.recipes || [];
             totalRecipes = data.total || 0;
             
@@ -177,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // 2. Perbarui state halaman
             currentPage++;
-
+            
             // 3. Cek apakah masih ada resep untuk dimuat (data.hasMore atau perbandingan)
             const hasMore = data.hasMore; 
             
@@ -199,24 +232,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             isLoading = false;
             // Panggil kembali observer untuk animasi fade-in pada card baru
             document.querySelectorAll('.recipe-card:not(.visible)').forEach(el => observer.observe(el));
+            // ✅ Panggil updatePaginationControls di sini setelah loading selesai
+            updatePaginationControls();
         }
-    }
-    
-    // Pemuatan resep pertama saat halaman dimuat
-    await fetchRecipes();
-
-    // Event Listener untuk tombol "Muat Lebih Banyak Resep"
-    if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            fetchRecipes();
-        });
     }
 
     // Fungsi untuk merender HTML card resep
     function renderRecipes(recipesArray, append = false) {
         if (!recipesArray || recipesArray.length === 0) {
-            if (currentPage === 1) {
+            if (currentPage > 0) { 
                 recipeGrid.innerHTML = `<div class="empty-state">Tidak ada resep untuk filter ini.</div>`;
             }
             return;
@@ -229,22 +253,35 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ? recipe.description.substring(0, 100) + '...' 
                 : recipe.description;
             
+            // 👇👇 PERBAIKAN DI FUNGSI INI 👇👇
+            let imageUrl = recipe.imageUrl || 'https://via.placeholder.com/300x200?text=Resep';
+            
+            // Jika URL gambar dimulai dengan '/' dan bukan http:// atau https://
+            if (imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
+                imageUrl = `${PUBLIC_BACKEND_URL}${imageUrl}`;
+            }
+            
+            // 👇👇 PERBAIKAN STRUKTUR HTML AGAR SESUAI DENGAN resep.html 👇👇
+            const timeTotal = (recipe.prepTime || 0) + (recipe.cookTime || 0);
+            const categoryDisplay = recipe.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+
             return `
-                <div class="recipe-card fade-in" onclick="window.location.href='resep_detail.html?id=${recipe._id}'" style="cursor:pointer;">
-                    <img src="${recipe.imageUrl || 'https://via.placeholder.com/300x200?text=Resep'}" 
-                        alt="${recipe.title}" 
-                        onerror="this.src='https://via.placeholder.com/300x200?text=Resep'">
-                    <div class="card-content">
-                        <h3>${recipe.title}</h3>
-                        <p class="description">${shortDesc}</p>
-                        <div class="rating-display">
-                            ${starHTML} (${ratingValue.toFixed(1)})
-                        </div>
+                <a href="resep_detail.html?id=${recipe._id}" class="recipe-card fade-in">
+                    <div class="card-image">
+                        <img src="${imageUrl}" alt="${recipe.title}" loading="lazy" onerror="this.src='via.placeholder.co'">
+                        <span class="category-badge">${categoryDisplay}</span>
+                        <button class="btn-fav" aria-label="Tambahkan ke Favorit"><i class="far fa-heart"></i></button>
                     </div>
-                </div>
+                    <div class="card-info">
+                        <h3>${recipe.title}</h3>
+                        <p class="duration"><i class="far fa-clock"></i> ${timeTotal} Menit</p>
+                    </div>
+                </a>
             `;
+            // 👆👆 SELESAI PERBAIKAN STRUKTUR HTML 👆👆
         }).join('');
         
+        // ... (kode di bawah ini sama persis) ...
         if (append) {
             recipeGrid.insertAdjacentHTML('beforeend', newRecipeHTML);
         } else {
@@ -255,18 +292,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         newlyAddedElements.forEach(el => observer.observe(el));
     }
     
-    // File: resep.js
-
-    // Fungsi untuk membuat markup HTML untuk satu resep
+    // Fungsi untuk membuat markup HTML untuk satu resep (sekitar baris 265 di kode Anda)
     function createRecipeCard(recipe) {
         const timeTotal = (recipe.prepTime || 0) + (recipe.cookTime || 0);
         const categoryDisplay = recipe.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
 
+        // 👇👇 PERBAIKAN UTAMA DI SINI 👇👇
+        // Pastikan URL gambar dimulai dengan PUBLIC_BACKEND_URL jika itu relatif
+        let imageUrl = recipe.imageUrl || 'via.placeholder.com';
+        
+        // Jika URL gambar dimulai dengan '/' dan bukan http:// atau https://
+        if (imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
+            imageUrl = `${PUBLIC_BACKEND_URL}${imageUrl}`;
+        }
+        // 👆👆 SELESAI PERBAIKAN 👆👆
+
+
         return `
             <div class="recipe-card fade-in">
-                <a href="detail_resep.html?id=${recipe._id}" class="recipe-link">
+                <a href="resep_detail.html?id=${recipe._id}" class="recipe-link">
                     <div class="recipe-image-container">
-                        <img src="${recipe.imageUrl || 'https://via.placeholder.com/800x450?text=Resep+SajiLe'}" alt="${recipe.title}" loading="lazy">
+                        <!-- ✅ Gunakan variabel imageUrl yang sudah diperbaiki -->
+                        <img src="${imageUrl}" alt="${recipe.title}" loading="lazy">
                         <span class="recipe-badge">${categoryDisplay}</span>
                         <button class="btn-fav" aria-label="Tambahkan ke Favorit"><i class="far fa-heart"></i></button>
                     </div>
@@ -336,38 +383,48 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     filterTags.forEach(tag => {
         tag.addEventListener('click', function() {
-            // Hapus 'active' dari semua tag dan tambahkan ke tag yang diklik
             filterTags.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
             
-            const newFilter = this.getAttribute('data-filter') || this.textContent.trim();
+            currentFilter = this.getAttribute('data-filter') || this.textContent.trim(); // ✅ Update filter global
             
-            // Panggil API untuk memuat ulang resep dari Halaman 1 dengan filter baru
-            fetchRecipes(newFilter, 1, false); 
+            // ✅ Reset halaman ke 0 saat filter baru diterapkan
+            currentPage = 0; 
+            fetchRecipes(); // Panggil API untuk memuat ulang resep dari halaman 0
         });
     });
 
     // ========================================================
-    // 5. Load More Button (REAL - Pagination)
+    // START UP LOGIC (LOGIKA UTAMA YANG MENUNGGU config.js)
     // ========================================================
     
-    if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', () => {
-            const nextPage = currentPage + 1;
-            loadMoreBtn.textContent = "Memuat...";
-            // Panggil API untuk memuat halaman berikutnya dan tambahkan (append = true)
-            fetchRecipes(currentFilter, nextPage, true);
-        });
+    function initResepPage() {
+        // Ini adalah fungsi inisialisasi yang menunggu URL dimuat
+        console.log('⚡ Resep.js: Inisialisasi setelah URL backend dimuat:', API_BASE_URL);
+        checkLoginState(); // Cek status login setelah URL siap
+        fetchRecipes(); // Muat resep pertama kali (currentPage=0, filter default)
+
+        // Event Listener untuk tombol "Muat Lebih Banyak Resep" (Diaktifkan di sini)
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // currentPage sudah diincrement di fetchRecipes() sebelumnya
+                fetchRecipes(); 
+            });
+        }
     }
 
+    // Terapkan pola event listener dari beranda.js untuk menunggu URL dimuat
+    if (API_BASE_URL) {
+        initResepPage();
+    } else {
+        // Jika config.js belum selesai, tunggu event kustom
+        window.addEventListener('backend-url-changed', initResepPage);
+    }
 
     // ========================================================
     // START UP LOGIC
     // ========================================================
-    
-    // Muat resep pertama saat halaman dimuat
-    fetchRecipes(currentFilter, 1, false); 
-
 
     // --- 1. Navbar Toggle Logic (STANDAR WAJIB) ---
     // Memastikan desain navbar dan dropdown vertical menu sesuai standar wajib [2025-11-27]

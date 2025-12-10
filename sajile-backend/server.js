@@ -10,7 +10,7 @@ const app = express();
 
 // ⭐ CORS: cukup SATU blok ini — sudah cukup untuk semua request + preflight
 app.use(cors({
-    origin: 'http://localhost:8000',
+    origin: ['http://localhost:8000', 'https://sajile.netlify.app'],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "x-auth-token", "Authorization", "Accept"],
     credentials: true

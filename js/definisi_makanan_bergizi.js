@@ -8,6 +8,81 @@ document.addEventListener('dragstart', function(e) {
     e.preventDefault();
 });
 
+// =======================================================
+// FUNGSI UTAMA: UPDATE UI PROFIL (FOTO, NAMA, EMAIL)
+// =======================================================
+
+/**
+ * Mengambil data pengguna dari localStorage dan memperbarui
+ * foto profil, username, dan email pada navbar dropdown.
+ */
+function updateUserProfileUI() {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    if (userDataJSON) {
+        try {
+            const userData = JSON.parse(userDataJSON);
+            
+            // 1. Update Profile Picture (ID harus 'profile-pic-img')
+            const profilePicImg = document.getElementById('profile-pic-img');
+            if (profilePicImg && userData.profilePictureUrl) {
+                profilePicImg.src = userData.profilePictureUrl;
+                
+                // Tambahkan error handler untuk berjaga-jaga jika URL eksternal gagal
+                profilePicImg.onerror = () => {
+                    console.warn("Gagal memuat foto profil eksternal. Menggunakan default HTML.");
+                    // Biarkan browser menggunakan src default yang sudah ada di HTML
+                };
+            }
+            
+            // 2. Update Username (ID atau Class)
+            const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+            if (usernameEl && userData.username) {
+                usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+                usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
+            }
+                
+            // 3. Update Email (ID atau Class)
+            const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+            if (emailEl && userData.email) {
+                emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+                emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+            }
+                
+        } catch (error) {
+            console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
+        }
+    }
+}
+
+// =======================================================
+// FUNGSI UTAMA: CEK STATUS LOGIN DAN TAMPILKAN UI YANG SESUAI
+// =======================================================
+
+async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authToken'
+    const token = localStorage.getItem('authToken');
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    // Asumsi: Token valid jika ada dan data pengguna ada
+    if (token && userDataJSON) {
+        // Logika sederhana: anggap token dan data di LS valid
+        if (navAuthLinks) navAuthLinks.style.display = 'none';
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (body) body.dataset.loggedIn = 'true';
+
+        // ⭐ Panggil fungsi untuk memperbarui UI profil ⭐
+        updateUserProfileUI();
+    } else {
+        // Pengguna belum login
+        if (navAuthLinks) navAuthLinks.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
+        if (body) body.dataset.loggedIn = 'false';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // === 1. DEKLARASI VARIABEL DOM UTAMA ===
@@ -21,23 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const navMenu = document.getElementById('nav-menu');
 
-    // === 2. LOGIKA CEK LOGIN (DEFAULT - WAJIB KONSISTEN) ===
-    function checkLoginState() {
-        const token = localStorage.getItem('authToken');
+    // --- 2. Cek Status Login Saat Halaman Dimuat ---
+    checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
 
-        if (token) {
-            body.setAttribute('data-logged-in', 'true');
-            if (navAuthLinks) navAuthLinks.style.display = 'none';
-            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'block';
-        } else {
-            body.setAttribute('data-logged-in', 'false');
-            if (navAuthLinks) navAuthLinks.style.display = 'block';
-            if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
-        }
-    }
-    checkLoginState();
-
-    // === 3. LOGIKA INTERAKSI NAVBAR (DEFAULT) ===
+    // === 3. LOGIKA INTERAKSI NAVBAR (STANDAR) ===
     if (profilePicBtn && profileDropdown) {
         profilePicBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -55,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             if (confirm("Yakin ingin keluar?")) {
                 localStorage.removeItem('authToken');
+                localStorage.removeItem('authUser');
                 window.location.reload(); 
             }
         });
@@ -69,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === 4. LOGIKA DARK MODE (DEFAULT) ===
+    // === 4. LOGIKA DARK MODE (STANDAR) ===
     if (themeToggle) {
         const icon = themeToggle.querySelector('i');
         const savedTheme = localStorage.getItem('sajile_theme') || 'light';
@@ -90,40 +153,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === 5. SCROLL ANIMATION (DEFAULT) ===
-    const observerOptions = { threshold: 0.1 }; // Sedikit lebih sensitif
+    // === 5. SCROLL ANIMATION & TABS (TETAP SAMA) ===
     const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
             entry.target.classList.add('visible');
             obs.unobserve(entry.target);
         });
-    }, observerOptions);
-
+    }, { threshold: 0.1 });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-
-    // === 6. LOGIKA TAB MAKANAN SEHAT (FITUR BARU KHUSUS HALAMAN INI) ===
+    // Tab Logic
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabPanes = document.querySelectorAll('.tab-pane');
-
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Hapus kelas active dari semua tombol
             tabBtns.forEach(b => b.classList.remove('active'));
-            // Tambah kelas active ke tombol yang diklik
             btn.classList.add('active');
-
-            // Sembunyikan semua pane
             tabPanes.forEach(pane => pane.classList.remove('active'));
-            
-            // Tampilkan pane yang sesuai target
             const targetId = btn.getAttribute('data-tab');
             const targetPane = document.getElementById(targetId);
-            if (targetPane) {
-                targetPane.classList.add('active');
-            }
+            if (targetPane) targetPane.classList.add('active');
         });
     });
-
 });

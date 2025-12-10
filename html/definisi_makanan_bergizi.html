@@ -1,362 +1,362 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panduan Lengkap Makanan Sehat - SajiLe</title>
-    
-    <link rel="stylesheet" href="../css/definisi_makanan_bergizi.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Panduan Lengkap Makanan Sehat - SajiLe</title>
+        
+        <link rel="stylesheet" href="../css/definisi_makanan_bergizi.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
 
-<body data-logged-in="false">
+    <body data-logged-in="false">
 
-    <nav class="navbar">
-        <a class="nav-brand" href="../index.html">Saji<span class="brand-highlight">Le</span></a>
+        <nav class="navbar">
+            <a class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
 
-        <button class="hamburger" id="hamburger-btn" aria-label="Menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
 
-        <div class="nav-menu-container" id="nav-menu">
-            <ul class="nav-links">
-                <li><a href="../index.html">Beranda</a></li>
-                <li><a href="daftar_makanan.html">Menu</a></li>
-                <li><a href="resep.html">Resep</a></li>
-                <li><a href="favorit.html">Favorit</a></li>
-            </ul>
+            <div class="nav-menu-container" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="../index.html">Beranda</a></li>
+                    <li><a href="daftar_makanan.html">Menu</a></li>
+                    <li><a href="resep.html">Resep</a></li>
+                    <li><a href="favorit.html">Favorit</a></li>
+                </ul>
 
-            <div class="nav-actions">
-                <button id="theme-toggle" class="btn-icon">
-                    <i class="fas fa-moon"></i>
-                    <span class="mobile-only-text">Mode Gelap</span>
-                </button>
-                
-                <div class="nav-auth-links logged-out-only">
-                    <a href="daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
-                </div>
-                
-                <div class="profile-dropdown-wrapper logged-in-only">
-                    <div class="profile-pic" id="profile-pic-btn">
-                        <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna">
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="btn-icon">
+                        <i class="fas fa-moon"></i>
+                        <span class="mobile-only-text">Mode Gelap</span>
+                    </button>
+                    
+                    <div class="nav-auth-links logged-out-only">
+                        <a href="daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
                     </div>
                     
-                    <div class="profile-dropdown-menu" id="profile-dropdown">
-                        <div class="dropdown-header">
-                            <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
-                            <div class="user-info">
-                                <span class="username">Nama Pengguna</span>
-                                <span class="email">user@mail.com</span>
+                    <div class="profile-dropdown-wrapper logged-in-only">
+                        <div class="profile-pic" id="profile-pic-btn">
+                            <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna">
+                        </div>
+                        
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <div class="dropdown-header">
+                                <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
+                                <div class="user-info">
+                                    <span class="username" data-text="Nama Pengguna Super Panjang">Nama Pengguna</span>
+                                    <span class="email" data-text="email.pengguna.panjang.sekali@namadomainyangsangatpanjang.com">user.email@mail.com</span>
+                                </div>
+                            </div>
+                            <ul class="dropdown-links">
+                                <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
+                                <li><a href="pengaturan.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
+                                <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
+                                <li class="divider-item"></li>
+                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-wrapper">
+
+            <header class="page-header fade-in">
+                <span class="tag-header">Edukasi Gizi</span>
+                <h1>Panduan Lengkap <span class="text-brand-highlight">Makanan Sehat</span></h1>
+                <p>Pahami fondasi gizi untuk hidup yang lebih berkualitas, bahagia, dan penuh energi.</p>
+            </header>
+
+            <section class="split-section fade-in">
+                <div class="split-text">
+                    <h2 class="section-title">Apa Itu Makanan Sehat?</h2>
+                    <p class="content-text">
+                        Secara umum, makanan sehat adalah makanan yang mengandung beragam nutrisi yang dibutuhkan oleh tubuh untuk memelihara kesehatan, pertumbuhan, dan bekerja secara optimal. Makanan ini harus bersih, higienis, dan bebas dari bahan kimia berbahaya.
+                    </p>
+                    <div class="quote-box">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p class="quote-text">
+                            "Makanan bergizi seimbang adalah susunan pangan sehari-hari yang mengandung zat gizi dalam jenis dan jumlah yang sesuai dengan kebutuhan tubuh, dengan memperhatikan prinsip keanekaragaman pangan, aktivitas fisik, perilaku hidup bersih dan memantau berat badan secara teratur."
+                        </p>
+                        <span class="quote-author">— Kementerian Kesehatan RI (Konsep Gizi Seimbang)</span>
+                    </div>
+                </div>
+                <div class="split-image">
+                    <img src="https://placehold.co/600x450/2ecc71/fff?text=Konsep+Gizi+Seimbang" alt="Ilustrasi Gizi Seimbang">
+                </div>
+            </section>
+
+            <section class="info-section fade-in">
+                <div class="text-center-section">
+                    <h2 class="section-title">Karakteristik Makanan Sehat</h2>
+                    <p class="subtitle">Tidak semua yang kenyang itu sehat. Kenali ciri-cirinya:</p>
+                </div>
+                <div class="characteristics-grid">
+                    <div class="char-card">
+                        <i class="fas fa-seedling char-icon"></i>
+                        <h3>Kaya Nutrisi</h3>
+                        <p>Mengandung karbohidrat, protein, lemak sehat, vitamin, dan mineral dalam proporsi tepat.</p>
+                    </div>
+                    <div class="char-card">
+                        <i class="fas fa-hand-sparkles char-icon"></i>
+                        <h3>Higienis</h3>
+                        <p>Diolah dengan cara yang bersih, bebas kuman, bakteri, dan kontaminasi silang.</p>
+                    </div>
+                    <div class="char-card">
+                        <i class="fas fa-ban char-icon"></i>
+                        <h3>Minim Pengawet</h3>
+                        <p>Menghindari penggunaan pewarna buatan, pemanis buatan berlebih, dan pengawet kimia.</p>
+                    </div>
+                    <div class="char-card">
+                        <i class="fas fa-fire-alt char-icon"></i>
+                        <h3>Pengolahan Tepat</h3>
+                        <p>Dimasak dengan cara yang tidak merusak gizi, seperti merebus, mengukus, atau menumis.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="benefits-section fade-in">
+                <h2 class="section-title text-center">Manfaat Bagi Tubuh & Pikiran</h2>
+                <div class="benefits-container">
+                    <div class="benefit-item">
+                        <div class="benefit-number">01</div>
+                        <div class="benefit-content">
+                            <h3>Meningkatkan Imunitas</h3>
+                            <p>Asupan vitamin dan mineral yang cukup membantu tubuh melawan virus dan bakteri.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-number">02</div>
+                        <div class="benefit-content">
+                            <h3>Menjaga Berat Badan</h3>
+                            <p>Serat yang tinggi membuat kenyang lebih lama dan metabolisme lebih lancar.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-number">03</div>
+                        <div class="benefit-content">
+                            <h3>Kesehatan Mental</h3>
+                            <p>Nutrisi seperti Omega-3 terbukti dapat memperbaiki suasana hati dan mengurangi stres.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-number">04</div>
+                        <div class="benefit-content">
+                            <h3>Energi Stabil</h3>
+                            <p>Menghindari lonjakan gula darah drastis sehingga Anda tidak mudah lemas atau mengantuk.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="food-examples-section fade-in">
+                <h2 class="section-title text-center">Kelompok Makanan Sehat</h2>
+                
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="karbo">Karbohidrat</button>
+                    <button class="tab-btn" data-tab="protein">Protein</button>
+                    <button class="tab-btn" data-tab="sayur">Sayur & Buah</button>
+                    <button class="tab-btn" data-tab="lemak">Lemak Sehat</button>
+                </div>
+
+                <div class="tabs-content">
+                    <div id="karbo" class="tab-pane active fade-in-tab">
+                        <div class="tab-flex">
+                            <img src="https://placehold.co/300x200/e67e22/fff?text=Karbohidrat" alt="Karbohidrat">
+                            <div class="tab-desc">
+                                <h3>Sumber Energi Utama</h3>
+                                <p>Pilihlah karbohidrat kompleks yang kaya serat.</p>
+                                <ul class="check-list">
+                                    <li>Beras Merah / Hitam</li>
+                                    <li>Oatmeal (Gandum Utuh)</li>
+                                    <li>Ubi Jalar & Singkong</li>
+                                    <li>Jagung & Sagu</li>
+                                </ul>
                             </div>
                         </div>
-                        <ul class="dropdown-links">
-                            <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
-                            <li><a href="pengaturan.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
-                            <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
-                            <li class="divider-item"></li>
-                            <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
-                        </ul>
+                    </div>
+                    <div id="protein" class="tab-pane fade-in-tab">
+                        <div class="tab-flex">
+                            <img src="https://placehold.co/300x200/e74c3c/fff?text=Protein" alt="Protein">
+                            <div class="tab-desc">
+                                <h3>Pembangun Sel Tubuh</h3>
+                                <p>Kombinasikan protein hewani dan nabati.</p>
+                                <ul class="check-list">
+                                    <li>Dada Ayam (Tanpa Kulit)</li>
+                                    <li>Ikan (Salmon, Tuna, Kembung)</li>
+                                    <li>Telur</li>
+                                    <li>Tempe, Tahu & Kacang-kacangan</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="sayur" class="tab-pane fade-in-tab">
+                        <div class="tab-flex">
+                            <img src="https://placehold.co/300x200/27ae60/fff?text=Sayur+Buah" alt="Sayur Buah">
+                            <div class="tab-desc">
+                                <h3>Sumber Vitamin & Serat</h3>
+                                <p>Makanlah beragam warna ("Eat the Rainbow").</p>
+                                <ul class="check-list">
+                                    <li>Sayuran Hijau (Bayam, Brokoli)</li>
+                                    <li>Wortel & Tomat</li>
+                                    <li>Jeruk, Apel, Pepaya</li>
+                                    <li>Berries & Pisang</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="lemak" class="tab-pane fade-in-tab">
+                        <div class="tab-flex">
+                            <img src="https://placehold.co/300x200/f1c40f/fff?text=Lemak+Sehat" alt="Lemak Sehat">
+                            <div class="tab-desc">
+                                <h3>Pelindung Organ & Hormon</h3>
+                                <p>Hindari lemak trans, pilih lemak tak jenuh.</p>
+                                <ul class="check-list">
+                                    <li>Alpukat</li>
+                                    <li>Minyak Zaitun (Olive Oil)</li>
+                                    <li>Kacang Almond & Kenari</li>
+                                    <li>Biji Chia & Flaxseed</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </nav>
+            </section>
 
-    <div class="main-wrapper">
+            <section class="tips-section fade-in">
+                <div class="tips-box">
+                    <h2><i class="fas fa-lightbulb"></i> Tips Cerdas Memilih & Mengolah</h2>
+                    <div class="tips-grid">
+                        <div class="tip-item">
+                            <h4>Belanja Cerdas</h4>
+                            <p>Baca label nutrisi. Pilih produk dengan kandungan gula, garam, dan lemak jenuh yang rendah.</p>
+                        </div>
+                        <div class="tip-item">
+                            <h4>Metode Masak</h4>
+                            <p>Kurangi menggoreng (deep-fry). Utamakan merebus, mengukus, memanggang, atau menumis dengan sedikit minyak.</p>
+                        </div>
+                        <div class="tip-item">
+                            <h4>Porsi Makan</h4>
+                            <p>Gunakan piring kecil untuk mengontrol porsi. Isi setengah piring dengan sayuran terlebih dahulu.</p>
+                        </div>
+                        <div class="tip-item">
+                            <h4>Kurangi Gula & Garam</h4>
+                            <p>Ganti penyedap rasa dengan rempah alami seperti bawang, jahe, kunyit, dan lada.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        <header class="page-header fade-in">
-            <span class="tag-header">Edukasi Gizi</span>
-            <h1>Panduan Lengkap <span class="text-brand-highlight">Makanan Sehat</span></h1>
-            <p>Pahami fondasi gizi untuk hidup yang lebih berkualitas, bahagia, dan penuh energi.</p>
-        </header>
+            <section class="myth-fact-section fade-in">
+                <h2 class="section-title text-center">Mitos vs Fakta</h2>
+                <div class="myth-container">
+                    <div class="myth-card">
+                        <div class="myth-header red">MITOS</div>
+                        <div class="myth-body">
+                            <p>"Makanan sehat itu tidak enak dan hambar."</p>
+                        </div>
+                        <div class="fact-header green">FAKTA</div>
+                        <div class="fact-body">
+                            <p>Makanan sehat bisa sangat lezat jika diolah dengan bumbu rempah alami yang kaya rasa. Kuncinya adalah kreativitas dalam memasak.</p>
+                        </div>
+                    </div>
+                    <div class="myth-card">
+                        <div class="myth-header red">MITOS</div>
+                        <div class="myth-body">
+                            <p>"Karbohidrat bikin gemuk, jadi harus dihindari total."</p>
+                        </div>
+                        <div class="fact-header green">FAKTA</div>
+                        <div class="fact-body">
+                            <p>Tubuh butuh karbohidrat sebagai energi. Yang perlu dihindari adalah karbohidrat sederhana berlebih (gula), bukan karbohidrat kompleks.</p>
+                        </div>
+                    </div>
+                    <div class="myth-card">
+                        <div class="myth-header red">MITOS</div>
+                        <div class="myth-body">
+                            <p>"Makan malam bikin berat badan naik."</p>
+                        </div>
+                        <div class="fact-header green">FAKTA</div>
+                        <div class="fact-body">
+                            <p>Kenaikan berat badan disebabkan oleh surplus kalori harian, bukan jam makan. Namun, makan terlalu dekat waktu tidur bisa mengganggu pencernaan.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        <section class="split-section fade-in">
-            <div class="split-text">
-                <h2 class="section-title">Apa Itu Makanan Sehat?</h2>
-                <p class="content-text">
-                    Secara umum, makanan sehat adalah makanan yang mengandung beragam nutrisi yang dibutuhkan oleh tubuh untuk memelihara kesehatan, pertumbuhan, dan bekerja secara optimal. Makanan ini harus bersih, higienis, dan bebas dari bahan kimia berbahaya.
-                </p>
-                <div class="quote-box">
-                    <i class="fas fa-quote-left quote-icon"></i>
-                    <p class="quote-text">
-                        "Makanan bergizi seimbang adalah susunan pangan sehari-hari yang mengandung zat gizi dalam jenis dan jumlah yang sesuai dengan kebutuhan tubuh, dengan memperhatikan prinsip keanekaragaman pangan, aktivitas fisik, perilaku hidup bersih dan memantau berat badan secara teratur."
+            <section class="menu-table-section fade-in">
+                <h2 class="section-title text-center">Contoh Menu Harian Sehat</h2>
+                <div class="table-responsive">
+                    <table class="nutrition-table">
+                        <thead>
+                            <tr>
+                                <th>Waktu Makan</th>
+                                <th>Menu Rekomendasi</th>
+                                <th>Kandungan Utama</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Sarapan</strong></td>
+                                <td>Oatmeal dengan pisang & kacang almond</td>
+                                <td>Serat, Karbohidrat Kompleks</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Makan Siang</strong></td>
+                                <td>Nasi merah, pepes ikan, tumis kangkung, tempe bacem</td>
+                                <td>Protein, Vitamin, Mineral</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Camilan Sore</strong></td>
+                                <td>Potongan buah apel atau yogurt plain</td>
+                                <td>Vitamin, Probiotik</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Makan Malam</strong></td>
+                                <td>Sup ayam sayuran (tanpa santan), kentang rebus</td>
+                                <td>Protein Ringan, Hidrasi</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="conclusion-banner fade-in">
+                <div class="conclusion-content">
+                    <h2>Hidup Sehat Dimulai dari Piringmu</h2>
+                    <p>
+                        Kesehatan adalah investasi jangka panjang. Mulailah dengan perubahan kecil hari ini. 
+                        Pilih bahan segar, olah dengan benar, dan nikmati setiap gigitannya.
                     </p>
-                    <span class="quote-author">— Kementerian Kesehatan RI (Konsep Gizi Seimbang)</span>
+                    <p>Ingin mulai memasak menu sehat sekarang?</p>
+                    <div class="conclusion-actions">
+                        <a href="resep.html" class="btn-primary-glow">Cari Resep Sehat</a>
+                        <a href="../index.html" class="btn-secondary-glow">Kembali ke Beranda</a>
+                    </div>
                 </div>
-            </div>
-            <div class="split-image">
-                <img src="https://placehold.co/600x450/2ecc71/fff?text=Konsep+Gizi+Seimbang" alt="Ilustrasi Gizi Seimbang">
-            </div>
-        </section>
+            </section>
 
-        <section class="info-section fade-in">
-            <div class="text-center-section">
-                <h2 class="section-title">Karakteristik Makanan Sehat</h2>
-                <p class="subtitle">Tidak semua yang kenyang itu sehat. Kenali ciri-cirinya:</p>
-            </div>
-            <div class="characteristics-grid">
-                <div class="char-card">
-                    <i class="fas fa-seedling char-icon"></i>
-                    <h3>Kaya Nutrisi</h3>
-                    <p>Mengandung karbohidrat, protein, lemak sehat, vitamin, dan mineral dalam proporsi tepat.</p>
-                </div>
-                <div class="char-card">
-                    <i class="fas fa-hand-sparkles char-icon"></i>
-                    <h3>Higienis</h3>
-                    <p>Diolah dengan cara yang bersih, bebas kuman, bakteri, dan kontaminasi silang.</p>
-                </div>
-                <div class="char-card">
-                    <i class="fas fa-ban char-icon"></i>
-                    <h3>Minim Pengawet</h3>
-                    <p>Menghindari penggunaan pewarna buatan, pemanis buatan berlebih, dan pengawet kimia.</p>
-                </div>
-                <div class="char-card">
-                    <i class="fas fa-fire-alt char-icon"></i>
-                    <h3>Pengolahan Tepat</h3>
-                    <p>Dimasak dengan cara yang tidak merusak gizi, seperti merebus, mengukus, atau menumis.</p>
-                </div>
-            </div>
-        </section>
+        </div>
 
-        <section class="benefits-section fade-in">
-            <h2 class="section-title text-center">Manfaat Bagi Tubuh & Pikiran</h2>
-            <div class="benefits-container">
-                <div class="benefit-item">
-                    <div class="benefit-number">01</div>
-                    <div class="benefit-content">
-                        <h3>Meningkatkan Imunitas</h3>
-                        <p>Asupan vitamin dan mineral yang cukup membantu tubuh melawan virus dan bakteri.</p>
-                    </div>
-                </div>
-                <div class="benefit-item">
-                    <div class="benefit-number">02</div>
-                    <div class="benefit-content">
-                        <h3>Menjaga Berat Badan</h3>
-                        <p>Serat yang tinggi membuat kenyang lebih lama dan metabolisme lebih lancar.</p>
-                    </div>
-                </div>
-                <div class="benefit-item">
-                    <div class="benefit-number">03</div>
-                    <div class="benefit-content">
-                        <h3>Kesehatan Mental</h3>
-                        <p>Nutrisi seperti Omega-3 terbukti dapat memperbaiki suasana hati dan mengurangi stres.</p>
-                    </div>
-                </div>
-                <div class="benefit-item">
-                    <div class="benefit-number">04</div>
-                    <div class="benefit-content">
-                        <h3>Energi Stabil</h3>
-                        <p>Menghindari lonjakan gula darah drastis sehingga Anda tidak mudah lemas atau mengantuk.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <footer class="site-footer">
+            <p>&copy; 2025 SajiLe. Semua hak dilindungi.</p>
+            <p>
+                <a href="tentang_kami.html" class="about-we">Tentang Kami</a> | 
+                Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> |
+                Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a>
+            </p>
+            <p>
+                Dikelola oleh Tim 
+                <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</span></strong></a> 
+                (ex-MBADOKLE) Indonesia
+            </p>
+        </footer>
 
-        <section class="food-examples-section fade-in">
-            <h2 class="section-title text-center">Kelompok Makanan Sehat</h2>
-            
-            <div class="tabs-header">
-                <button class="tab-btn active" data-tab="karbo">Karbohidrat</button>
-                <button class="tab-btn" data-tab="protein">Protein</button>
-                <button class="tab-btn" data-tab="sayur">Sayur & Buah</button>
-                <button class="tab-btn" data-tab="lemak">Lemak Sehat</button>
-            </div>
-
-            <div class="tabs-content">
-                <div id="karbo" class="tab-pane active fade-in-tab">
-                    <div class="tab-flex">
-                        <img src="https://placehold.co/300x200/e67e22/fff?text=Karbohidrat" alt="Karbohidrat">
-                        <div class="tab-desc">
-                            <h3>Sumber Energi Utama</h3>
-                            <p>Pilihlah karbohidrat kompleks yang kaya serat.</p>
-                            <ul class="check-list">
-                                <li>Beras Merah / Hitam</li>
-                                <li>Oatmeal (Gandum Utuh)</li>
-                                <li>Ubi Jalar & Singkong</li>
-                                <li>Jagung & Sagu</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div id="protein" class="tab-pane fade-in-tab">
-                    <div class="tab-flex">
-                        <img src="https://placehold.co/300x200/e74c3c/fff?text=Protein" alt="Protein">
-                        <div class="tab-desc">
-                            <h3>Pembangun Sel Tubuh</h3>
-                            <p>Kombinasikan protein hewani dan nabati.</p>
-                            <ul class="check-list">
-                                <li>Dada Ayam (Tanpa Kulit)</li>
-                                <li>Ikan (Salmon, Tuna, Kembung)</li>
-                                <li>Telur</li>
-                                <li>Tempe, Tahu & Kacang-kacangan</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div id="sayur" class="tab-pane fade-in-tab">
-                    <div class="tab-flex">
-                        <img src="https://placehold.co/300x200/27ae60/fff?text=Sayur+Buah" alt="Sayur Buah">
-                        <div class="tab-desc">
-                            <h3>Sumber Vitamin & Serat</h3>
-                            <p>Makanlah beragam warna ("Eat the Rainbow").</p>
-                            <ul class="check-list">
-                                <li>Sayuran Hijau (Bayam, Brokoli)</li>
-                                <li>Wortel & Tomat</li>
-                                <li>Jeruk, Apel, Pepaya</li>
-                                <li>Berries & Pisang</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div id="lemak" class="tab-pane fade-in-tab">
-                    <div class="tab-flex">
-                        <img src="https://placehold.co/300x200/f1c40f/fff?text=Lemak+Sehat" alt="Lemak Sehat">
-                        <div class="tab-desc">
-                            <h3>Pelindung Organ & Hormon</h3>
-                            <p>Hindari lemak trans, pilih lemak tak jenuh.</p>
-                            <ul class="check-list">
-                                <li>Alpukat</li>
-                                <li>Minyak Zaitun (Olive Oil)</li>
-                                <li>Kacang Almond & Kenari</li>
-                                <li>Biji Chia & Flaxseed</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="tips-section fade-in">
-            <div class="tips-box">
-                <h2><i class="fas fa-lightbulb"></i> Tips Cerdas Memilih & Mengolah</h2>
-                <div class="tips-grid">
-                    <div class="tip-item">
-                        <h4>Belanja Cerdas</h4>
-                        <p>Baca label nutrisi. Pilih produk dengan kandungan gula, garam, dan lemak jenuh yang rendah.</p>
-                    </div>
-                    <div class="tip-item">
-                        <h4>Metode Masak</h4>
-                        <p>Kurangi menggoreng (deep-fry). Utamakan merebus, mengukus, memanggang, atau menumis dengan sedikit minyak.</p>
-                    </div>
-                    <div class="tip-item">
-                        <h4>Porsi Makan</h4>
-                        <p>Gunakan piring kecil untuk mengontrol porsi. Isi setengah piring dengan sayuran terlebih dahulu.</p>
-                    </div>
-                    <div class="tip-item">
-                        <h4>Kurangi Gula & Garam</h4>
-                        <p>Ganti penyedap rasa dengan rempah alami seperti bawang, jahe, kunyit, dan lada.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="myth-fact-section fade-in">
-            <h2 class="section-title text-center">Mitos vs Fakta</h2>
-            <div class="myth-container">
-                <div class="myth-card">
-                    <div class="myth-header red">MITOS</div>
-                    <div class="myth-body">
-                        <p>"Makanan sehat itu tidak enak dan hambar."</p>
-                    </div>
-                    <div class="fact-header green">FAKTA</div>
-                    <div class="fact-body">
-                        <p>Makanan sehat bisa sangat lezat jika diolah dengan bumbu rempah alami yang kaya rasa. Kuncinya adalah kreativitas dalam memasak.</p>
-                    </div>
-                </div>
-                <div class="myth-card">
-                    <div class="myth-header red">MITOS</div>
-                    <div class="myth-body">
-                        <p>"Karbohidrat bikin gemuk, jadi harus dihindari total."</p>
-                    </div>
-                    <div class="fact-header green">FAKTA</div>
-                    <div class="fact-body">
-                        <p>Tubuh butuh karbohidrat sebagai energi. Yang perlu dihindari adalah karbohidrat sederhana berlebih (gula), bukan karbohidrat kompleks.</p>
-                    </div>
-                </div>
-                <div class="myth-card">
-                    <div class="myth-header red">MITOS</div>
-                    <div class="myth-body">
-                        <p>"Makan malam bikin berat badan naik."</p>
-                    </div>
-                    <div class="fact-header green">FAKTA</div>
-                    <div class="fact-body">
-                        <p>Kenaikan berat badan disebabkan oleh surplus kalori harian, bukan jam makan. Namun, makan terlalu dekat waktu tidur bisa mengganggu pencernaan.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="menu-table-section fade-in">
-            <h2 class="section-title text-center">Contoh Menu Harian Sehat</h2>
-            <div class="table-responsive">
-                <table class="nutrition-table">
-                    <thead>
-                        <tr>
-                            <th>Waktu Makan</th>
-                            <th>Menu Rekomendasi</th>
-                            <th>Kandungan Utama</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Sarapan</strong></td>
-                            <td>Oatmeal dengan pisang & kacang almond</td>
-                            <td>Serat, Karbohidrat Kompleks</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Makan Siang</strong></td>
-                            <td>Nasi merah, pepes ikan, tumis kangkung, tempe bacem</td>
-                            <td>Protein, Vitamin, Mineral</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Camilan Sore</strong></td>
-                            <td>Potongan buah apel atau yogurt plain</td>
-                            <td>Vitamin, Probiotik</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Makan Malam</strong></td>
-                            <td>Sup ayam sayuran (tanpa santan), kentang rebus</td>
-                            <td>Protein Ringan, Hidrasi</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="conclusion-banner fade-in">
-            <div class="conclusion-content">
-                <h2>Hidup Sehat Dimulai dari Piringmu</h2>
-                <p>
-                    Kesehatan adalah investasi jangka panjang. Mulailah dengan perubahan kecil hari ini. 
-                    Pilih bahan segar, olah dengan benar, dan nikmati setiap gigitannya.
-                </p>
-                <p>Ingin mulai memasak menu sehat sekarang?</p>
-                <div class="conclusion-actions">
-                    <a href="resep.html" class="btn-primary-glow">Cari Resep Sehat</a>
-                    <a href="../index.html" class="btn-secondary-glow">Kembali ke Beranda</a>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <footer class="site-footer">
-        <p>&copy; 2025 SajiLe. Semua hak dilindungi.</p>
-        <p>
-            <a href="tentang_kami.html" class="about-we">Tentang Kami</a> | 
-            Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> |
-            Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a>
-        </p>
-        <p>
-            Dikelola oleh Tim 
-            <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</span></strong></a> 
-            (ex-MBADOKLE) Indonesia
-        </p>
-    </footer>
-
-    <script type="module" src="../js/definisi_makanan_bergizi.js"></script>
-</body>
+        <script type="module" src="../js/definisi_makanan_bergizi.js"></script>
+    </body>
 </html>

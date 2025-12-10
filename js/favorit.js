@@ -1,3 +1,8 @@
+// File: html/favorit.js
+
+// ⭐ IMPORT API URL DARI FILE CONFIG.JS ⭐
+import { API_BASE_URL, API_AUTH_URL } from '../js/config.js';
+
 // Blokir seleksi teks via JavaScript
 document.addEventListener('selectstart', function(e) {
     e.preventDefault(); // Mencegah aksi default seleksi
@@ -8,114 +13,143 @@ document.addEventListener('dragstart', function(e) {
     e.preventDefault();
 });
 
-document.addEventListener('DOMContentLoaded', async () => {
+// =======================================================
+// FUNGSI UTAMA: UPDATE UI PROFIL (FOTO, NAMA, EMAIL)
+// =======================================================
+
+/**
+ * Mengambil data pengguna dari localStorage dan memperbarui
+ * foto profil, username, dan email pada navbar dropdown.
+ */
+function updateUserProfileUI() {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
     
-    // =======================================================
-    // 1. LOGIKA CEK LOGIN
-    // =======================================================
-    // Ambil URL backend dari /backend_url.json (fallback ke localhost)
-    async function loadBackendBaseUrl() {
-        const DEFAULT = 'http://localhost:5000'; // fallback lokal
+    if (userDataJSON) {
         try {
-            const res = await fetch('/backend_url.json', { cache: 'no-cache' });
-            if (!res.ok) return DEFAULT;
-            const data = await res.json();
-            if (!data || !data.url) return DEFAULT;
-            // pastikan tidak ada trailing slash
-            return data.url.replace(/\/$/, '');
-        } catch (err) {
-            console.warn('Gagal memuat backend_url.json, gunakan fallback:', err);
-            return DEFAULT;
+            const userData = JSON.parse(userDataJSON);
+            
+            // 1. Update Profile Picture (ID harus 'profile-pic-img')
+            const profilePicImg = document.getElementById('profile-pic-img');
+            if (profilePicImg && userData.profilePictureUrl) {
+                profilePicImg.src = userData.profilePictureUrl;
+                
+                // Tambahkan error handler untuk berjaga-jaga jika URL eksternal gagal
+                profilePicImg.onerror = () => {
+                    console.warn("Gagal memuat foto profil eksternal. Menggunakan default HTML.");
+                    // Biarkan browser menggunakan src default yang sudah ada di HTML
+                };
+            }
+            
+            // 2. Update Username (ID atau Class)
+            const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+            if (usernameEl && userData.username) {
+                usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+                usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
+            }
+                
+            // 3. Update Email (ID atau Class)
+            const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+            if (emailEl && userData.email) {
+                emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+                emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+            }
+                
+        } catch (error) {
+            console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
         }
     }
+}
 
-    const BACKEND_BASE_URL = await loadBackendBaseUrl();
-    console.log('Menggunakan backend base URL:', BACKEND_BASE_URL);
-    const API_AUTH_URL = `${BACKEND_BASE_URL}/api/auth`; 
-    // Asumsi ada endpoint untuk Favorit, contoh:
-    const API_FAVORITES_URL = `${BACKEND_BASE_URL}/api/favorites`; 
-    // =======================================================
+// =======================================================
+// FUNGSI UTAMA: CEK STATUS LOGIN DAN TAMPILKAN UI YANG SESUAI
+// =======================================================
 
-    // --- Ambil Elemen DOM ---
+async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
+    // ✅ PERBAIKAN: Menggunakan kunci 'authToken'
+    const token = localStorage.getItem('authToken');
+    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
+    const userDataJSON = localStorage.getItem('authUser');
+    
+    // Asumsi: Token valid jika ada dan data pengguna ada
+    if (token && userDataJSON) {
+        // Logika sederhana: anggap token dan data di LS valid
+        if (navAuthLinks) navAuthLinks.style.display = 'none';
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (body) body.dataset.loggedIn = 'true';
+
+        // ⭐ Panggil fungsi untuk memperbarui UI profil ⭐
+        updateUserProfileUI();
+    } else {
+        // Pengguna belum login
+        if (navAuthLinks) navAuthLinks.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
+        if (body) body.dataset.loggedIn = 'false';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    
+    // --- Elemen DOM ---
     const body = document.body;
     const contentSection = document.getElementById('favorit-content');
     const emptyStateSection = document.getElementById('empty-state');
     
-    // Navbar dan Dark Mode
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu-container');
+    // Navbar Elements
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const navMenu = document.getElementById('nav-menu');
     const themeToggle = document.getElementById('theme-toggle');
+    const navAuthLinks = document.querySelector('.nav-auth-links');
+    const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper');
     const profilePicBtn = document.getElementById('profile-pic-btn');
     const profileDropdown = document.getElementById('profile-dropdown');
     const logoutBtn = document.getElementById('logout-btn');
 
-
-    // Default: Sembunyikan semua konten
+    // Default: Sembunyikan konten
     if (contentSection) contentSection.style.display = 'none';
     if (emptyStateSection) emptyStateSection.style.display = 'none';
 
-    // ===============================================
-    // FUNGSI UTAMA (Login, Status, Logout)
-    // ===============================================
-
-    function setLoginStatus(isLoggedIn) {
-        body.setAttribute('data-logged-in', isLoggedIn ? 'true' : 'false');
-        if (profileDropdown) {
-            profileDropdown.classList.remove('active');
+    // --- Helper function untuk penanganan respons API yang aman ---
+    async function handleApiResponseSecure(response) {
+        const responseText = await response.text();
+        if (!response.ok) {
+            try {
+                const errorData = JSON.parse(responseText);
+                return { ok: false, data: errorData };
+            } catch (e) {
+                return { ok: false, data: { msg: 'Kesalahan jaringan atau server.' } };
+            }
+        }
+        try {
+            const jsonData = JSON.parse(responseText);
+            return { ok: true, data: jsonData };
+        } catch (e) {
+            console.error("Gagal parse JSON:", responseText);
+            return { ok: false, data: { msg: 'Kesalahan format respons dari server' } };
         }
     }
-    
+
+    // --- 2. Cek Status Login Saat Halaman Dimuat ---
+    checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
+
     // --- Logika Logout ---
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (event) => {
             event.preventDefault();
-            
-            localStorage.removeItem('authToken'); 
-            setLoginStatus(false);
-            
-            // Redirect ke halaman login setelah logout
-            window.location.href = 'daftar_atau_login.html'; 
+            if (confirm("Yakin ingin keluar?")) {
+                localStorage.removeItem('authToken'); 
+                localStorage.removeItem('authUser');
+                window.location.href = 'daftar_atau_login.html'; 
+            }
         });
     }
 
-    // --- 1. Pengecekan Status Login Real ---
-    async function checkLoginStatus() {
-        const token = localStorage.getItem('authToken'); 
-        
-        if (!token) {
-            handleEmptyState(false, false); // Belum Login
-            return false;
-        }
-
-        try {
-            const response = await fetch(`${API_AUTH_URL}/verify`, { 
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (response.ok) {
-                setLoginStatus(true);
-                return true;
-            } else {
-                localStorage.removeItem('authToken');
-                handleEmptyState(false, false); // Token tidak valid
-                return false;
-            }
-
-        } catch (error) {
-            console.error('Koneksi ke Render gagal saat verifikasi:', error);
-            handleEmptyState(false, false); // Error koneksi
-            return false;
-        }
-    }
-
-    // --- 2. Logika Penanganan Tampilan (Empty States) ---
+    // --- Logika Empty States ---
     function handleEmptyState(isLoggedIn, hasFavorites) {
         if (contentSection) contentSection.style.display = 'none';
         if (emptyStateSection) emptyStateSection.style.display = 'flex';
 
         if (!isLoggedIn) {
-            // Kasus 1: Belum Login / Error Token
             emptyStateSection.innerHTML = `
                 <div class="empty-message fade-in visible">
                     <i class="fas fa-lock icon-large"></i>
@@ -125,7 +159,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
         } else if (isLoggedIn && !hasFavorites) {
-            // Kasus 2: Sudah Login, Tapi Belum Ada Favorit
             emptyStateSection.innerHTML = `
                 <div class="empty-message fade-in visible">
                     <i class="far fa-heart icon-large"></i>
@@ -135,54 +168,55 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
         } else {
-            // Kasus 3: Sudah Login dan Ada Favorit (Seharusnya ini tidak dipanggil jika konten sudah ditampilkan)
             if (emptyStateSection) emptyStateSection.style.display = 'none';
             if (contentSection) contentSection.style.display = 'block';
         }
     }
 
-    // --- 3. Logika Fetch Data Favorit ---
+    // ===============================================
+    // FUNGSI INTI: FETCH DATA FAVORIT
+    // ===============================================
     async function fetchFavorites() {
         const token = localStorage.getItem('authToken');
         if (!token) return;
 
+        // Endpoint dinamis berdasarkan API_BASE_URL
+        const API_FAVORITES_URL = `${API_BASE_URL}/favorites`; // Sesuaikan jika endpoint beda
+
         try {
-            const response = await fetch(`${API_FAVORITES_URL}`, { // Endpoint GET /api/favorites
+            const response = await fetch(API_FAVORITES_URL, { 
                 method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: { 'Authorization': `Bearer ${token}` },
+                credentials: 'include'
             });
 
-            const data = await response.json();
+            const result = await handleApiResponseSecure(response);
 
-            if (response.ok && data.favorites && data.favorites.length > 0) {
-                // Berhasil dan ADA FAVORIT
-                handleEmptyState(true, true); // Sembunyikan empty state
-                renderFavorites(data.favorites); // Panggil fungsi render
-                initContentListeners(); // Aktifkan event listener (Remove, Animation)
+            if (result.ok && result.data.favorites && result.data.favorites.length > 0) {
+                handleEmptyState(true, true); 
+                renderFavorites(result.data.favorites); 
+                initContentListeners(API_FAVORITES_URL); // Pass URL ke listener
             } else {
-                // Berhasil tapi TIDAK ADA FAVORIT (atau data kosong)
                 handleEmptyState(true, false);
             }
 
         } catch (error) {
             console.error('Gagal mengambil favorit:', error);
-            handleEmptyState(true, false); // Anggap tidak ada favorit karena error fetch
+            handleEmptyState(true, false); 
         }
     }
 
-    // --- 4. Fungsi Simulasi Rendering (PERLU DIGANTI DENGAN LOGIKA HTML ASLI ANDA) ---
     function renderFavorites(favoritesArray) {
-        // Logika ini harus diganti dengan cara Anda membuat card HTML
         const grid = document.querySelector('.recipe-grid');
         if (grid) {
             grid.innerHTML = favoritesArray.map(fav => `
                 <div class="recipe-card fade-in" data-id="${fav.id}">
-                    <img src="${fav.imageUrl}" alt="${fav.title}">
+                    <img src="${fav.imageUrl || 'https://via.placeholder.com/300'}" alt="${fav.title}">
                     <div class="card-content">
                         <h3>${fav.title}</h3>
-                        <p class="description">${fav.description}</p>
+                        <p class="description">${fav.description || 'Tidak ada deskripsi'}</p>
                         <div class="card-footer">
-                            <a href="#" class="btn-primary">Lihat Resep</a>
+                            <a href="resep_detail.html?id=${fav.id}" class="btn-primary">Lihat Resep</a>
                             <button class="btn-remove-fav">Hapus</button> 
                         </div>
                     </div>
@@ -191,14 +225,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- 5. Logika Inisialisasi Setelah Konten Dimuat ---
-    function initContentListeners() {
-        // Logika Menghapus Favorit (REAL - Memanggil API Delete)
+    function initContentListeners(apiUrl) {
+        // Logika Hapus Favorit
         const removeBtns = document.querySelectorAll('.btn-remove-fav');
         removeBtns.forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault(); 
-                
                 if (!confirm("Yakin ingin menghapus resep ini dari Favorit?")) return;
                 
                 const card = btn.closest('.recipe-card');
@@ -208,108 +240,98 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!recipeId || !token) return;
 
                 try {
-                    // ⭐ PANGGIL ENDPOINT DELETE API
-                    const response = await fetch(`${API_FAVORITES_URL}/${recipeId}`, {
+                    const response = await fetch(`${apiUrl}/${recipeId}`, {
                         method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        credentials: 'include'
                     });
 
                     if (response.ok) {
-                        // Hapus elemen dari DOM dengan transisi halus
                         card.style.opacity = 0;
                         card.style.transform = 'scale(0.8)';
-                        
                         setTimeout(() => {
                             card.remove();
-                            // Re-check jika grid kosong setelah penghapusan
-                            const grid = card.closest('.recipe-grid');
+                            const grid = document.querySelector('.recipe-grid');
                             if (grid && grid.children.length === 0) {
                                 handleEmptyState(true, false);
                             }
                         }, 300);
-                        
                     } else {
-                        alert(`Gagal menghapus favorit: ${response.statusText}`);
+                        alert(`Gagal menghapus favorit.`);
                     }
-
                 } catch (error) {
                     alert('Error koneksi saat menghapus favorit.');
                 }
             });
         });
 
-        // Scroll Animation (Fade In)
-        const observerOptions = { threshold: 0.15 };
-        const observer = new IntersectionObserver((entries, observer) => {
+        // Scroll Animation
+        const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    obs.unobserve(entry.target);
+                }
             });
-        }, observerOptions);
+        }, { threshold: 0.15 });
 
-        const fadeElements = document.querySelectorAll('.fade-in');
-        fadeElements.forEach(el => observer.observe(el));
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
 
-
     // ===============================================
-    // START UP LOGIC
+    // STARTUP LOGIC (WAITING FOR CONFIG)
     // ===============================================
-    (async () => {
-        const loggedIn = await checkLoginStatus();
+    async function initFavoritPage() {
+        console.log('⚡ Favorit Page Init. API:', API_BASE_URL);
+        const loggedIn = checkLoginState();
         if (loggedIn) {
             await fetchFavorites();
         }
-    })();
-    
-    // --- NAV BAR TOGGLE (Wajib) ---
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-    }
+        
+        // --- Dark Mode & Navbar Logic (Standard) ---
+        // (Logika Navbar dan Dark Mode Anda sudah bagus, ditempel di sini)
+        if (hamburgerBtn && navMenu) {
+            hamburgerBtn.addEventListener('click', () => {
+                hamburgerBtn.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+        
+        if (profilePicBtn && profileDropdown) {
+            profilePicBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('active');
+            });
+            document.addEventListener('click', (e) => {
+                if (!profileDropdown.contains(e.target) && !profilePicBtn.contains(e.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        }
 
-    // --- Dark Mode Toggle (Tidak Berubah) ---
-    if (themeToggle) {
-        const icon = themeToggle.querySelector('i');
-        const initTheme = () => {
-            const savedTheme = localStorage.getItem('sajile_theme') || 'light'; // Gunakan sajile_theme
+        if (themeToggle) {
+            const icon = themeToggle.querySelector('i');
+            const savedTheme = localStorage.getItem('sajile_theme') || 'light';
             body.dataset.theme = savedTheme;
             if (icon) {
                 icon.classList.toggle('fa-sun', savedTheme === 'dark');
                 icon.classList.toggle('fa-moon', savedTheme === 'light');
             }
-        };
-        initTheme();
-
-        themeToggle.addEventListener('click', () => {
-            const newTheme = body.dataset.theme === 'dark' ? 'light' : 'dark';
-            body.dataset.theme = newTheme;
-            localStorage.setItem('sajile_theme', newTheme);
-
-            if (icon) {
-                icon.classList.toggle('fa-moon');
-                icon.classList.toggle('fa-sun');
-            }
-        });
+            themeToggle.addEventListener('click', () => {
+                const newTheme = body.dataset.theme === 'dark' ? 'light' : 'dark';
+                body.dataset.theme = newTheme;
+                localStorage.setItem('sajile_theme', newTheme);
+                if (icon) {
+                    icon.classList.toggle('fa-moon');
+                    icon.classList.toggle('fa-sun');
+                }
+            });
+        }
     }
 
-    // --- 6. LOGIKA PROFILE DROPDOWN (Perbaikan Wajib) ---
-    // Logika ini sebelumnya hilang sehingga dropdown tidak bisa dibuka
-    if (profilePicBtn && profileDropdown) {
-        // Toggle saat foto diklik
-        profilePicBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Mencegah event bubbling ke window
-            profileDropdown.classList.toggle('active');
-        });
-
-        // Tutup dropdown jika klik di luar area
-        document.addEventListener('click', (e) => {
-            if (!profileDropdown.contains(e.target) && !profilePicBtn.contains(e.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        });
+    if (API_BASE_URL) {
+        initFavoritPage();
+    } else {
+        window.addEventListener('backend-url-changed', initFavoritPage);
     }
 });

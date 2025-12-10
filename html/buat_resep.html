@@ -8,6 +8,11 @@
         <link rel="stylesheet" href="../css/buat_resep.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" 
+            integrity="sha512-hvNR0F/e2J7zPPfLC9auFe3/SE0yG4aJCOd/qxew74NN7eyiSKjr7xJJMu1Jy2wf7FXITpWS1E/RY8yzuXN7VA==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer" 
+        />
     </head>
     <body data-logged-in="false">
 
@@ -47,8 +52,8 @@
                             <div class="dropdown-header">
                                 <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
                                 <div class="user-info">
-                                    <span class="username">Nama Pengguna</span>
-                                    <span class="email">user.email@mail.com</span>
+                                    <span class="username" data-text="Nama Pengguna Super Panjang">Nama Pengguna</span>
+                                    <span class="email" data-text="email.pengguna.panjang.sekali@namadomainyangsangatpanjang.com">user.email@mail.com</span>
                                 </div>
                             </div>
                             <ul class="dropdown-links">
@@ -216,6 +221,59 @@
             <p>Dikelola oleh Tim <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</strong></span></a> (ex-MBADOKLE) Indonesia</p>
         </footer>
 
+        <div id="crop-modal" class="crop-modal-overlay">
+            <div class="crop-modal-content">
+                <h2 class="modal-title"><i class="fas fa-crop-alt"></i> Sesuaikan Foto Resep Anda</h2>
+                <p class="modal-subtitle">Pilih bagian gambar yang akan digunakan sebagai kartu resep (Rekomendasi rasio: 16:9).</p>
+
+                <div class="img-container">
+                    <img id="image-to-crop" src="" alt="Gambar untuk Crop">
+                </div>
+
+                <div class="cropper-toolbar">
+                    <div class="toolbar-group">
+                        <button type="button" class="tool-btn" data-method="rotate" data-option="-90" title="Putar Kiri 90°">
+                            <i class="fas fa-undo-alt"></i>
+                        </button>
+                        <button type="button" class="tool-btn" data-method="rotate" data-option="90" title="Putar Kanan 90°">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="toolbar-group">
+                        <button type="button" class="tool-btn" data-method="scaleX" data-option="-1" title="Flip Horizontal">
+                            <i class="fas fa-arrows-alt-h"></i>
+                        </button>
+                        <button type="button" class="tool-btn" data-method="scaleY" data-option="-1" title="Flip Vertikal">
+                            <i class="fas fa-arrows-alt-v"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="toolbar-group">
+                        <button type="button" class="tool-btn" data-method="clear" title="Hapus Seleksi Crop">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button type="button" class="tool-btn" data-method="reset" title="Reset Semua Perubahan">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+
+                    <div class="toolbar-group coretan-group" title="Fitur Coretan (Coming Soon)">
+                        <button type="button" class="tool-btn disabled">
+                            <i class="fas fa-pencil-alt"></i> Coretan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cropper-footer">
+                    <button type="button" id="crop-cancel-btn" class="btn-secondary">Batal Upload</button>
+                    <button type="button" id="crop-confirm-btn" class="btn-primary">
+                        <i class="fas fa-check"></i> Simpan & Gunakan
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="custom-alert-modal" class="custom-modal-overlay">
             <div class="custom-modal-content">
                 <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
@@ -230,6 +288,11 @@
         </div>
 
         <script type="module" src="../js/authManager.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js" 
+            integrity="sha512-9KkIqdfN7ipEW6B6k+Aq20PV31bjODg4AA52W+tYtAE0jE0kMx49bjJ3FgvS56wzmyfMUHbQ4Km2b7l9+Y/+Eg==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"
+        ></script>
         <script type="module" src="../js/buat_resep.js"></script>
     </body>
 </html>

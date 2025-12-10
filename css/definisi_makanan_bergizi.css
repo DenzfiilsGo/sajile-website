@@ -494,3 +494,50 @@ body[data-logged-in="true"] .logged-out-only { display: none; }
 [data-theme="dark"] .about-we, [data-theme="dark"] .contact-we { color: #999999; }
 [data-theme="dark"] .about-we:hover, [data-theme="dark"] .contact-we:hover { color: var(--primary-color); }
 [data-theme="dark"] .footer-brand { color: #BB86FC; }
+
+/* =========================================
+   7. STANDAR WAJIB: MARQUEE TEXT PROFIL
+   ========================================= */
+
+/* Area Tampilan untuk Username dan Email */
+.user-info {
+    /* Pastikan lebar tidak lebih dari lebar dropdown - padding/margin */
+    width: 170px; /* Sesuaikan sesuai kebutuhan agar pas dengan lebar dropdown */
+    overflow: hidden; /* Sembunyikan teks yang melebihi batas */
+    display: flex; /* Gunakan flexbox untuk menata elemen dalam baris terpisah */
+    flex-direction: column;
+}
+
+/* Teks yang akan berjalan (username dan email) */
+.user-info span {
+    /* Mengubah dari inline-block menjadi block untuk memastikan keduanya di baris terpisah */
+    display: block; 
+    
+    /* Gunakan properti ini pada SPAN agar teks di dalamnya tidak pecah baris */
+    white-space: nowrap; 
+    
+    /* Tambahkan 1px margin bawah antara username dan email */
+    margin-bottom: 1px;
+}
+
+/* Teks ANImasi (INNER SPAN) */
+.user-info span::before {
+    content: attr(data-text); /* Gunakan atribut data-text untuk konten teks */
+    display: inline-block;
+    padding-left: 100%; /* Mulai teks dari luar batas kanan */
+    animation: marquee 10s linear infinite; 
+    animation-play-state: running; /* Pastikan berjalan secara default */
+}
+
+/* Hentikan animasi saat hover (opsional: agar teks mudah dibaca) */
+.user-info:hover span::before {
+    animation-play-state: paused;
+}
+
+/* Keyframes untuk animasi marquee */
+@keyframes marquee {
+    0% { transform: translate(0, 0); } /* Posisi awal: 0 (sudah didorong 100% dari kiri parent) */
+    100% { transform: translate(-100%, 0); } /* Pindah ke kiri hingga mencapai batas kiri parent */
+}
+
+/* Catatan: Karena p didorong 100% dari kiri, 0% di sini adalah titik 'mulai terlihat' di ujung kanan. */
