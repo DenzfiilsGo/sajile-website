@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Profil Pengguna - SajiLe</title>
+        <link rel="stylesheet" href="../css/profil.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    <body data-logged-in="false">
+
+        <nav class="navbar">
+            <a class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
+
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <div class="nav-menu-container" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="../index.html" class="active">Beranda</a></li>
+                    <li><a href="daftar_makanan.html">Menu</a></li>
+                    <li><a href="resep.html">Resep</a></li>
+                    <li><a href="favorit.html">Favorit</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="btn-icon">
+                        <i class="fas fa-moon"></i>
+                        <span class="mobile-only-text">Mode Gelap</span>
+                    </button>
+                    
+                    <div class="nav-auth-links logged-out-only">
+                        <a href="daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
+                    </div>
+                    
+                    <div class="profile-dropdown-wrapper logged-in-only">
+                        <div class="profile-pic" id="profile-pic-btn">
+                            <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna" onerror="this.onerror=null; this.src='https://placehold.co/40x40/3498db/fff?text=U'">
+                        </div>
+                        
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <div class="dropdown-header">
+                                <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
+                                <div class="user-info">
+                                    <span class="username" data-text="Nama Pengguna Super Panjang">Nama Pengguna</span>
+                                    <span class="email" data-text="email.pengguna.panjang.sekali@namadomainyangsangatpanjang.com">user.email@mail.com</span>
+                                </div>
+                            </div>
+                            <ul class="dropdown-links">
+                                <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
+                                <li><a href="pengaturan_akun.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
+                                <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
+                                <li class="divider-item"></li>
+                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <main class="profile-page">
+            <div class="container">
+                <div class="loading-state" id="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i> Memuat profil...
+                </div>
+                
+                <section class="profile-content" id="profile-content" style="display: none;">
+                    
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                <img id="profile-avatar-img" src="../assets/default-avatar.png" alt="Foto Profil" loading="lazy">
+                            </div>
+                            <div class="profile-info-text">
+                                <h1 id="profile-username">Nama Pengguna</h1>
+                                <p id="profile-bio" class="bio-text">Bio pengguna ini masih kosong atau tidak disediakan.</p>
+                                <button id="edit-profile-btn" class="btn-secondary" style="display: none;"><i class="fas fa-user-edit"></i> Edit Profil</button>
+                            </div>
+                        </div>
+
+                        <div class="profile-stats-grid">
+                            <div class="stat-item">
+                                <i class="fas fa-list-alt"></i>
+                                <span class="stat-value" id="stat-recipes">0</span>
+                                <span class="stat-label">Total Resep</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-heart"></i>
+                                <span class="stat-value" id="stat-likes">0</span>
+                                <span class="stat-label">Total Disukai</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span class="stat-value" id="stat-joined-date">N/A</span>
+                                <span class="stat-label">Bergabung</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-details-list">
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span id="detail-email">email@pengguna.com</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span id="detail-verified">Status Verifikasi</span>
+                            </div>
+                            </div>
+                    </div>
+
+                    <div class="user-recipes-section">
+                        <h2>Resep Publik <span id="recipes-owner-name">Pengguna</span></h2>
+                        <div class="recipe-grid" id="user-recipes-list">
+                            <div class="loading-recipes-state">
+                                <i class="fas fa-spinner fa-spin"></i> Memuat resep publik...
+                            </div>
+                        </div>
+                        
+                        <div class="load-more-container" id="load-more-container" style="text-align: center;">
+                            <button class="btn-secondary" id="load-more-btn" style="display: none;">Muat Lebih Banyak Resep</button>
+                        </div>
+                        
+                    </div>
+                </section>
+                
+                <div class="error-state" id="error-state" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p id="error-message">Profil yang Anda cari tidak ditemukan.</p>
+                </div>
+                
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
+            <p>
+                <a href="html/tentang_kami.html" class="about-we">Tentang Kami</a> | 
+                Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> |
+                Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a>
+            </p>
+            <p>
+                Dikelola oleh Tim 
+                <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</span></strong></a> 
+                (ex-<a class="footer-brand"><strong>MBADOK<span class="footer-brand-highlight">Le</span></strong></a>) Indonesia
+            </p>
+        </footer>
+
+        <script type="module" src="../js/profil.js"></script>
+    </body>
+</html>

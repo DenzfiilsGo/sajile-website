@@ -132,14 +132,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- 2. Cek Status Login Saat Halaman Dimuat ---
     checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
 
-    // --- Logika Logout ---
+    // Logika Logout
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', (event) => {
-            event.preventDefault();
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             if (confirm("Yakin ingin keluar?")) {
-                localStorage.removeItem('authToken'); 
+                localStorage.removeItem('authToken');
                 localStorage.removeItem('authUser');
-                window.location.href = 'daftar_atau_login.html'; 
+                window.location.reload();
             }
         });
     }

@@ -94,9 +94,10 @@ body {
     font-weight: 700;
     letter-spacing: 1px;
     flex-shrink: 0; 
-    color: var(--user-name-color); /* Menggunakan variabel baru */
+    color: #4B0082;
+    transition: color var(--color-transition);
 }
-.brand-highlight { color: var(--primary-color); }
+.brand-highlight { color: var(--primary-color); transition: color var(--color-transition); }
 
 /* --- Container Menu (Desktop Mode) --- */
 .nav-menu-container {
@@ -297,28 +298,27 @@ body[data-logged-in="true"] .logged-out-only {
 
 
 /* =========================================
-   3. BREAKPOINT AMAN & DROPDOWN (Sesuai standar wajib)
+   4. BREAKPOINT AMAN & DROPDOWN (Fixed)
    ========================================= */
-@media (max-width: 1024px) { 
-    /* NAV BAR MOBILE/TABLET */
+/* Saya naikkan ke 1024px agar tidak berantakan di tablet/laptop kecil */
+@media (max-width: 720px) { 
     .navbar { padding: 0 20px; }
     .hamburger { display: block; }
-    
-    .nav-links {
-        display: none; /* Sembunyikan di sini, ditangani oleh .nav-menu-container.active */
-    }
-    
+
+    /* Ubah Container jadi Dropdown Vertical */
     .nav-menu-container {
         position: absolute;
-        top: var(--nav-height); 
+        top: var(--nav-height); /* Dihitung dari variabel nav-height */
         left: 0;
         width: 100%;
         margin: 0;
         
+        /* Flex Column untuk Vertical Menu */
         flex-direction: column;
         background-color: var(--bg-color);
         padding: 30px 20px;
         
+        /* Style Dropdown */
         box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         border-bottom: 1px solid rgba(0,0,0,0.05);
         
@@ -329,9 +329,9 @@ body[data-logged-in="true"] .logged-out-only {
         
         /* TRANSISI SUPER HALUS */
         transition: opacity 0.4s ease, 
-                    transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55),
-                    visibility 0.4s ease,
-                    background-color var(--color-transition);
+                        transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                        visibility 0.4s ease,
+                        background-color var(--color-transition);
     }
 
     /* KELAS ACTIVE (Saat hamburger diklik) */
@@ -341,27 +341,17 @@ body[data-logged-in="true"] .logged-out-only {
         transform: translateY(0);
     }
 
-    /* Tampilkan nav-links di mode mobile */
-    .nav-menu-container.active .nav-links {
-        display: flex;
+    /* Reset Link Styles */
+    .nav-links {
         flex-direction: column;
         width: 100%;
         text-align: center;
         gap: 15px;
         margin-bottom: 25px;
-        list-style: none; 
     }
     .nav-links a {
         display: block; font-size: 1.2rem; padding: 10px 0;
-        position: relative;
     }
-    .nav-links a::after {
-        content: ''; position: absolute; width: 0; height: 2px;
-        bottom: 0px; left: 50%; transform: translateX(-50%); 
-        background-color: var(--primary-color);
-        transition: width 0.3s;
-    }
-    .nav-links a:hover::after, .nav-links a.active::after { width: 40%; }
     
     /* Actions di Bawah */
     .nav-actions {
@@ -370,8 +360,54 @@ body[data-logged-in="true"] .logged-out-only {
         gap: 15px;
         border-top: 1px solid var(--text-light);
         padding-top: 25px;
+        
+        /* Penting: Pastikan logged-in/out elemen juga diatur di sini */
+        display: flex; /* Override untuk memformat sebagai kolom */
+    }
+
+    .nav-auth-links {
+        width: 100%;
+        flex-direction: column; /* Tombol Masuk/Daftar jadi full-width */
+    }
+
+    .logged-out-only {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-dropdown-wrapper {
+        position: static; /* Dropdown di mobile tidak perlu absolute */
+        width: 100%;
+        order: -1; /* Pindah ke atas */
+        flex-direction: column;
+        gap: 10px;
+        /* Penting: Pastikan logged-in-only tampil sebagai flex saat login */
+        display: flex; 
+        
+        /* Dropdown Header Styling untuk Mobile */
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .profile-dropdown-wrapper .dropdown-header {
+        border-bottom: none;
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+    }
+    .profile-dropdown-wrapper .profile-pic {
+        display: none; /* Sembunyikan profile pic kecil, hanya tampilkan info */
+    }
+    .profile-dropdown-wrapper .user-info {
+        display: block;
+        text-align: left;
+        padding-left: 0;
     }
     
+    /* Tombol Theme jadi baris panjang */
     .btn-icon {
         width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
         border: 1px solid #ddd; border-radius: 10px; padding: 10px;
@@ -380,42 +416,11 @@ body[data-logged-in="true"] .logged-out-only {
     
     .btn-primary { width: 100%; text-align: center; padding: 12px; }
     
-    /* Pindah Profile ke Atas */
-    .profile-dropdown-wrapper { 
-        order: -2; 
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        margin-bottom: 20px;
-    }
-    .profile-pic { 
-        cursor: pointer; 
-    }
-    .profile-pic img { width: 80px; height: 80px; }
-    
-    /* Dropdown Profil di Mobile (Perlu JS untuk toggle) */
+    /* Hapus dropdown menu, ganti dengan link di nav-links di mobile */
     .profile-dropdown-menu {
-        position: static; /* Ubah posisi di mobile agar berada di alur dokumen */
-        width: 100%;
-        box-shadow: none;
-        border: none;
-        padding: 0;
-        margin-top: 15px;
-        background-color: transparent;
-        transform: none;
-        opacity: 1; /* Biarkan JS yang mengatur display: none/block */
-        visibility: visible;
-        transition: none;
-    }
-    .profile-dropdown-menu.show {
-        display: block;
-    }
-    .dropdown-header {
-        background-color: var(--card-bg);
-        border-radius: 10px;
+        display: none; /* Sembunyikan dropdown menu vertikal di mobile */
     }
 }
-
 
 /* =========================================
    4. STYLING KHUSUS DETAIL RESEP
@@ -438,6 +443,7 @@ body[data-logged-in="true"] .logged-out-only {
     font-size: 1.1rem;
     color: var(--text-light);
     margin-bottom: 25px;
+    transition: color var(--color-transition);
 }
 
 .recipe-image-container {
@@ -446,6 +452,7 @@ body[data-logged-in="true"] .logged-out-only {
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: box-shadow var(--color-transition);
 }
 
 .recipe-image-container img {
@@ -488,12 +495,14 @@ body[data-logged-in="true"] .logged-out-only {
     color: var(--primary-color);
     font-size: 1.5rem;
     margin-bottom: 5px;
+    transition: color var(--color-transition);
 }
 .meta-item p {
     margin: 0;
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-color);
+    transition: color var(--color-transition);
 }
 
 
@@ -521,29 +530,32 @@ body[data-logged-in="true"] .logged-out-only {
     border-radius: 25px;
     border: 2px solid var(--text-light);
     cursor: pointer;
-    transition: var(--transition);
+    transition: background var(--color-transition), color var(--color-transition), border var(--color-transition);
     font-weight: 600;
-    display: flex;
     align-items: center;
     gap: 8px;
 }
 
 .btn-save i {
     color: var(--danger-color); /* Default warna hati */
+    transition: color var(--color-transition);
 }
 
 .btn-save.active {
     background-color: var(--danger-color);
     color: white;
     border-color: var(--danger-color);
+    transition: background-color var(--color-transition), color var(--color-transition), border-color var(--color-transition);
 }
 
 .btn-save.active i {
     color: white;
+    transition: color var(--color-transition);
 }
 .btn-save:hover {
     border-color: var(--primary-color);
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: border-color var(--color-transition), box-shadow var(--color-transition);
 }
 /* Untuk tombol print */
 .btn-primary i {
@@ -575,7 +587,7 @@ body[data-logged-in="true"] .logged-out-only {
     border-radius: 15px;
     box-shadow: var(--card-shadow);
     margin-bottom: 30px;
-    transition: background-color var(--color-transition), box-shadow var(--color-transition);
+    transition: background var(--color-transition), box-shadow var(--color-transition);
 }
 
 .section-card h2 {
@@ -585,6 +597,7 @@ body[data-logged-in="true"] .logged-out-only {
     border-bottom: 2px solid var(--primary-color);
     padding-bottom: 10px;
     font-weight: 700;
+    transition: color var(--color-transition), border-bottom var(--color-transition);
 }
 
 /* Styling Daftar Bahan & Langkah */
@@ -602,6 +615,7 @@ body[data-logged-in="true"] .logged-out-only {
     align-items: center;
     font-size: 1rem;
     color: var(--text-color);
+    transition: border-bottom var(--color-transition), color var(--color-transition);
 }
 .ingredients-list li:last-child {
     border-bottom: none;
@@ -612,6 +626,7 @@ body[data-logged-in="true"] .logged-out-only {
     text-align: right;
     flex-shrink: 0;
     width: 80px;
+    transition: color var(--color-transition);
 }
 
 
@@ -620,6 +635,7 @@ body[data-logged-in="true"] .logged-out-only {
     border-bottom: 1px solid #eee;
     display: flex;
     gap: 15px;
+    transition: border-bottom var(--color-transition);
 }
 .steps-list li:last-child {
     border-bottom: none;
@@ -633,6 +649,7 @@ body[data-logged-in="true"] .logged-out-only {
     width: 30px;
     text-align: center;
     line-height: 1.2;
+    transition: color var(--color-transition);
 }
 .steps-list li p {
     margin: 0;
@@ -965,9 +982,11 @@ body[data-logged-in="true"] .logged-out-only {
     letter-spacing: 1px;
     flex-shrink: 0;
     color: #4B0082;
+    transition: color var(--color-transition);
 }
 .footer-brand-highlight {
     color: var(--primary-color);
+    transition: color var(--color-transition);
 }
 
 /* =========================================

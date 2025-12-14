@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- 2. Cek Status Login Saat Halaman Dimuat ---
     checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
 
-    // Logika Logout (Diperbaiki key localStorage)
+    // Logika Logout
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -308,6 +308,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ? `<div class="recipe-tools"><strong>Alat:</strong> ${recipe.tools.join(', ')}</div>` 
             : '';
 
+        if ()
         // Template HTML Detail
         recipeDetailContainer.innerHTML = `
             <section class="recipe-hero fade-in">
@@ -338,7 +339,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <section class="recipe-meta-bar fade-in delay-1">
                 <div class="meta-item">
                     <i class="far fa-clock"></i>
-                    <p>${recipe.cookTime}</p>
+                    <p>Total Waktu: <span>${recipe.cookTime}</span> Jam</p>
                 </div>
                 <div class="meta-item">
                     <i class="fas fa-utensils"></i>
@@ -346,7 +347,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
                 <div class="meta-item">
                     <i class="fas fa-chart-line"></i>
-                    <p>Tingkat Kesulitan: Sulit</p>
+                    <p>Tingkat Kesulitan: <span>Sulit</span></p>
                 </div>
             </section>
 

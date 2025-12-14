@@ -77,9 +77,10 @@ body {
     font-weight: 700;
     letter-spacing: 1px;
     flex-shrink: 0; 
-    color: var(--user-name-color); /* Menggunakan variabel baru */
+    color: #4B0082;
+    transition: color var(--color-transition);
 }
-.brand-highlight { color: var(--primary-color); }
+.brand-highlight { color: var(--primary-color); transition: color var(--color-transition); }
 
 /* --- Container Menu (Desktop Mode) --- */
 .nav-menu-container {
@@ -268,7 +269,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
    4. BREAKPOINT AMAN & DROPDOWN (Fixed)
    ========================================= */
 /* Saya naikkan ke 1024px agar tidak berantakan di tablet/laptop kecil */
-@media (max-width: 1024px) { 
+@media (max-width: 720px) { 
     .navbar { padding: 0 20px; }
     .hamburger { display: block; }
 
@@ -422,7 +423,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
 
 .hero-slider {
     width: 100%;
-    height: 450px;
+    height: 500px;
     position: relative;
     overflow: hidden;
     margin-bottom: 40px;
@@ -433,6 +434,30 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     background-size: cover; background-position: center; opacity: 0;
     transition: opacity 1s ease-in-out;
 }
+.slide-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Memposisikan tepat di tengah */
+    color: white; /* Warna teks */
+    text-align: center;
+    z-index: 2; /* Pastikan teks di atas gambar */
+    /* Tambahkan gaya lain sesuai keinginan */
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5); /* Latar belakang semi-transparan agar teks mudah dibaca */
+    border-radius: 8px;
+}
+
+.slide-content h1 {
+    font-size: 2.5rem;
+    margin: 0 0 10px 0;
+}
+
+.slide-content p {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
 .slide.active { opacity: 1; }
 .slider-dots {
     position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -521,8 +546,13 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
 /* Course Banner */
 .helper-text { display: block; margin-top: -10px; margin-bottom: 30px; color: var(--accent-color); font-weight: 600; }
 .course-banner {
-    background-color: var(--text-color); color: var(--bg-color); padding: 40px; text-align: center;
-    border-radius: 15px; margin-bottom: 30px; transition: background-color var(--color-transition), color var(--color-transition);
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    padding: 40px;
+    text-align: center;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    transition: background-color var(--color-transition), color var(--color-transition);
 }
 
 /* CTA Banner */
@@ -588,9 +618,11 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     letter-spacing: 1px;
     flex-shrink: 0;
     color: #4B0082;
+    transition: color var(--color-transition);
 }
 .footer-brand-highlight {
     color: var(--primary-color);
+    transition: color var(--color-transition);
 }
 
 /* =========================================
@@ -622,7 +654,12 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
 
 /* Responsive Mobile (Override konten) */
 @media (max-width: 768px) {
-    .hero-slider { height: 250px; }
+    .hero-slider { height: 175px; }
+    .slider-container { height: 100%; }
+    .slide { height: 100%; }
+    .slide-content { padding: 10px; }
+    .slide-content h1 { font-size: 1rem; }
+    .slide-content p { font-size: 0.5rem; }
     .features-grid { grid-template-columns: 1fr; }
     .split-section, .split-section.reverse { flex-direction: column; text-align: center; }
     .split-image { margin-top: 20px; } 

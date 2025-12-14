@@ -116,15 +116,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loadMoreBtnContainer = document.querySelector('.load-more-btn-container');
     const loadMoreBtn = loadMoreBtnContainer ? loadMoreBtnContainer.querySelector('.btn-primary') : null;
 
+    // --- SETUP INTERSECTION OBSERVER ---
     const observerOptions = { threshold: 0.15 }; 
 
-    const observer = new IntersectionObserver((entries, observerInstance) => { // Rename observer param to avoid confusion
+    const observer = new IntersectionObserver((entries, observerInstance) => { 
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
-            entry.target.classList.add('visible');
-            observerInstance.unobserve(entry.target); // Use the instance param
+            entry.target.classList.add('visible'); // Ini mengubah opacity jadi 1
+            observerInstance.unobserve(entry.target); 
         });
     }, observerOptions);
+
+    // ============================================================
+    // [PERBAIKAN UTAMA] - INI YANG HILANG SEBELUMNYA
+    // Mengaktifkan animasi untuk elemen statis (Header, Search, CTA)
+    // ============================================================
+    const staticFadeElements = document.querySelectorAll('.fade-in');
+    staticFadeElements.forEach(el => {
+        observer.observe(el);
+    });
+    // ============================================================
 
     // ========================================================
     // LOGIKA CEK STATUS LOGIN (NAVBAR UI) - Diperbaiki
@@ -136,19 +147,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- 2. Cek Status Login Saat Halaman Dimuat ---
     checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
 
-    // Logika Logout (Diperbaiki key localStorage)
+    // Logika Logout
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (confirm("Yakin ingin keluar?")) {
                 localStorage.removeItem('authToken');
-                localStorage.removeItem('authUser'); // ✅ Hapus user data juga
+                localStorage.removeItem('authUser');
                 window.location.reload();
             }
         });
     }
-    // ... (Logika Toggle Dropdown Profil, Scroll Animation sama) ...
-
 
     // ========================================================
     // FUNGSI UTAMA UNTUK MENGAMBIL DATA RESEP
@@ -309,23 +318,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         return `
-            <div class="recipe-card fade-in">
-                <a href="resep_detail.html?id=${recipe._id}" class="recipe-link">
-                    <div class="recipe-image-container">
-                        <!-- ✅ Gunakan variabel imageUrl yang sudah diperbaiki -->
-                        <img src="${imageUrl}" alt="${recipe.title}" loading="lazy">
-                        <span class="recipe-badge">${categoryDisplay}</span>
-                        <button class="btn-fav" aria-label="Tambahkan ke Favorit"><i class="far fa-heart"></i></button>
-                    </div>
-                    <div class="recipe-info">
-                        <h3>${recipe.title}</h3>
-                        <div class="recipe-meta">
-                            <span class="rating"><i class="fas fa-star"></i> ${recipe.avgRating.toFixed(1)}</span>
-                            <span class="time"><i class="far fa-clock"></i> ${timeTotal} menit</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
+            <a href="resep_detail.html?id=${recipe._id}" class="recipe-card fade-in">
+                <div class="card-image">
+                    <img src="${imageUrl}" alt="${recipe.title}" loading="lazy" onerror="this.src='via.placeholder.co'">
+                    <span class="category-badge">${categoryDisplay}</span>
+                    <button class="btn-fav" aria-label="Tambahkan ke Favorit"><i class="far fa-heart"></i></button>
+                </div>
+                <div class="card-info">
+                    <h3>${recipe.title}</h3>
+                    <p class="duration"><i class="far fa-clock"></i> ${timeTotal} Menit</p>
+                </div>
+            </a>
         `;
     }
 

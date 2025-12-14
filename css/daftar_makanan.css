@@ -56,14 +56,15 @@ body {
     transition: background-color var(--color-transition), box-shadow var(--color-transition);
 }
 
-.nav-brand {
+.nav-brand { 
     font-size: 2rem;
     font-weight: 700;
     letter-spacing: 1px;
-    flex-shrink: 0;
+    flex-shrink: 0; 
     color: #4B0082;
+    transition: color var(--color-transition);
 }
-.brand-highlight { color: var(--primary-color); }
+.brand-highlight { color: var(--primary-color); transition: color var(--color-transition); }
 
 /* --- Container Menu (Desktop Mode) --- */
 .nav-menu-container {
@@ -240,17 +241,17 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
 .mobile-only-text { display: none; } /* Teks penjelasan icon di desktop sembunyi */
 
 /* =========================================
-    4. BREAKPOINT AMAN & DROPDOWN VERTICAL
-    ========================================= */
+   4. BREAKPOINT AMAN & DROPDOWN (Fixed)
+   ========================================= */
 /* Saya naikkan ke 1024px agar tidak berantakan di tablet/laptop kecil */
-@media (max-width: 1024px) { 
+@media (max-width: 720px) { 
     .navbar { padding: 0 20px; }
     .hamburger { display: block; }
 
     /* Ubah Container jadi Dropdown Vertical */
     .nav-menu-container {
         position: absolute;
-        top: var(--nav-height); 
+        top: var(--nav-height); /* Dihitung dari variabel nav-height */
         left: 0;
         width: 100%;
         margin: 0;
@@ -271,9 +272,9 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
         
         /* TRANSISI SUPER HALUS */
         transition: opacity 0.4s ease, 
-                    transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
-                    visibility 0.4s ease,
-                    background-color var(--color-transition);
+                        transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                        visibility 0.4s ease,
+                        background-color var(--color-transition);
     }
 
     /* KELAS ACTIVE (Saat hamburger diklik) */
@@ -300,32 +301,69 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
         width: 100%;
         flex-direction: column;
         gap: 15px;
-        border-top: 1px solid var(--border-color); /* Ubah ke border-color */
+        border-top: 1px solid var(--text-light);
         padding-top: 25px;
+        
+        /* Penting: Pastikan logged-in/out elemen juga diatur di sini */
+        display: flex; /* Override untuk memformat sebagai kolom */
+    }
+
+    .nav-auth-links {
+        width: 100%;
+        flex-direction: column; /* Tombol Masuk/Daftar jadi full-width */
+    }
+
+    .logged-out-only {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-dropdown-wrapper {
+        position: static; /* Dropdown di mobile tidak perlu absolute */
+        width: 100%;
+        order: -1; /* Pindah ke atas */
+        flex-direction: column;
+        gap: 10px;
+        /* Penting: Pastikan logged-in-only tampil sebagai flex saat login */
+        display: flex; 
+        
+        /* Dropdown Header Styling untuk Mobile */
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .profile-dropdown-wrapper .dropdown-header {
+        border-bottom: none;
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+    }
+    .profile-dropdown-wrapper .profile-pic {
+        display: none; /* Sembunyikan profile pic kecil, hanya tampilkan info */
+    }
+    .profile-dropdown-wrapper .user-info {
+        display: block;
+        text-align: left;
+        padding-left: 0;
     }
     
     /* Tombol Theme jadi baris panjang */
     .btn-icon {
         width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
-        border: 1px solid var(--border-color); border-radius: 10px; padding: 10px;
+        border: 1px solid #ddd; border-radius: 10px; padding: 10px;
     }
     .mobile-only-text { display: inline; font-size: 1rem; font-weight: 500; }
     
     .btn-primary { width: 100%; text-align: center; padding: 12px; }
     
-    /* ⭐ Penempatan Profil di Dropdown Mobile ⭐ */
-    .profile-dropdown-wrapper { 
-        order: -1; 
-        width: 100%;
-        margin-bottom: 10px; 
-        position: static; /* Hilangkan posisi absolut agar ikut aliran flex */
+    /* Hapus dropdown menu, ganti dengan link di nav-links di mobile */
+    .profile-dropdown-menu {
+        display: none; /* Sembunyikan dropdown menu vertikal di mobile */
     }
-    .profile-pic { display: block; text-align: center; } /* Memastikan gambar di tengah */
-
-    /* Sembunyikan Dropdown Menu Profile di Mobile, hanya tampilkan foto/header */
-    .profile-dropdown-menu { display: none !important; }
 }
-
 
 /* =========================================
     5. KONTEN UTAMA (Grid, Footer, Dark Mode Overrides)
@@ -426,9 +464,11 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
     letter-spacing: 1px;
     flex-shrink: 0;
     color: #4B0082;
+    transition: color var(--color-transition);
 }
 .footer-brand-highlight {
     color: var(--primary-color);
+    transition: color var(--color-transition);
 }
 
 /* Dark Mode Overrides */

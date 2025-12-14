@@ -111,6 +111,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     const navLinks = navMenu ? navMenu.querySelectorAll('.nav-links a') : []; 
     const themeToggle = document.getElementById('theme-toggle');
 
+    const slides = document.querySelectorAll('.slide');
+    const dotsContainer = document.querySelector('.slider-dots');
+    let currentSlide = 0;
+    const intervalTime = 5000; // Ubah durasi (4000ms = 4 detik)
+
+    // ⭐ Deklarasikan variabel untuk gambar yang peka mode gelap ⭐
+    const featureImage = document.getElementById('feature-image');
+    const imgSrcLight = '../assets/beranda/fitur_favorit_light.png';
+    const imgSrcDark = '../assets/beranda/fitur_favorit_dark.png';
+
+    // 1. Fungsi untuk membuat Dots secara otomatis
+    function createDots() {
+        slides.forEach((slide, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            dot.setAttribute('data-slide-index', index);
+            // Tambahkan event listener agar dot bisa diklik
+            dot.addEventListener('click', () => {
+                moveToSlide(index);
+            });
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    // 2. Fungsi untuk menampilkan slide tertentu dan mengupdate dots
+    function moveToSlide(slideIndex) {
+        // Hapus kelas active dari slide dan dot saat ini
+        slides[currentSlide].classList.remove('active');
+        document.querySelector('.dot.active')?.classList.remove('active');
+
+        // Set slide baru
+        currentSlide = slideIndex;
+
+        // Tambahkan kelas active ke slide dan dot yang baru
+        slides[currentSlide].classList.add('active');
+        document.querySelector(`.dot[data-slide-index="${currentSlide}"]`).classList.add('active');
+    }
+
+    // 3. Fungsi untuk berpindah ke slide berikutnya secara otomatis
+    function nextSlide() {
+        const nextIndex = (currentSlide + 1) % slides.length;
+        moveToSlide(nextIndex);
+    }
+
     // --- Helper function untuk penanganan respons API yang aman ---
     async function handleApiResponseSecure(response) {
         const responseText = await response.text();
@@ -131,20 +175,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     
+    // ⭐ FUNGSI BARU: Mengganti gambar berdasarkan mode gelap/terang ⭐
+    function updateFeatureImage() {
+        if (!featureImage) return; // Hentikan jika gambar tidak ditemukan
+
+        // Asumsi: Anda memiliki kelas CSS 'dark-mode-active' di body saat mode gelap aktif
+        const isDarkModeActive = body.classList.contains('dark-theme') || body.dataset.theme === 'dark';
+
+        if (isDarkModeActive) {
+            featureImage.src = imgSrcDark;
+        } else {
+            featureImage.src = imgSrcLight;
+        }
+    }
+
+    // Buat dots saat halaman dimuat
+    createDots();
+    // Set slide dan dot pertama menjadi aktif saat inisialisasi
+    moveToSlide(0);
+    // Mulai interval otomatis
+    setInterval(nextSlide, intervalTime);
+    // ⭐ Panggil fungsi update gambar saat halaman dimuat ⭐
+    if ('dark-theme' in body.dataset || body.classList.contains('dark-theme')) updateFeatureImage();
+    
     // --- 2. Cek Status Login Saat Halaman Dimuat ---
-    checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
+    checkLoginState(navAuthLinks, profileDropdownWrapper, body);
 
     // --- 3. Logika Logout ---
+    // Logika Logout
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // Hapus semua data otentikasi
-            // ✅ PERBAIKAN: Menggunakan kunci 'authToken' dan 'authUser'
-            localStorage.removeItem('authToken'); 
-            localStorage.removeItem('authUser');
-            
-            // Redirect ke halaman login atau beranda
-            window.location.href = './index.html'; 
+            if (confirm("Yakin ingin keluar?")) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('authUser');
+                window.location.reload();
+            }
         });
     }
 
@@ -193,6 +259,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 icon.classList.toggle('fa-moon');
                 icon.classList.toggle('fa-sun');
             }
+            // Panggil fungsi update gambar setiap kali mode berubah
+            updateFeatureImage();
         });
     }
 

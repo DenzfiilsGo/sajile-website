@@ -71,10 +71,11 @@ body {
     font-size: 2rem;
     font-weight: 700;
     letter-spacing: 1px;
-    flex-shrink: 0;
+    flex-shrink: 0; 
     color: #4B0082;
+    transition: color var(--color-transition);
 }
-.brand-highlight { color: var(--primary-color); }
+.brand-highlight { color: var(--primary-color); transition: color var(--color-transition); }
 
 /* --- Container Menu (Desktop Mode) --- */
 .nav-menu-container {
@@ -271,25 +272,27 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
 }
 
 /* =========================================
-   3. BREAKPOINT AMAN & DROPDOWN (Fixed - STANDAR WAJIB)
+   4. BREAKPOINT AMAN & DROPDOWN (Fixed)
    ========================================= */
-@media (max-width: 1024px) { 
+/* Saya naikkan ke 1024px agar tidak berantakan di tablet/laptop kecil */
+@media (max-width: 720px) { 
     .navbar { padding: 0 20px; }
     .hamburger { display: block; }
-    
-    /* Sembunyikan icon profil desktop */
-    .profile-pic.desktop-only { display: none; }
 
     /* Ubah Container jadi Dropdown Vertical */
     .nav-menu-container {
         position: absolute;
-        top: var(--nav-height); 
+        top: var(--nav-height); /* Dihitung dari variabel nav-height */
         left: 0;
         width: 100%;
         margin: 0;
+        
+        /* Flex Column untuk Vertical Menu */
         flex-direction: column;
         background-color: var(--bg-color);
         padding: 30px 20px;
+        
+        /* Style Dropdown */
         box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         border-bottom: 1px solid rgba(0,0,0,0.05);
         
@@ -300,9 +303,9 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
         
         /* TRANSISI SUPER HALUS */
         transition: opacity 0.4s ease, 
-                    transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55),
-                    visibility 0.4s ease,
-                    background-color var(--color-transition);
+                        transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                        visibility 0.4s ease,
+                        background-color var(--color-transition);
     }
 
     /* KELAS ACTIVE (Saat hamburger diklik) */
@@ -323,7 +326,6 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
     .nav-links a {
         display: block; font-size: 1.2rem; padding: 10px 0;
     }
-    .nav-links a::after { bottom: 5px; } /* Sesuaikan posisi garis bawah */
     
     /* Actions di Bawah */
     .nav-actions {
@@ -332,6 +334,51 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
         gap: 15px;
         border-top: 1px solid var(--text-light);
         padding-top: 25px;
+        
+        /* Penting: Pastikan logged-in/out elemen juga diatur di sini */
+        display: flex; /* Override untuk memformat sebagai kolom */
+    }
+
+    .nav-auth-links {
+        width: 100%;
+        flex-direction: column; /* Tombol Masuk/Daftar jadi full-width */
+    }
+
+    .logged-out-only {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-dropdown-wrapper {
+        position: static; /* Dropdown di mobile tidak perlu absolute */
+        width: 100%;
+        order: -1; /* Pindah ke atas */
+        flex-direction: column;
+        gap: 10px;
+        /* Penting: Pastikan logged-in-only tampil sebagai flex saat login */
+        display: flex; 
+        
+        /* Dropdown Header Styling untuk Mobile */
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .profile-dropdown-wrapper .dropdown-header {
+        border-bottom: none;
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+    }
+    .profile-dropdown-wrapper .profile-pic {
+        display: none; /* Sembunyikan profile pic kecil, hanya tampilkan info */
+    }
+    .profile-dropdown-wrapper .user-info {
+        display: block;
+        text-align: left;
+        padding-left: 0;
     }
     
     /* Tombol Theme jadi baris panjang */
@@ -343,15 +390,11 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
     
     .btn-primary { width: 100%; text-align: center; padding: 12px; }
     
-    /* Foto profil paling atas dropdown */
-    .profile-pic.mobile-only { 
-        display: block; 
-        order: -1; 
-        margin-bottom: 10px; 
-    } 
-    .profile-pic.mobile-only img { width: 80px; height: 80px; }
+    /* Hapus dropdown menu, ganti dengan link di nav-links di mobile */
+    .profile-dropdown-menu {
+        display: none; /* Sembunyikan dropdown menu vertikal di mobile */
+    }
 }
-
 
 /* =========================================
    4. STYLING KHUSUS FAVORIT & RESEP GRID
@@ -392,7 +435,7 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
     border: 2px dashed var(--text-light);
     border-radius: 15px;
     background-color: var(--card-bg);
-    transition: all var(--color-transition);
+    transition: border var(--color-transition), background-color var(--color-transition);
 }
 
 [data-theme="dark"] .empty-message { border-color: #555; }
@@ -404,7 +447,7 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
     transition: color var(--color-transition);
 }
 .empty-message h2 { margin-bottom: 10px; font-weight: 600; }
-.empty-message p { margin-bottom: 25px; color: var(--text-light); }
+.empty-message p { margin-bottom: 25px; color: var(--text-light); transition: color var(--color-transition); }
 
 
 /* --- Recipe Grid dan Card (Similiar dengan Daftar Menu) --- */
@@ -560,9 +603,11 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
     letter-spacing: 1px;
     flex-shrink: 0;
     color: #4B0082;
+    transition: color var(--color-transition);
 }
 .footer-brand-highlight {
     color: var(--primary-color);
+    transition: color var(--color-transition);
 }
 
 /* --- Dark Mode Overrides --- */

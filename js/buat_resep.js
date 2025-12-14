@@ -85,6 +85,9 @@ async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
 
 // ⭐ IMPORT API URL DARI FILE CONFIG.JS ⭐
 import { API_BASE_URL } from '../js/config.js';
+// 🔑 Tambahkan getAuthToken dan updateAuthUI dari authManager.js
+import { getAuthToken, updateAuthUI, removeAuthToken } from './authManager.js'; // <-- BARIS INI HARUS DIPERBARUI
+const authToken = getAuthToken();
 
 const MAX_FILE_SIZE_BYTES = 400 * 1024; // 400 KB
 
@@ -705,12 +708,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                     
                     // Append Simple Fields
-                    formData.append('title', title);
-                    formData.append('description', description);
-                    formData.append('category', category);
-                    formData.append('servingSize', servingSize);
-                    formData.append('cookTime', cookTime);
-                    formData.append('prepTime', prepTime);
+                    formData.set('title', title);
+                    formData.set('description', description);
+                    formData.set('category', category); // <--- INI PERBAIKAN UTAMANYA
+                    formData.set('servingSize', servingSize);
+                    formData.set('cookTime', cookTime);
+                    formData.set('prepTime', prepTime);
 
                     
                     // --- 2. Validasi & Kumpulkan Gambar WAJIB ---

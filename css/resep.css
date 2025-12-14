@@ -78,9 +78,10 @@ body {
     font-weight: 700;
     letter-spacing: 1px;
     flex-shrink: 0; 
-    color: var(--user-name-color); /* Menggunakan variabel baru */
+    color: #4B0082;
+    transition: color var(--color-transition);
 }
-.brand-highlight { color: var(--primary-color); }
+.brand-highlight { color: var(--primary-color); transition: color var(--color-transition); }
 
 /* --- Container Menu (Desktop Mode) --- */
 .nav-menu-container {
@@ -261,19 +262,17 @@ body {
 
 
 /* =========================================
-   3. BREAKPOINT AMAN & DROPDOWN (Fixed - STANDAR WAJIB)
+   4. BREAKPOINT AMAN & DROPDOWN (Fixed)
    ========================================= */
-@media (max-width: 1024px) { 
+/* Saya naikkan ke 1024px agar tidak berantakan di tablet/laptop kecil */
+@media (max-width: 720px) { 
     .navbar { padding: 0 20px; }
     .hamburger { display: block; }
-    
-    /* Sembunyikan icon profil desktop */
-    .profile-pic.desktop-only { display: none; }
 
     /* Ubah Container jadi Dropdown Vertical */
     .nav-menu-container {
         position: absolute;
-        top: var(--nav-height);
+        top: var(--nav-height); /* Dihitung dari variabel nav-height */
         left: 0;
         width: 100%;
         margin: 0;
@@ -294,9 +293,9 @@ body {
         
         /* TRANSISI SUPER HALUS */
         transition: opacity 0.4s ease, 
-                    transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55),
-                    visibility 0.4s ease,
-                    background-color var(--color-transition);
+                        transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                        visibility 0.4s ease,
+                        background-color var(--color-transition);
     }
 
     /* KELAS ACTIVE (Saat hamburger diklik) */
@@ -317,8 +316,7 @@ body {
     .nav-links a {
         display: block; font-size: 1.2rem; padding: 10px 0;
     }
-    .nav-links a::after { bottom: 5px; }
-
+    
     /* Actions di Bawah */
     .nav-actions {
         width: 100%;
@@ -326,6 +324,51 @@ body {
         gap: 15px;
         border-top: 1px solid var(--text-light);
         padding-top: 25px;
+        
+        /* Penting: Pastikan logged-in/out elemen juga diatur di sini */
+        display: flex; /* Override untuk memformat sebagai kolom */
+    }
+
+    .nav-auth-links {
+        width: 100%;
+        flex-direction: column; /* Tombol Masuk/Daftar jadi full-width */
+    }
+
+    .logged-out-only {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-dropdown-wrapper {
+        position: static; /* Dropdown di mobile tidak perlu absolute */
+        width: 100%;
+        order: -1; /* Pindah ke atas */
+        flex-direction: column;
+        gap: 10px;
+        /* Penting: Pastikan logged-in-only tampil sebagai flex saat login */
+        display: flex; 
+        
+        /* Dropdown Header Styling untuk Mobile */
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .profile-dropdown-wrapper .dropdown-header {
+        border-bottom: none;
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+    }
+    .profile-dropdown-wrapper .profile-pic {
+        display: none; /* Sembunyikan profile pic kecil, hanya tampilkan info */
+    }
+    .profile-dropdown-wrapper .user-info {
+        display: block;
+        text-align: left;
+        padding-left: 0;
     }
     
     /* Tombol Theme jadi baris panjang */
@@ -337,46 +380,12 @@ body {
     
     .btn-primary { width: 100%; text-align: center; padding: 12px; }
     
-    /* Foto profil paling atas dropdown */
-    .profile-dropdown-wrapper { width: 100%; } /* Agar 100% di mode mobile */
-    .profile-pic { 
-        order: -1; 
-        margin-bottom: 15px; 
-        display: none; /* Sembunyikan agar tidak konflik dengan .logged-in-only di bawah */
-    } 
-    
-    /* Aturan untuk logged-in-only di mobile */
-    .logged-in-only { width: 100%; }
-    .logged-in-only .profile-pic { display: none; } /* Sembunyikan profile-pic di nav-actions mobile, pakai dropdown menu aja */
-    
+    /* Hapus dropdown menu, ganti dengan link di nav-links di mobile */
     .profile-dropdown-menu {
-        position: static; /* Ganti posisi ke static agar berada di flow normal */
-        width: 100%; /* Lebar 100% */
-        box-shadow: none;
-        border-radius: 0;
-        border: none;
-        padding: 0;
-        margin-top: 15px;
-        /* Selalu tampil di mobile saat log-in (digantikan oleh JS) */
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
+        display: none; /* Sembunyikan dropdown menu vertikal di mobile */
     }
-    
-    .profile-dropdown-menu .dropdown-header { 
-        border-bottom: 1px solid var(--card-bg);
-        padding: 0 0 15px 0;
-        margin-bottom: 15px;
-    }
-    .profile-dropdown-menu .dropdown-links { padding: 0; }
-    .profile-dropdown-menu .dropdown-links li a { padding: 12px 0; justify-content: center; } /* Link jadi tengah */
-    .profile-dropdown-menu .dropdown-links li a i { min-width: 30px; }
-    .profile-dropdown-menu .divider-item { margin: 10px 0; }
-    
-    /* Sembunyikan profile-pic dan profile-dropdown-wrapper saat log-out */
-    .logged-out-only { width: 100%; }
-    
 }
+
 /* Memperbaiki konflik: Dropdown menu mobile hanya muncul saat .logged-in-only muncul */
 @media (max-width: 1024px) {
     .profile-dropdown-menu { display: block !important; } /* Paksa tampil di mobile */
@@ -742,10 +751,12 @@ body {
     font-size: 1rem;
     letter-spacing: 1px;
     flex-shrink: 0;
-    color: var(--user-name-color);
+    color: #4B0082;
+    transition: color var(--color-transition);
 }
 .footer-brand-highlight {
     color: var(--primary-color);
+    transition: color var(--color-transition);
 }
 
 

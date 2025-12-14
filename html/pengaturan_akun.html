@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pengaturan Akun - SajiLe</title>
+        <link rel="stylesheet" href="../css/pengaturan_akun.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    <body data-logged-in="false">
+
+        <nav class="navbar">
+            <a class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
+
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <div class="nav-menu-container" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="../index.html">Beranda</a></li>
+                    <li><a href="daftar_makanan.html">Menu</a></li>
+                    <li><a href="resep.html">Resep</a></li>
+                    <li><a href="favorit.html">Favorit</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="btn-icon">
+                        <i class="fas fa-moon"></i>
+                        <span class="mobile-only-text">Mode Gelap</span>
+                    </button>
+                    
+                    <div class="nav-auth-links logged-out-only">
+                        <a href="daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
+                    </div>
+                    
+                    <div class="profile-dropdown-wrapper logged-in-only">
+                        <div class="profile-pic" id="profile-pic-btn">
+                            <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna" onerror="this.onerror=null; this.src='https://placehold.co/40x40/3498db/fff?text=U'">
+                        </div>
+                        
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <div class="dropdown-header">
+                                <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
+                                <div class="user-info">
+                                    <span class="username" data-text="Nama Pengguna Super Panjang">Nama Pengguna</span>
+                                    <span class="email" data-text="email.pengguna.panjang.sekali@namadomainyangsangatpanjang.com">user.email@mail.com</span>
+                                </div>
+                            </div>
+                            <ul class="dropdown-links">
+                                <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
+                                <li><a href="pengaturan_akun.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
+                                <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
+                                <li class="divider-item"></li>
+                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <main class="settings-page">
+            <div class="container">
+                <h1><i class="fas fa-cog"></i> Pengaturan Akun</h1>
+                <p class="subtitle">Kelola informasi pribadi, kata sandi, dan preferensi akun SajiLe Anda.</p>
+
+                <div class="settings-layout">
+                    <nav class="settings-nav">
+                        <a href="#profil" class="nav-item active" data-tab="profil"><i class="fas fa-user-edit"></i> Profil Dasar</a>
+                        <a href="#sandi" class="nav-item" data-tab="sandi"><i class="fas fa-lock"></i> Kata Sandi</a>
+                        <a href="#verifikasi" class="nav-item" data-tab="verifikasi"><i class="fas fa-envelope-open-text"></i> Email & Verifikasi</a>
+                        <a href="#preferensi" class="nav-item" data-tab="preferensi"><i class="fas fa-palette"></i> Preferensi Tampilan</a>
+                    </nav>
+
+                    <div class="settings-content">
+                        
+                        <div class="loading-state" id="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i> Memuat data akun...
+                        </div>
+                        
+                        <section id="tab-profil" class="settings-tab active">
+                            <h2>Informasi Profil Dasar</h2>
+                            <form id="profile-form">
+                                <div class="form-group profile-avatar-group">
+                                    <label>Foto Profil</label>
+                                    <div class="avatar-edit-wrapper">
+                                        <img id="current-avatar" src="../assets/default-avatar.png" alt="Avatar Pengguna" class="profile-avatar-large">
+                                        <input type="file" id="avatar-upload" name="avatar" accept="image/*" class="file-input-hidden">
+                                        <div class="btn-avatar-section">
+                                            <label for="avatar-upload" class="change-avatar-btn btn-small"><i class="fas fa-camera"></i> Ubah Foto</label>
+                                            <button type="button" id="delete-avatar-btn" class="btn-danger-outline btn-small"><i class="fas fa-trash"></i> Hapus</button>
+                                        </div>
+                                    </div>
+                                    <small class="form-text-info">Gunakan foto berukuran persegi. Maksimum 5MB.</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="username">Nama Pengguna (Username)</label>
+                                    <input type="text" id="username" name="username" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bio">Bio Singkat</label>
+                                    <textarea id="bio" name="bio" rows="3" maxlength="150" placeholder="Jelaskan diri Anda secara singkat (Maks. 150 karakter)."></textarea>
+                                </div>
+                                
+                                <button type="submit" id="profile-submit-btn" class="save-change-btn"><i class="fas fa-save"></i> Simpan Perubahan Profil</button>
+                                <div class="form-message success" id="profile-success-msg" style="display:none;"></div>
+                                <div class="form-message error" id="profile-error-msg" style="display:none;"></div>
+                            </form>
+                        </section>
+
+                        <section id="tab-sandi" class="settings-tab" style="display: none;">
+                            <h2>Ubah Kata Sandi</h2>
+                            <form id="password-form">
+                                <div class="form-group">
+                                    <label for="current-password">Kata Sandi Saat Ini</label>
+                                    <input type="password" id="current-password" name="currentPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-password">Kata Sandi Baru</label>
+                                    <input type="password" id="new-password" name="newPassword" required minlength="6">
+                                    <small class="form-text-info">Minimal 6 karakter.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirm-password">Konfirmasi Kata Sandi Baru</label>
+                                    <input type="password" id="confirm-password" name="confirmPassword" required minlength="6">
+                                </div>
+                                
+                                <button type="submit" id="password-submit-btn" class="btn-primary"><i class="fas fa-key"></i> Ubah Kata Sandi</button>
+                                <div class="form-message success" id="password-success-msg" style="display:none;"></div>
+                                <div class="form-message error" id="password-error-msg" style="display:none;"></div>
+                            </form>
+                        </section>
+
+                        <section id="tab-verifikasi" class="settings-tab" style="display: none;">
+                            <h2>Pengaturan Email & Status Verifikasi</h2>
+                            
+                            <div class="verification-status-box" id="verification-status-box">
+                                <p class="email-display"><i class="fas fa-envelope"></i> Email Anda: <span id="current-email">loading...</span></p>
+                                <p class="status-badge-wrapper">Status Verifikasi: <span id="verification-badge" class="badge">N/A</span></p>
+                                
+                                <div id="resend-verification-area" style="margin-top: 15px;">
+                                    <button type="button" id="resend-verification-btn" class="btn-secondary"><i class="fas fa-paper-plane"></i> Kirim Ulang Link Verifikasi</button>
+                                    <div class="form-message success" id="resend-success-msg" style="display:none;"></div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin-top: 30px;">Ubah Alamat Email</h3>
+                            <form id="email-form">
+                                <div class="form-group">
+                                    <label for="new-email">Alamat Email Baru</label>
+                                    <input type="email" id="new-email" name="newEmail" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email-password">Kata Sandi Anda Saat Ini</label>
+                                    <input type="password" id="email-password" name="password" required>
+                                    <small class="form-text-info">Wajib untuk mengonfirmasi perubahan email.</small>
+                                </div>
+                                
+                                <button type="submit" id="email-submit-btn" class="btn-primary"><i class="fas fa-exchange-alt"></i> Ubah Email</button>
+                                <div class="form-message success" id="email-success-msg" style="display:none;"></div>
+                                <div class="form-message error" id="email-error-msg" style="display:none;"></div>
+                            </form>
+                        </section>
+                        
+                        <section id="tab-preferensi" class="settings-tab" style="display: none;">
+                            <h2>Preferensi Tampilan & Tema</h2>
+                            
+                            <div class="preference-item">
+                                <i class="fas fa-palette"></i>
+                                <div class="item-details">
+                                    <h3>Mode Tampilan</h3>
+                                    <p class="description">Pilih mode tampilan terang atau gelap.</p>
+                                </div>
+                                <div class="switch-control">
+                                    <label class="switch">
+                                        <input type="checkbox" id="theme-switch">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="button" id="save-preference-btn" class="btn-primary" style="margin-top: 20px;"><i class="fas fa-save"></i> Simpan Preferensi</button>
+                            <div class="form-message success" id="preference-success-msg" style="display:none;">Perubahan Preferensi telah disimpan.</div>
+                        </section>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
+            <p>
+                <a href="html/tentang_kami.html" class="about-we">Tentang Kami</a> | 
+                Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> |
+                Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a>
+            </p>
+            <p>
+                Dikelola oleh Tim 
+                <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</span></strong></a> 
+                (ex-<a class="footer-brand"><strong>MBADOK<span class="footer-brand-highlight">Le</span></strong></a>) Indonesia
+            </p>
+        </footer>
+
+        <script type="module" src="../js/pengaturan_akun.js"></script>
+    </body>
+</html>

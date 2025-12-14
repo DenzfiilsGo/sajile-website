@@ -206,13 +206,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     // === 3. Logika Logout ===
+    // Logika Logout
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            localStorage.removeItem('authToken'); 
-            localStorage.removeItem('authUser'); // ✅ Pastikan menghapus key yang benar
-            setLoginStatus(false);
-            window.location.href = '../html/daftar_atau_login.html'; 
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm("Yakin ingin keluar?")) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('authUser');
+                window.location.reload();
+            }
         });
     }
 

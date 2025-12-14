@@ -131,7 +131,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             e.preventDefault();
             if (confirm("Yakin ingin keluar?")) {
                 localStorage.removeItem('authToken');
-                window.location.reload(); // Refresh untuk update UI
+                localStorage.removeItem('authUser');
+                window.location.reload();
             }
         });
     }

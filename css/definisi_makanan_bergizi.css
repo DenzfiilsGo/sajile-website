@@ -69,9 +69,10 @@ body {
     font-weight: 700;
     letter-spacing: 1px;
     flex-shrink: 0; 
-    color: var(--user-name-color); /* Menggunakan variabel baru */
+    color: #4B0082;
+    transition: color var(--color-transition);
 }
-.brand-highlight { color: var(--primary-color); }
+.brand-highlight { color: var(--primary-color); transition: color var(--color-transition); }
 
 /* --- Container Menu (Desktop Mode) --- */
 .nav-menu-container {
@@ -255,21 +256,129 @@ body[data-logged-in="true"] .logged-out-only { display: none; }
 
 .mobile-only-text { display: none; } /* Teks penjelasan icon di desktop sembunyi */
 
-@media (max-width: 1024px) {
+/* =========================================
+   4. BREAKPOINT AMAN & DROPDOWN (Fixed)
+   ========================================= */
+/* Saya naikkan ke 1024px agar tidak berantakan di tablet/laptop kecil */
+@media (max-width: 720px) { 
     .navbar { padding: 0 20px; }
     .hamburger { display: block; }
+
+    /* Ubah Container jadi Dropdown Vertical */
     .nav-menu-container {
-        position: absolute; top: var(--nav-height); left: 0; width: 100%; flex-direction: column;
-        background-color: var(--bg-color); padding: 30px 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        opacity: 0; visibility: hidden; transform: translateY(-20px); transition: all 0.4s ease;
+        position: absolute;
+        top: var(--nav-height); /* Dihitung dari variabel nav-height */
+        left: 0;
+        width: 100%;
+        margin: 0;
+        
+        /* Flex Column untuk Vertical Menu */
+        flex-direction: column;
+        background-color: var(--bg-color);
+        padding: 30px 20px;
+        
+        /* Style Dropdown */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        
+        /* STATE AWAL: Hidden & Slide Up */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        
+        /* TRANSISI SUPER HALUS */
+        transition: opacity 0.4s ease, 
+                        transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                        visibility 0.4s ease,
+                        background-color var(--color-transition);
     }
-    .nav-menu-container.active { opacity: 1; visibility: visible; transform: translateY(0); }
-    .nav-links { flex-direction: column; width: 100%; text-align: center; gap: 15px; margin-bottom: 20px; }
-    .nav-actions { width: 100%; flex-direction: column; gap: 15px; display: flex; }
-    .nav-auth-links, .logged-out-only { width: 100%; flex-direction: column; }
-    .profile-dropdown-wrapper { width: 100%; display: flex; flex-direction: column; order: -1; }
-    .profile-pic { display: none; } 
-    .profile-dropdown-menu { display: none; } 
+
+    /* KELAS ACTIVE (Saat hamburger diklik) */
+    .nav-menu-container.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Reset Link Styles */
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .nav-links a {
+        display: block; font-size: 1.2rem; padding: 10px 0;
+    }
+    
+    /* Actions di Bawah */
+    .nav-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+        border-top: 1px solid var(--text-light);
+        padding-top: 25px;
+        
+        /* Penting: Pastikan logged-in/out elemen juga diatur di sini */
+        display: flex; /* Override untuk memformat sebagai kolom */
+    }
+
+    .nav-auth-links {
+        width: 100%;
+        flex-direction: column; /* Tombol Masuk/Daftar jadi full-width */
+    }
+
+    .logged-out-only {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-dropdown-wrapper {
+        position: static; /* Dropdown di mobile tidak perlu absolute */
+        width: 100%;
+        order: -1; /* Pindah ke atas */
+        flex-direction: column;
+        gap: 10px;
+        /* Penting: Pastikan logged-in-only tampil sebagai flex saat login */
+        display: flex; 
+        
+        /* Dropdown Header Styling untuk Mobile */
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .profile-dropdown-wrapper .dropdown-header {
+        border-bottom: none;
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+    }
+    .profile-dropdown-wrapper .profile-pic {
+        display: none; /* Sembunyikan profile pic kecil, hanya tampilkan info */
+    }
+    .profile-dropdown-wrapper .user-info {
+        display: block;
+        text-align: left;
+        padding-left: 0;
+    }
+    
+    /* Tombol Theme jadi baris panjang */
+    .btn-icon {
+        width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
+        border: 1px solid #ddd; border-radius: 10px; padding: 10px;
+    }
+    .mobile-only-text { display: inline; font-size: 1rem; font-weight: 500; }
+    
+    .btn-primary { width: 100%; text-align: center; padding: 12px; }
+    
+    /* Hapus dropdown menu, ganti dengan link di nav-links di mobile */
+    .profile-dropdown-menu {
+        display: none; /* Sembunyikan dropdown menu vertikal di mobile */
+    }
 }
 
 /* =========================================
@@ -452,9 +561,11 @@ body[data-logged-in="true"] .logged-out-only { display: none; }
     letter-spacing: 1px;
     flex-shrink: 0;
     color: #4B0082;
+    transition: color var(--color-transition);
 }
 .footer-brand-highlight {
     color: var(--primary-color);
+    transition: color var(--color-transition);
 }
 
 /* Responsive Adjustments */
@@ -463,12 +574,13 @@ body[data-logged-in="true"] .logged-out-only { display: none; }
     .split-section { flex-direction: column; }
     .characteristics-grid { grid-template-columns: 1fr; }
     .benefits-container { grid-template-columns: 1fr; }
+    .tab-btn {  width: 100%; text-align: center; }
     .tab-flex { flex-direction: column; }
     .tab-flex img { width: 100%; height: auto; }
     .tips-grid { grid-template-columns: 1fr; }
     .myth-card { grid-template-columns: 80px 1fr; } 
     .myth-header, .fact-header { font-size: 0.8rem; padding: 10px; }
-    .nutrition-table { font-size: 0.9rem; }
+    .nutrition-table { font-size: 0.75rem; }
 }
 
 /* Animations */

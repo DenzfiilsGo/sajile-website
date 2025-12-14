@@ -13,16 +13,22 @@
     --nav-height: 70px;
     --transition: all 0.3s ease; 
     --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
-    --accent-color: #3498db; 
+    --accent-color: #3498db; /* Biru untuk badge kategori */
+    --danger-color: #e74c3c; /* Merah untuk Logout */
+    --user-name-color: #4B0082; /* Warna Nama Pengguna */
+    --dropdown-bg: #ffffff; /* Tambahan untuk dropdown */
+    --border-color: #eeeeee; /* Tambahan untuk batas */
 }
 
 /* Dark Mode Variables */
 [data-theme="dark"] {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --text-light: #aaaaaa;
+    --bg-color: #121212; 
+    --text-color: #e0e0e0; 
+    --text-light: #aaaaaa; 
     --card-bg: #1e1e1e;
     --card-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+    --dropdown-bg: #1e1e1e; /* Dark mode dropdown */
+    --border-color: #333333; /* Dark mode batas */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -74,9 +80,10 @@ body {
     font-weight: 700;
     letter-spacing: 1px;
     flex-shrink: 0; 
-    color: var(--user-name-color); /* Menggunakan variabel baru */
+    color: #4B0082;
+    transition: color var(--color-transition);
 }
-.brand-highlight { color: var(--primary-color); }
+.brand-highlight { color: var(--primary-color); transition: color var(--color-transition); }
 
 /* --- Container Menu (Desktop Mode) --- */
 .nav-menu-container {
@@ -255,19 +262,17 @@ body {
 .mobile-only-text { display: none; } /* Teks penjelasan icon di desktop sembunyi */
 
 /* =========================================
-   3. BREAKPOINT AMAN & DROPDOWN (Fixed - STANDAR WAJIB)
+   4. BREAKPOINT AMAN & DROPDOWN (Fixed)
    ========================================= */
-@media (max-width: 1024px) { 
+/* Saya naikkan ke 1024px agar tidak berantakan di tablet/laptop kecil */
+@media (max-width: 720px) { 
     .navbar { padding: 0 20px; }
     .hamburger { display: block; }
-    
-    /* Sembunyikan icon profil desktop */
-    .profile-pic.desktop-only { display: none; }
 
     /* Ubah Container jadi Dropdown Vertical */
     .nav-menu-container {
         position: absolute;
-        top: var(--nav-height); /* Menggunakan variabel nav-height */
+        top: var(--nav-height); /* Dihitung dari variabel nav-height */
         left: 0;
         width: 100%;
         margin: 0;
@@ -288,9 +293,9 @@ body {
         
         /* TRANSISI SUPER HALUS */
         transition: opacity 0.4s ease, 
-                    transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
-                    visibility 0.4s ease,
-                    background-color var(--color-transition);
+                        transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                        visibility 0.4s ease,
+                        background-color var(--color-transition);
     }
 
     /* KELAS ACTIVE (Saat hamburger diklik) */
@@ -311,8 +316,7 @@ body {
     .nav-links a {
         display: block; font-size: 1.2rem; padding: 10px 0;
     }
-    .nav-links a::after { bottom: 5px; } /* Sesuaikan posisi garis bawah */
-
+    
     /* Actions di Bawah */
     .nav-actions {
         width: 100%;
@@ -320,6 +324,51 @@ body {
         gap: 15px;
         border-top: 1px solid var(--text-light);
         padding-top: 25px;
+        
+        /* Penting: Pastikan logged-in/out elemen juga diatur di sini */
+        display: flex; /* Override untuk memformat sebagai kolom */
+    }
+
+    .nav-auth-links {
+        width: 100%;
+        flex-direction: column; /* Tombol Masuk/Daftar jadi full-width */
+    }
+
+    .logged-out-only {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-dropdown-wrapper {
+        position: static; /* Dropdown di mobile tidak perlu absolute */
+        width: 100%;
+        order: -1; /* Pindah ke atas */
+        flex-direction: column;
+        gap: 10px;
+        /* Penting: Pastikan logged-in-only tampil sebagai flex saat login */
+        display: flex; 
+        
+        /* Dropdown Header Styling untuk Mobile */
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .profile-dropdown-wrapper .dropdown-header {
+        border-bottom: none;
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+    }
+    .profile-dropdown-wrapper .profile-pic {
+        display: none; /* Sembunyikan profile pic kecil, hanya tampilkan info */
+    }
+    .profile-dropdown-wrapper .user-info {
+        display: block;
+        text-align: left;
+        padding-left: 0;
     }
     
     /* Tombol Theme jadi baris panjang */
@@ -331,17 +380,11 @@ body {
     
     .btn-primary { width: 100%; text-align: center; padding: 12px; }
     
-    /* Foto profil paling atas dropdown */
-    .profile-pic.mobile-only { 
-        display: block; 
-        order: -1; 
-        margin-bottom: 10px; 
-    } 
-    .profile-pic.mobile-only img { width: 80px; height: 80px; }
-    /* Tambahan: Pastikan profil desktop disembunyikan */
-    .profile-pic { order: initial; margin-bottom: initial; }
+    /* Hapus dropdown menu, ganti dengan link di nav-links di mobile */
+    .profile-dropdown-menu {
+        display: none; /* Sembunyikan dropdown menu vertikal di mobile */
+    }
 }
-
 
 /* =========================================
    4. FOOTER STYLING (STANDAR WAJIB)
@@ -408,16 +451,22 @@ body {
 .footer-section ul li a {
     color: var(--text-color);
     text-decoration: none;
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
     font-size: 0.9rem;
     display: block;
-    margin-bottom: 8px;
-    transition: color var(--transition);
+    margin-bottom: 10px;
+    transition: color var(--color-transition);
 }
 
-.footer-section ul li a:hover {
-    color: var(--primary-color);
-    transform: translateX(3px); 
+.footer-section ul li a::after {
+    content: ''; position: absolute; width: 0; height: 1px;
+    bottom: -1px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
 }
+.footer-section ul li a:hover::after, .footer-section ul li a.active::after { width: 100%; }
+.footer-section ul li a:hover, .footer-section ul li a.active { color: var(--primary-color); }
 
 /* Social Media Icons */
 .social-icons a {
@@ -443,13 +492,39 @@ body {
 .social-icons a.fa-instagram { background-color: #e4405f; }
 .social-icons a.fa-pinterest-p { background-color: #bd081c; }
 
-.contact-we {
-    color: var(--text-light);
+.footer-navigation { 
     text-decoration: none;
+    color: var(--text-light);
     font-weight: 600;
-    transition: color var(--transition);
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
 }
-.contact-we:hover { color: var(--primary-color); }
+
+.footer-navigation::after {
+    content: ''; position: absolute; width: 0; height: 1px;
+    bottom: -1px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.footer-navigation:hover::after, .footer-navigation.active::after { width: 100%; }
+.footer-navigation:hover, .footer-navigation.active { color: var(--primary-color); }
+
+.contact-we { 
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.contact-we::after {
+    content: ''; position: absolute; width: 0; height: 1px;
+    bottom: -1px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.contact-we:hover::after, .contact-we.active::after { width: 100%; }
+.contact-we:hover, .contact-we.active { color: var(--primary-color); }
 
 .footer-bottom {
     text-align: center;
@@ -473,8 +548,9 @@ body {
 
 /* About Header */
 .about-header {
+    height: 500px;
     text-align: center;
-    padding: 80px 20px;
+    padding: 200px;
     background-color: var(--card-bg);
     margin-bottom: 40px;
     transition: transform 0.3s ease, background-color var(--transition), box-shadow var(--transition);
@@ -483,14 +559,14 @@ body {
 
 .header-content {
     background-color: var(--card-bg);
-    transition: background-color var(--color-transition);
+    transition: transform 0.3s ease, background-color var(--transition), box-shadow var(--transition);
 }
 
 .header-content h1 {
     font-size: 3rem; 
     color: var(--primary-dark); 
     margin-bottom: 10px;
-    transition: transform 0.3s ease, color var(--color-transition);
+    transition: transform 0.3s ease, background-color var(--transition), box-shadow var(--transition);
 }
 .banner-brand {
     font-size: 3rem;
@@ -501,13 +577,14 @@ body {
 }
 .banner-brand-highlight { color: var(--primary-color); }
 [data-theme="dark"] .header-content h1 {
-    color: var(--primary-color); 
+    color: var(--primary-color);
+    transition: transform 0.3s ease, background-color var(--transition), box-shadow var(--transition);
 }
 
 .header-content p {
     font-size: 1.2rem; 
     color: var(--text-light);
-    transition: transform 0.3s ease, color var(--color-transition);
+    transition: transform 0.3s ease, background-color var(--transition), box-shadow var(--transition);
 }
 
 /* Layout Umum Konten */
@@ -625,6 +702,7 @@ body {
 }
 
 @media (max-width: 768px) {
+    .about-header { height: 400px; padding: 100px 50px; }
     .features-grid { grid-template-columns: 1fr; } 
     .team-grid { grid-template-columns: repeat(2, 1fr); } 
     .header-content h1 { font-size: 2rem; }
@@ -658,31 +736,18 @@ body {
 [data-theme="dark"] .navbar { background-color: #1a1a1a; box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
 [data-theme="dark"] .nav-brand { color: #BB86FC; }
 [data-theme="dark"] .nav-links a { color: #cccccc; }
-[data-theme="dark"] .nav-links a:hover,
+[data-theme="dark"] .nav-links a:hover, 
 [data-theme="dark"] .nav-links a.active { color: var(--primary-color); }
 [data-theme="dark"] .btn-icon { color: #e0e0e0; }
 [data-theme="dark"] .btn-icon:hover { background-color: rgba(255, 255, 255, 0.05); color: #FFE87C; }
 [data-theme="dark"] .bar { background-color: #e0e0e0; }
-
-/* Footer Dark Mode */
-[data-theme="dark"] .site-footer { 
-    background-color: #1a1a1a; 
-    color: #bbb; 
-    border-top-color: var(--primary-dark); 
-}
-[data-theme="dark"] .footer-section h4 {
-    color: var(--primary-color);
-}
-[data-theme="dark"] .footer-section ul li a {
-    color: #bbb;
-}
-[data-theme="dark"] .contact-we { color: #999999; }
-[data-theme="dark"] .contact-we:hover { color: var(--primary-color); }
-[data-theme="dark"] .footer-bottom {
-    border-top-color: #333;
-    color: #bbb;
-    transition: border-top-color var(--color-transition);
-}
+[data-theme="dark"] .profile-pic img { border-color: var(--primary-color); }
+[data-theme="dark"] .profile-dropdown-menu { background-color: var(--dropdown-bg); box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .divider-item { background-color: #333333; }
+[data-theme="dark"] .site-footer { background-color: #1a1a1a; color: #bbb; border-top-color: var(--primary-dark); }
+[data-theme="dark"] .about-we, [data-theme="dark"] .contact-we { color: #999999; }
+[data-theme="dark"] .about-we:hover, [data-theme="dark"] .contact-we:hover { color: var(--primary-color); }
+[data-theme="dark"] .footer-brand { color: #BB86FC; }
 
 /* =========================================
    8. STANDAR WAJIB: MARQUEE TEXT PROFIL

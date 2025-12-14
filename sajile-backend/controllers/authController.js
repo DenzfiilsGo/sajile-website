@@ -24,63 +24,100 @@ const getGravatarUrl = (email) => {
     return `https://www.gravatar.com/avatar/${hash}?d=mp&s=200`;
 };
 
-// Fungsi untuk proses Registrasi Pengguna
+// File: saji-backend/controllers/authController.js (Update Bagian Register)
+
 exports.register = async (req, res) => {
     const { username, email, password } = req.body;
+    let userCreated = null; // Penampung user sementara
 
     try {
+        // 1. Cek Duplikat
         let user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({ msg: 'Pengguna dengan email ini sudah terdaftar.' });
         }
 
+        // 2. Persiapan Data
         const verificationToken = crypto.randomBytes(32).toString('hex');
-        const verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // Kadaluarsa 24 jam
+        const verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000;
         const profilePictureUrl = getGravatarUrl(email);
 
-        user = new User({
+        userCreated = new User({
             username,
             email,
             password,
-            profilePictureUrl, // Simpan URL Gravatar
-            isVerified: false, 
-            verificationToken, 
-            verificationTokenExpires, 
+            profilePictureUrl,
+            isVerified: false,
+            verificationToken,
+            verificationTokenExpires,
         });
 
-        const salt = await bcrypt.genSalt(10); 
-        user.password = await bcrypt.hash(password, salt);
-        await user.save();
+        // 3. Hash Password
+        const salt = await bcrypt.genSalt(10);
+        userCreated.password = await bcrypt.hash(password, salt);
+        
+        // 4. SIMPAN KE DB
+        await userCreated.save();
 
+        // 5. Generate Link
         const publicURL = getPublicBackendURL();
         const verificationLink = `${publicURL}/api/auth/verify/${verificationToken}`;
+        
+        console.log(`[DEBUG] Mencoba kirim email ke: ${email}`);
 
-        // ===================================================
-        // === DEBUGGING LOG BARU: CEK NILAI LINK SEBELUM DIKIRIM ===
-        // Log ini akan muncul di konsol CMD Anda.
-        console.log(`[DEBUG] Link Verifikasi yang Dibuat untuk ${email}: ${verificationLink}`);
-        // ===================================================
-
-        // 2. Kirim email
-        // PENTING: Jika link di email masih NULL, masalah ada di file utils/emailSender.js
+        // 6. Kirim Email
         const emailSent = await sendVerificationEmail(email, verificationLink);
 
-        if (emailSent) {
-            return res.status(201).json({
-                msg: 'Registrasi berhasil! Silakan cek email Anda untuk verifikasi akun.',
-                user: { id: user._id, username: user.username, email: user.email, isVerified: user.isVerified },
-            });
-        } else {
-            await User.deleteOne({ _id: user._id }); 
-            return res.status(500).json({ msg: 'Gagal mengirim email verifikasi.' });
+        if (!emailSent) {
+            // ⚠️ KRUSIAL: JIKA EMAIL GAGAL, HAPUS USER DARI DB!
+            console.error("[REGISTER] Email gagal dikirim. Menghapus user...");
+            await User.deleteOne({ _id: userCreated._id });
+            return res.status(500).json({ msg: 'Gagal mengirim email verifikasi. Silakan coba sesaat lagi.' });
         }
 
+        // 7. Sukses
+        return res.status(201).json({
+            msg: 'Registrasi berhasil! Silakan cek email Anda.',
+            user: { id: userCreated._id, email: userCreated.email }
+        });
+
     } catch (err) {
-        console.error(err.message);
-        if (err.name === 'ValidationError') {
-            return res.status(400).json({ msg: err.message });
+        console.error("❌ Register Error (Catch Block):", err.message);
+        
+        // ROLLBACK JIKA ERROR TAK TERDUGA
+        if (userCreated && userCreated._id) {
+            try {
+                await User.deleteOne({ _id: userCreated._id });
+                console.log("ℹ️ Rollback: User dihapus karena error sistem.");
+            } catch (e) { console.error("Gagal rollback:", e.message); }
         }
-        res.status(500).send('Server Error');
+
+        // ⭐ PERBAIKAN KRUSIAL: TANGANI MONGODB DUPLICATE KEY (E11000)
+        if (err.code === 11000) {
+             // Kode 409 Conflict (atau 400 Bad Request) lebih akurat untuk duplikat
+             const key = Object.keys(err.keyValue)[0]; // Mendapat 'username' atau 'email'
+             const value = err.keyValue[key];
+             let msg = `Registrasi gagal: ${key} '${value}' sudah digunakan.`;
+
+             // Jika terjadi duplikat pada username, kirim pesan spesifik
+             if (key === 'username') {
+                 msg = `Nama pengguna '${value}' sudah digunakan.`;
+             } else if (key === 'email') {
+                 msg = `Email '${value}' sudah terdaftar.`;
+             }
+
+             // Hentikan proses dan kirim respons 409
+             return res.status(409).json({ msg }); 
+        }
+
+        if (err.name === 'ValidationError') {
+            // Ambil pesan error pertama
+            const firstErrorKey = Object.keys(err.errors)[0];
+            const msg = err.errors[firstErrorKey].message;
+            return res.status(400).json({ msg });
+        }
+        
+        res.status(500).json({ msg: 'Terjadi kesalahan server internal yang tidak terduga.' });
     }
 };
 
@@ -172,7 +209,7 @@ exports.verifyAccount = async (req, res) => {
                         <p>Akun SajiLe Anda telah diaktifkan. Mengalihkan Anda ke halaman utama...</p>
                         <script>
                             // 1. Simpan token ke LocalStorage
-                            localStorage.setItem('token', '${jwtToken}');
+                            localStorage.setItem('authToken', '${jwtToken}');
                             
                             // 2. Redirect ke FRONTEND URL yang BENAR (Live Server)
                             window.location.href = '${FRONTEND_URL}/index.html';

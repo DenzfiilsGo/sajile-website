@@ -112,13 +112,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Logika Logout
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (confirm("Yakin ingin keluar?")) {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('authUser');
-                window.location.reload(); 
+                window.location.reload();
             }
         });
     }

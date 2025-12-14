@@ -39,8 +39,8 @@ export const updateAuthUI = () => {
 
 // ===== SIMPAN TOKEN & USER =====
 export const saveAuthToken = (token, user = null) => {
-    localStorage.setItem("authToken", token);
-    if (user) localStorage.setItem("authUser", JSON.stringify(user));
+    localStorage.setItem(TOKEN_KEY, token);
+    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
     updateAuthUI();
 };
 
@@ -58,7 +58,7 @@ export const getAuthUser = () => {
 };
 
 // authManager.js: UPDATE FUNGSI validateToken
-async function validateToken() {
+export async function validateToken() {
     const apiUrl = `https://metallographical-unoverpaid-omer.ngrok-free.dev/api/auth`;
     
     // ✅ Mengambil token dari localStorage (fungsi yang sudah kita buat)
