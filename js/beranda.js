@@ -70,7 +70,7 @@ function updateUserProfileUI() {
 // FUNGSI UTAMA: CEK STATUS LOGIN DAN TAMPILKAN UI YANG SESUAI
 // =======================================================
 
-async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
+async function checkLoginState(navAuthLinks, profileDropdownWrapper, ctaBannerSignIn, body) {
     // ✅ PERBAIKAN: Menggunakan kunci 'authToken'
     const token = localStorage.getItem('authToken');
     // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
@@ -81,6 +81,7 @@ async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
         // Logika sederhana: anggap token dan data di LS valid
         if (navAuthLinks) navAuthLinks.style.display = 'none';
         if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (ctaBannerSignIn) ctaBannerSignIn.style.display = 'none';
         if (body) body.dataset.loggedIn = 'true';
 
         // ⭐ Panggil fungsi untuk memperbarui UI profil ⭐
@@ -89,6 +90,7 @@ async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
         // Pengguna belum login
         if (navAuthLinks) navAuthLinks.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
         if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
+        if (ctaBannerSignIn) ctaBannerSignIn.style.display = !ctaBannerSignIn;
         if (body) body.dataset.loggedIn = 'false';
     }
 }
@@ -115,6 +117,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dotsContainer = document.querySelector('.slider-dots');
     let currentSlide = 0;
     const intervalTime = 5000; // Ubah durasi (4000ms = 4 detik)
+
+    const ctaBannerSignIn = document.querySelector(".cta-banner");
 
     // ⭐ Deklarasikan variabel untuk gambar yang peka mode gelap ⭐
     const featureImage = document.getElementById('feature-image');
@@ -199,7 +203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if ('dark-theme' in body.dataset || body.classList.contains('dark-theme')) updateFeatureImage();
     
     // --- 2. Cek Status Login Saat Halaman Dimuat ---
-    checkLoginState(navAuthLinks, profileDropdownWrapper, body);
+    checkLoginState(navAuthLinks, profileDropdownWrapper, ctaBannerSignIn, body);
 
     // --- 3. Logika Logout ---
     // Logika Logout

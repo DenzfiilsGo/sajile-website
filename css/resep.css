@@ -501,6 +501,9 @@ body {
 }
 
 .recipe-grid-section .recipe-card {
+    position: relative;
+    z-index: 1; /* Layer dasar */
+    cursor: pointer;
     display: block;
     text-decoration: none;
     background: var(--card-bg); /* Menggunakan card-bg */
@@ -518,6 +521,7 @@ body {
 
 .card-image {
     position: relative;
+    z-index: 2; /* Layer gambar */
     height: 180px;
 }
 
@@ -540,6 +544,7 @@ body {
 }
 
 .btn-fav {
+    z-index: 100; /* 🔥 Z-INDEX TINGGI AGAR MENANG DARI LINK */
     position: absolute;
     bottom: 10px;
     right: 10px;
@@ -866,3 +871,63 @@ body {
 }
 
 /* Catatan: Karena p didorong 100% dari kiri, 0% di sini adalah titik 'mulai terlihat' di ujung kanan. */
+
+/* =========================================
+   11. PERBAIKAN: TOAST NOTIFICATION & FAV BUTTON
+   ========================================= */
+
+/* Toast Notification (Pop-up saat klik favorit) */
+.fav-toast {
+    z-index: 101;
+    position: absolute;
+    top: -40px; /* Muncul di atas tombol */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, top 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.fav-toast.show {
+    opacity: 1;
+    top: -50px; /* Animasi naik sedikit */
+}
+
+/* Pastikan tombol favorit berada DI ATAS link kartu */
+.recipe-card {
+    position: relative; /* Wajib untuk positioning anak */
+}
+
+.card-image {
+    position: relative;
+    z-index: 1;
+}
+
+/* Tombol Favorit di Card */
+.btn-fav {
+    z-index: 10; /* Lebih tinggi dari link card */
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    /* ... style lama tetap ... */
+}
+
+/* State Aktif (Merah & Solid) */
+.btn-fav.active {
+    background-color: var(--danger-color);
+    color: white;
+    transform: scale(1.1);
+    border-color: var(--danger-color);
+}
+.btn-fav.active i::before {
+    content: "\f004"; /* Kode FontAwesome untuk Solid Heart */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}

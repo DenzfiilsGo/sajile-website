@@ -199,7 +199,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             const res = await fetch(url, { 
                 cache: 'no-cache',
-                credentials: 'include' // ✅ Tambahkan ini untuk konsistensi CORS
+                // ⭐ BARIS WAJIB UNTUK MELEWATI PERINGATAN NGROK ⭐
+                headers: {
+                    'ngrok-skip-browser-warning': 'true' 
+                }
+                // Karena rute ini publik (tanpa middleware auth), hapus/komentari credentials
+                // credentials: 'include' 
             });
 
             // ✅ Gunakan helper penanganan respons yang aman
@@ -250,6 +255,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderRecipes(recipesArray, append = false) {
         if (!recipesArray || recipesArray.length === 0) {
             if (currentPage > 0) { 
+                // Logika kosong (seharusnya ini hanya muncul jika pagination kosong)
+            } else {
+                // Jika page 0 (pertama kali load) yang kosong
                 recipeGrid.innerHTML = `<div class="empty-state">Tidak ada resep untuk filter ini.</div>`;
             }
             return;
@@ -267,19 +275,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             // Jika URL gambar dimulai dengan '/' dan bukan http:// atau https://
             if (imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
-                imageUrl = `${PUBLIC_BACKEND_URL}${imageUrl}`;
+                // ⭐ PERBAIKAN NGROK KE URL ABSOLUT ⭐
+                imageUrl = `${PUBLIC_BACKEND_URL}${imageUrl}?ngrok-skip-browser-warning=1`;
             }
             
             // 👇👇 PERBAIKAN STRUKTUR HTML AGAR SESUAI DENGAN resep.html 👇👇
             const timeTotal = (recipe.prepTime || 0) + (recipe.cookTime || 0);
             const categoryDisplay = recipe.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
 
+            // Menggunakan URL fallback yang benar di onerror (Hanya jika belum diperbaiki di createRecipeCard)
+            const fallbackUrl = 'https://placehold.co/300?text=Gambar+Hilang';
+
             return `
                 <a href="resep_detail.html?id=${recipe._id}" class="recipe-card fade-in">
                     <div class="card-image">
                         <img src="${imageUrl}" alt="${recipe.title}" loading="lazy" onerror="this.src='via.placeholder.co'">
                         <span class="category-badge">${categoryDisplay}</span>
-                        <button class="btn-fav" aria-label="Tambahkan ke Favorit"><i class="far fa-heart"></i></button>
+                        <button class="btn-fav" data-id="${recipe._id}" aria-label="Tambahkan ke Favorit">
+                            <i class="far fa-heart"></i>
+                        </button>
                     </div>
                     <div class="card-info">
                         <h3>${recipe.title}</h3>
@@ -299,6 +313,92 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         const newlyAddedElements = recipeGrid.querySelectorAll('.recipe-card:not(.visible)');
         newlyAddedElements.forEach(el => observer.observe(el));
+
+        // 👇👇 2. PANGGIL FUNGSI UNTUK PASANG LISTENER FAVORIT 👇👇
+        attachFavoriteListeners();
+    }
+
+    // ========================================================
+    // 🆕 FUNGSI LOGIKA FAVORIT (Tambahkan ini di resep.js)
+    // ========================================================
+    // File: js/resep.js (Ganti fungsi attachFavoriteListeners dengan ini)
+
+    function attachFavoriteListeners() {
+        // Ambil semua tombol, termasuk yang baru dirender
+        const favButtons = document.querySelectorAll('.btn-fav');
+        
+        favButtons.forEach(btn => {
+            // Hapus listener lama dengan cara cloning
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+
+            // Buat elemen Toast jika belum ada
+            if (!newBtn.querySelector('.fav-toast')) {
+                const toast = document.createElement('div');
+                toast.className = 'fav-toast';
+                newBtn.appendChild(toast);
+            }
+            
+            const toast = newBtn.querySelector('.fav-toast');
+
+            // 🔥 EVENT LISTENER AGRESIF
+            newBtn.addEventListener('click', async (e) => {
+                // 1. Matikan semua aksi bawaan link
+                e.preventDefault(); 
+                e.stopPropagation();
+                e.stopImmediatePropagation(); // Memastikan tidak ada event lain yang jalan
+
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert("Silakan login untuk menyimpan resep!");
+                    return;
+                }
+
+                const recipeId = newBtn.getAttribute('data-id');
+                const icon = newBtn.querySelector('i');
+                const isCurrentlyActive = newBtn.classList.contains('active');
+
+                // 2. UI Optimistik
+                if (isCurrentlyActive) {
+                    newBtn.classList.remove('active');
+                    icon.classList.replace('fas', 'far'); // Jadi outline
+                    toast.textContent = "Dihapus";
+                } else {
+                    newBtn.classList.add('active');
+                    icon.classList.replace('far', 'fas'); // Jadi solid
+                    toast.textContent = "Disimpan!";
+                }
+
+                // Tampilkan Toast
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+
+                // 3. Panggil API
+                try {
+                    const url = `${API_BASE_URL}/favorites`; 
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ recipeId: recipeId })
+                    });
+
+                    if (!res.ok) throw new Error("Gagal update backend");
+                } catch (error) {
+                    console.error("Error fav:", error);
+                    // Revert UI jika gagal
+                    if (isCurrentlyActive) {
+                        newBtn.classList.add('active');
+                        icon.classList.replace('far', 'fas');
+                    } else {
+                        newBtn.classList.remove('active');
+                        icon.classList.replace('fas', 'far');
+                    }
+                }
+            });
+        });
     }
     
     // Fungsi untuk membuat markup HTML untuk satu resep (sekitar baris 265 di kode Anda)
@@ -306,21 +406,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         const timeTotal = (recipe.prepTime || 0) + (recipe.cookTime || 0);
         const categoryDisplay = recipe.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
 
-        // 👇👇 PERBAIKAN UTAMA DI SINI 👇👇
-        // Pastikan URL gambar dimulai dengan PUBLIC_BACKEND_URL jika itu relatif
-        let imageUrl = recipe.imageUrl || 'via.placeholder.com';
-        
-        // Jika URL gambar dimulai dengan '/' dan bukan http:// atau https://
-        if (imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
-            imageUrl = `${PUBLIC_BACKEND_URL}${imageUrl}`;
-        }
-        // 👆👆 SELESAI PERBAIKAN 👆👆
+        let imageUrl = recipe.imageUrl || ''; // Ambil URL dari data API
+        const fallbackUrl = 'https://placehold.co/800x450?text=Resep+Baru'; // Definisi fallback di sini
 
+        // ⭐ LOGIKA URL GAMBAR ROBUST (SOLUSI MASALAH PATH) ⭐
+        if (imageUrl) {
+            // Kasus 1: Gambar Diunggah Pengguna (Relatif ke Backend, contoh: /uploads/gambar.jpg)
+            if (imageUrl.startsWith('/')) {
+                // ⭐ PERBAIKAN NGROK KE URL ABSOLUT ⭐
+                imageUrl = `${PUBLIC_BACKEND_URL}${imageUrl}?ngrok-skip-browser-warning=1`;
+            } 
+            // Kasus 2: Gambar Eksternal/Placeholder (TAPI HILANG PROTOKOL, contoh: via.placeholder.co/800x450)
+            else if (!imageUrl.startsWith('http')) {
+                // Tambahkan protokol HTTPS secara eksplisit
+                imageUrl = `https://${imageUrl}`; 
+            }
+            // Kasus 3: Gambar Eksternal (Lengkap dengan Protokol) - Tidak perlu diubah
+        } else {
+            // Fallback jika imageUrl kosong/null dari API
+            imageUrl = fallbackUrl;
+        }
+        // ⭐ AKHIR LOGIKA URL GAMBAR ⭐
+
+        // ⭐ TAMBAHKAN LOG INI ⭐
+        console.log("Final Image URL yang diminta browser:", imageUrl);
 
         return `
             <a href="resep_detail.html?id=${recipe._id}" class="recipe-card fade-in">
                 <div class="card-image">
-                    <img src="${imageUrl}" alt="${recipe.title}" loading="lazy" onerror="this.src='via.placeholder.co'">
+                    <img src="${imageUrl}" 
+                        alt="${recipe.title}" 
+                        loading="lazy" 
+                        onerror="this.onerror=null; this.src='${fallbackUrl}'">
                     <span class="category-badge">${categoryDisplay}</span>
                     <button class="btn-fav" aria-label="Tambahkan ke Favorit"><i class="far fa-heart"></i></button>
                 </div>
@@ -458,7 +575,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
 
-    // --- 2. Dark Mode Toggle (Perbaiki nama LS key agar konsisten) ---
+    // B. Dark Mode Toggle
     if (themeToggle) {
         const icon = themeToggle.querySelector('i');
         // ⭐ Gunakan kunci LS yang konsisten: sajile_theme
@@ -471,7 +588,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         themeToggle.addEventListener('click', () => {
-            const newTheme = body.dataset.theme === 'dark' ? 'light' : 'dark';
+            const currentTheme = body.dataset.theme;
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
             body.dataset.theme = newTheme;
             localStorage.setItem('sajile_theme', newTheme);
 

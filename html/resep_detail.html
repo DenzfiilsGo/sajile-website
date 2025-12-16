@@ -76,14 +76,14 @@
 
 
                 <div class="recipe-actions">
-                    <button id="btn-save" class="btn-save logged-in-only" data-saved="false" style="display:none;">
+                    <button type="button" id="btn-save" class="btn-save logged-in-only" data-saved="false">
                         <i class="far fa-heart"></i> Simpan ke Favorit
                     </button>
-                    <button id="btn-save-login" class="btn-save logged-out-only">
+                    <button type="button" id="btn-save-login" class="btn-save logged-out-only">
                         <i class="far fa-heart"></i> Login untuk Simpan
                     </button>
 
-                    <button id="btn-print" class="btn-primary">
+                    <button type="button" id="btn-print" class="btn-primary">
                         <i class="fas fa-print"></i> Cetak Resep
                     </button>
                 </div>
@@ -218,7 +218,7 @@
                                 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> (5/5)
                             </div>
                             <p class="comment-text-content">Ini adalah rendang paling enak yang pernah saya buat! Resepnya mudah diikuti dan hasilnya super empuk. Sangat direkomendasikan!</p>
-                            <div class="comment-actions logged-in-only" style="display:none;"> <button class="edit-comment-btn" data-edit-count="0" data-comment-id="1">Edit (1x)</button>
+                            <div class="comment-actions logged-in-only"> <button class="edit-comment-btn" data-edit-count="0" data-comment-id="1">Edit</button>
                                 <button class="delete-comment-btn" data-comment-id="1">Hapus</button>
                             </div>
                         </div>
@@ -266,12 +266,20 @@
         </div>
         
         <footer class="site-footer">
-            <p>&copy; 2025 SinauLe. Semua hak dilindungi.</p>
-            <p><a href="tentang_kami.html" class="about-we">Tentang Kami</a> | Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> | Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a></p>
-            <p>Dikelola oleh Tim <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</strong></span></a> (ex-MBADOKLE) Indonesia</p>
+            <p>&copy; 2025 <a class="footer-brand"><strong>Sinau<span class="footer-brand-highlight">Le</span></strong></a>. Semua hak dilindungi.</p>
+            <p>
+                <a href="tentang_kami.html" class="about-we">Tentang Kami</a> | 
+                Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> |
+                Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a>
+            </p>
+            <p>
+                Dikelola oleh Tim 
+                <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</span></strong></a> 
+                (ex-<a class="footer-brand"><strong>MBADOK<span class="footer-brand-highlight">Le</span></strong></a>) Indonesia
+            </p>
         </footer>
 
         <script type="module" src="../js/authManager.js"></script>
-        <script type="module" src="../js/resep_detail.js"></script> 
+        <script type="module" src="../js/resep_detail.js"></script>
     </body>
 </html>

@@ -15,7 +15,7 @@ export async function loadBackendUrl() {
             lastUrl = data.url;
 
             API_BASE_URL = `${data.url}/api`;
-            API_AUTH_URL = `${data.url}/auth`;
+            API_AUTH_URL = `${data.url}/api/auth`;
         }
 
     } catch (err) {

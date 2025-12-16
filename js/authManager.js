@@ -59,7 +59,7 @@ export const getAuthUser = () => {
 
 // authManager.js: UPDATE FUNGSI validateToken
 export async function validateToken() {
-    const apiUrl = `https://metallographical-unoverpaid-omer.ngrok-free.dev/api/auth`;
+    const apiUrl = `${API_AUTH_URL}`;
     
     // ✅ Mengambil token dari localStorage (fungsi yang sudah kita buat)
     const token = getAuthToken(); 
@@ -103,9 +103,9 @@ validateToken();
 // ===== INIT =====
 function initAuthManager() {
     updateAuthUI();
-    validateToken().then((freshUser) => {
-        if (freshUser) updateAuthUI();
-    });
+    //validateToken().then((freshUser) => {
+    //    if (freshUser) updateAuthUI();
+    //});
 }
 
 document.addEventListener("DOMContentLoaded", initAuthManager);

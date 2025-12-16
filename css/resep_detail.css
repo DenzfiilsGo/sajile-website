@@ -549,7 +549,7 @@ body[data-logged-in="true"] .logged-out-only {
 }
 
 .btn-save.active i {
-    color: white;
+    color: var(--danger-color);
     transition: color var(--color-transition);
 }
 .btn-save:hover {
@@ -557,7 +557,11 @@ body[data-logged-in="true"] .logged-out-only {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     transition: border-color var(--color-transition), box-shadow var(--color-transition);
 }
+
 /* Untuk tombol print */
+.btn-primary {
+    cursor: pointer;
+}
 .btn-primary i {
     margin-right: 5px;
 }
@@ -749,11 +753,25 @@ body[data-logged-in="true"] .logged-out-only {
     margin-bottom: 15px;
     font-size: 1.5rem;
 }
+
 .rating-input .star {
     cursor: pointer;
     color: #ccc; 
     transition: color 0.2s;
 }
+
+.rating-input .star:hover {
+    transform: scale(1.2);
+}
+
+/* Warna Bintang (Diatur oleh JS via style inline, tapi ini fallback) */
+.rating-input .star i.fas {
+    color: #ffc107; /* Kuning Emas */
+}
+.rating-input .star i.far {
+    color: #ccc; /* Abu-abu */
+}
+
 .rating-input .star.filled {
     color: var(--star-color-filled);
 }
@@ -835,7 +853,7 @@ body[data-logged-in="true"] .logged-out-only {
 }
 
 .edit-comment-btn {
-    background-color: var(--edit-color);
+    background-color: skyblue;
     color: white;
 }
 
@@ -860,12 +878,16 @@ body[data-logged-in="true"] .logged-out-only {
     transform: translateY(-1px);
 }
 
+.edit-comment-btn[disabled] {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
 
 /* =========================================
    6. MODAL STYLING (Untuk Edit Komentar)
    ========================================= */
 .modal {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed; 
     z-index: 2000; 
     left: 0;
@@ -880,7 +902,7 @@ body[data-logged-in="true"] .logged-out-only {
 
 .modal-content {
     background-color: var(--bg-color);
-    margin: 5% auto; /* 5% dari atas dan dipusatkan */
+    margin: 5% auto;
     padding: 20px;
     border-radius: 15px;
     width: 90%; 
@@ -1122,3 +1144,77 @@ body[data-logged-in="true"] .logged-out-only {
 }
 
 /* Catatan: Karena p didorong 100% dari kiri, 0% di sini adalah titik 'mulai terlihat' di ujung kanan. */
+
+/* =========================================
+   RATING SYSTEM STYLES (Desktop & Mobile)
+   ========================================= */
+.rating-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.rating-stars {
+    display: inline-flex;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #ccc; /* Warna default (kosong) */
+    position: relative;
+}
+
+/* Warna Bintang Terisi (Kuning Emas) */
+.rating-stars i.active {
+    color: #f1c40f; 
+}
+/* Setengah Bintang */
+.rating-stars i.fa-star-half-alt.active {
+    color: #f1c40f;
+}
+
+/* Kontrol Rating Mobile (+ dan -) */
+.mobile-rating-controls {
+    display: none; /* Sembunyi di desktop */
+    align-items: center;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.btn-rate-ctrl {
+    background-color: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    width: 40px; 
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-rate-ctrl:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.current-rating-display {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Tampilkan kontrol mobile di layar kecil */
+@media (max-width: 768px) {
+    .mobile-rating-controls {
+        display: flex;
+    }
+    /* Nonaktifkan hover effect di mobile agar tidak bingung */
+    .rating-stars {
+        pointer-events: none; 
+    }
+}

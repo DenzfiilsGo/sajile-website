@@ -513,7 +513,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
 .split-text { flex: 1; }
 .split-image { flex: 1; }
 .split-image img {
-    width: 100%; border-radius: 20px; box-shadow: var(--card-shadow); transition: var(--transition); cursor: pointer;
+    width: 100%; border-radius: 20px; box-shadow: var(--card-shadow); transition: var(--transition);
 }
 .split-image img:hover { transform: scale(1.02); }
 .highlight-text { font-size: 2rem; margin-bottom: 15px; color: var(--primary-color); }

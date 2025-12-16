@@ -2,12 +2,14 @@
 
 const express = require('express');
 const router = express.Router();
+
 const recipeController = require('../controllers/recipeController');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
 
-const uploadsDir = path.join(__dirname, '..', 'uploads');
+const uploadsDir = path.join(__dirname, '..', 'uploads'); // <-- TAMBAHKAN INI
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => {
