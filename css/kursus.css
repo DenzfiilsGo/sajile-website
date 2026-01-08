@@ -1,0 +1,675 @@
+/* =========================================
+   1. BASE VARIABLES & RESET
+   ========================================= */
+:root {
+    --hover-button: #98FB98;
+    --primary-color: #2ecc71;
+    --primary-dark: #27ae60;
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --card-bg: #f9f9f9;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    --nav-height: 70px;
+    --transition: all 0.3s ease; 
+    --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
+    --accent-color: #3498db; /* Biru untuk badge kategori */
+    --danger-color: #e74c3c; /* Merah untuk Logout */
+    --user-name-color: #4B0082; /* Warna Nama Pengguna */
+    --dropdown-bg: #ffffff; /* Tambahan untuk dropdown */
+    --border-color: #eeeeee; /* Tambahan untuk batas */
+}
+
+/* DARK MODE VARIABLES */
+[data-theme="dark"] {
+    --bg-color: #121212; 
+    --text-color: #e0e0e0; 
+    --text-light: #aaaaaa; 
+    --card-bg: #1e1e1e;
+    --card-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+    --dropdown-bg: #1e1e1e; /* Dark mode dropdown */
+    --border-color: #333333; /* Dark mode batas */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { 
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--color-transition), color var(--color-transition); 
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    user-select: none; /* Mencegah seleksi teks */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge lama */
+}
+
+.main-wrapper { 
+    flex-grow: 1;
+    max-width: 1400px;
+    margin: 0 auto; 
+    padding: 0 20px;
+}
+
+
+/* =========================================
+   2. NAVBAR STYLING (FIXED & SAFE - STANDAR WAJIB)
+   ========================================= */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    height: var(--nav-height);
+    background-color: var(--bg-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: background-color var(--color-transition), box-shadow var(--color-transition);
+}
+
+.nav-brand { 
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    flex-shrink: 0; 
+    color: #4B0082;
+    transition: color var(--color-transition);
+}
+.brand-highlight { color: var(--primary-color); transition: color var(--color-transition); }
+
+/* --- Container Menu (Desktop Mode) --- */
+.nav-menu-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    margin: 0 auto;
+}
+
+.nav-links a { 
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.nav-links a::after {
+    content: ''; position: absolute; width: 0; height: 2px;
+    bottom: -5px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary-color); }
+
+.nav-actions { 
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.btn-primary { 
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+.btn-primary:hover {
+    background-color: transparent; border-color: var(--primary-color); color: var(--primary-color);
+}
+
+.btn-icon { 
+    background: none; border: none; font-size: 1.2rem; cursor: pointer; 
+    color: var(--text-color); padding: 5px; border-radius: 50%;
+    transition: color var(--color-transition), background-color var(--transition); 
+}
+.btn-icon:hover { background-color: rgba(0,0,0,0.05); color: #7296AB; }
+
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+/* Tambahan: Sembunyikan item mobile di desktop */
+.mobile-only-text, .profile-pic.mobile-only { display: none; } 
+/* Tambahan: Tampilkan item desktop di desktop */
+.profile-pic.desktop-only { display: block; }
+
+/* Hamburger Button */
+.hamburger {
+    display: none; cursor: pointer; background: none; border: none; padding: 10px; z-index: 1001;
+}
+.bar {
+    display: block; width: 25px; height: 3px; margin: 5px auto;
+    background-color: var(--text-color); transition: all 0.3s ease-in-out; border-radius: 3px;
+}
+/* Animasi Hamburger ke X */
+.hamburger.active .bar:nth-child(2) { opacity: 0; }
+.hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* --- KONTROL TAMPILAN BERDASARKAN STATUS MASUK --- */
+.logged-in-only { display: none; }
+.logged-out-only { display: flex; align-items: center; } /* Default: tampilkan tombol Masuk/Daftar */
+
+body[data-logged-in="true"] .logged-in-only { display: flex; } /* Tampilkan profil jika logged-in=true */
+body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan tombol Masuk/Daftar jika logged-in=true */
+
+
+/* =========================================
+    3. DROPDOWN PROFILE STYLING (STANDAR WAJIB)
+    ========================================= */
+.profile-dropdown-wrapper { position: relative; }
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.profile-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 30px); /* Jarak dari nav-actions */
+    right: -60px; /* Penyesuaian posisi kanan */
+    width: 300px;
+    background-color: var(--dropdown-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 15px 0;
+    z-index: 990;
+    
+    /* State Awal (Sembunyi) */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Kelas yang akan ditambahkan via JavaScript */
+.profile-dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    padding: 0 15px 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+.dropdown-header img {
+    width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+    margin-right: 10px; border: 2px solid var(--primary-color);
+}
+.user-info {
+    display: flex; flex-direction: column;
+}
+.username {
+    font-weight: 600; color: var(--text-color); font-size: 1rem;
+}
+.email {
+    font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.dropdown-links {
+    list-style: none; padding: 0; margin: 0;
+}
+.dropdown-links li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dropdown-links li a:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--primary-dark);
+}
+.dropdown-links li a i {
+    margin-right: 10px; width: 20px; text-align: center;
+}
+.dropdown-links li a.logout {
+    color: #e74c3c;
+}
+.dropdown-links li a.logout:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #c0392b;
+}
+
+.divider-item {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 5px 0;
+}
+
+.mobile-only-text { display: none; } /* Teks penjelasan icon di desktop sembunyi */
+
+/* =========================================
+   4. BREAKPOINT AMAN & DROPDOWN (Fixed)
+   ========================================= */
+/* Saya naikkan ke 1024px agar tidak berantakan di tablet/laptop kecil */
+@media (max-width: 720px) { 
+    .navbar { padding: 0 20px; }
+    .hamburger { display: block; }
+
+    /* Ubah Container jadi Dropdown Vertical */
+    .nav-menu-container {
+        position: absolute;
+        top: var(--nav-height); /* Dihitung dari variabel nav-height */
+        left: 0;
+        width: 100%;
+        margin: 0;
+        
+        /* Flex Column untuk Vertical Menu */
+        flex-direction: column;
+        background-color: var(--bg-color);
+        padding: 30px 20px;
+        
+        /* Style Dropdown */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        
+        /* STATE AWAL: Hidden & Slide Up */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        
+        /* TRANSISI SUPER HALUS */
+        transition: opacity 0.4s ease, 
+                        transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                        visibility 0.4s ease,
+                        background-color var(--color-transition);
+    }
+
+    /* KELAS ACTIVE (Saat hamburger diklik) */
+    .nav-menu-container.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Reset Link Styles */
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .nav-links a {
+        display: block; font-size: 1.2rem; padding: 10px 0;
+    }
+    
+    /* Actions di Bawah */
+    .nav-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+        border-top: 1px solid var(--text-light);
+        padding-top: 25px;
+        
+        /* Penting: Pastikan logged-in/out elemen juga diatur di sini */
+        display: flex; /* Override untuk memformat sebagai kolom */
+    }
+
+    .nav-auth-links {
+        width: 100%;
+        flex-direction: column; /* Tombol Masuk/Daftar jadi full-width */
+    }
+
+    .logged-out-only {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-dropdown-wrapper {
+        position: static; /* Dropdown di mobile tidak perlu absolute */
+        width: 100%;
+        order: -1; /* Pindah ke atas */
+        flex-direction: column;
+        gap: 10px;
+        /* Penting: Pastikan logged-in-only tampil sebagai flex saat login */
+        display: flex; 
+        
+        /* Dropdown Header Styling untuk Mobile */
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .profile-dropdown-wrapper .dropdown-header {
+        border-bottom: none;
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+    }
+    .profile-dropdown-wrapper .profile-pic {
+        display: none; /* Sembunyikan profile pic kecil, hanya tampilkan info */
+    }
+    .profile-dropdown-wrapper .user-info {
+        display: block;
+        text-align: left;
+        padding-left: 0;
+    }
+    
+    /* Tombol Theme jadi baris panjang */
+    .btn-icon {
+        width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
+        border: 1px solid #ddd; border-radius: 10px; padding: 10px;
+    }
+    .mobile-only-text { display: inline; font-size: 1rem; font-weight: 500; }
+    
+    .btn-primary { width: 100%; text-align: center; padding: 12px; }
+    
+    /* Hapus dropdown menu, ganti dengan link di nav-links di mobile */
+    .profile-dropdown-menu {
+        display: none; /* Sembunyikan dropdown menu vertikal di mobile */
+    }
+}
+
+.main-container { max-width: 1400px; margin: 0 auto; padding: 0 20px 80px; }
+
+.page-header { text-align: center; padding: 60px 20px 30px; }
+.page-header h1 { font-size: 2.5rem; color: var(--primary-dark); margin-bottom: 10px; font-weight: 700; }
+.page-header p { color: var(--text-light); transition: color var(--color-transition); }
+
+.filter-controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 50px;
+}
+
+.filter-btn {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid #ddd;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color var(--color-transition), color var(--color-transition), border var(--color-transition);
+}
+
+.filter-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transition: background-color var(--color-transition), color var(--color-transition), border-color var(--color-transition);
+}
+
+.filter-btn.active {
+    background-color: var(--primary-dark);
+    color: white;
+    border-color: var(--primary-dark);
+    transition: background-color var(--color-transition), color var(--color-transition), border-color var(--color-transition);
+}
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 kolom desktop */
+    gap: 25px;
+}
+
+/* Card Style (Mengadopsi gaya resep.css) */
+.course-card {
+    position: relative;
+    z-index: 1; /* Layer dasar */
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    background: var(--card-bg); /* Menggunakan card-bg */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transform: translateY(0px);
+    transition: transform var(--color-transition), box-shadow var(--color-transition), background var(--color-transition);
+}
+
+.course-card:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+    transition: box-shadow var(--color-transition), transform var(--color-transition);
+}
+
+/* Thumbnail 16:9 */
+.thumbnail-box {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+}
+
+.thumbnail-box img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform var(--color-transition);
+}
+
+.course-card:hover .thumbnail-box img { transform: scale(1.1); }
+
+/* Play Icon Overlay */
+.play-btn-overlay {
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    width: 60px; 
+    height: 60px;
+    background: rgba(46, 204, 113, 0.9);
+    border-radius: 50%;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    color: white; 
+    font-size: 1.5rem;
+    opacity: 0; 
+    transition: background var(--color-transition), color var(--color-transition) opacity var(--color-transition);
+}
+
+.course-card:hover .play-btn-overlay { opacity: 1; transition: opacity var(--color-transition); }
+
+/* YouTube Link Style */
+.yt-direct-link {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: #ff0000; color: white;
+    width: 35px; height: 35px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 5; text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Info Section */
+.course-info { padding: 15px; transition: color var(--color-transition); }
+.course-info h3 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 10px; 
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    transition: color var(--color-transition);
+}
+.course-card:hover .course-info h3 { color: var(--primary-color); transition: color var(--color-transition); }
+.course-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: #7f8c8d; transition: color var(--color-transition); }
+
+/* Modal Styling */
+.video-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 10000;
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+    transition: background var(--color-transition);
+}
+
+.modal-content {
+    background: var(--card-bg); width: 100%; max-width: 900px;
+    border-radius: 15px; overflow: hidden; position: relative;
+    transition: background var(--color-transition);
+}
+
+.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; }
+.video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+.close-modal {
+    position: absolute; top: 15px; right: 15px; background: white;
+    border: none; font-size: 2rem; cursor: pointer; z-index: 10;
+    width: 40px; height: 40px; border-radius: 50%;
+    transition: background var(--color-transition);
+}
+
+/* =========================================
+   6. FOOTER STYLING (FIXED & MANDATORY)
+   ========================================= */
+
+.site-footer {
+    background-color: #e8f5e9; padding: 30px 20px; text-align: center;
+    border-top: 4px solid var(--primary-color); color: #555; transition: background-color var(--color-transition), color var(--color-transition), border-top-color var(--color-transition);
+}
+.site-footer p { margin-bottom: 5px; }
+.site-footer p:last-child { margin-bottom: 0; }
+
+.about-we { 
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.about-we::after {
+    content: ''; position: absolute; width: 0; height: 1px;
+    bottom: -1px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.about-we:hover::after, .about-we.active::after { width: 100%; }
+.about-we:hover, .about-we.active { color: var(--primary-color); }
+
+.contact-we { 
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.contact-we::after {
+    content: ''; position: absolute; width: 0; height: 1px;
+    bottom: -1px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.contact-we:hover::after, .contact-we.active::after { width: 100%; }
+.contact-we:hover, .contact-we.active { color: var(--primary-color); }
+
+.footer-brand {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+    transition: color var(--color-transition);
+}
+.footer-brand-highlight {
+    color: var(--primary-color);
+    transition: color var(--color-transition);
+}
+
+/* =========================================
+   6. DARK MODE STYLING (FIXED & MANDATORY)
+   ========================================= */
+
+[data-theme="dark"] .navbar { background-color: #1a1a1a; box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .nav-brand { color: #BB86FC; }
+[data-theme="dark"] .nav-links a { color: #cccccc; }
+[data-theme="dark"] .nav-links a:hover, 
+[data-theme="dark"] .nav-links a.active { color: var(--primary-color); }
+[data-theme="dark"] .btn-icon { color: #e0e0e0; }
+[data-theme="dark"] .btn-icon:hover { background-color: rgba(255, 255, 255, 0.05); color: #FFE87C; }
+[data-theme="dark"] .bar { background-color: #e0e0e0; }
+[data-theme="dark"] .profile-pic img { border-color: var(--primary-color); }
+[data-theme="dark"] .profile-dropdown-menu { background-color: var(--dropdown-bg); box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .divider-item { background-color: #333333; }
+[data-theme="dark"] .site-footer { background-color: #1a1a1a; color: #bbb; border-top-color: var(--primary-dark); }
+[data-theme="dark"] .about-we, [data-theme="dark"] .contact-we { color: #999999; }
+[data-theme="dark"] .about-we:hover, [data-theme="dark"] .contact-we:hover { color: var(--primary-color); }
+[data-theme="dark"] .footer-brand { color: #BB86FC; }
+
+[data-theme="dark"] .course-card { background: var(--card-bg); box-shadow: var(--card-shadow); }
+[data-theme="dark"] .course-card:hover { box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15); }
+[data-theme="dark"] .course-info h3 { color: #fff; }
+[data-theme="dark"] .course-card:hover .course-info h3 { color: var(--primary-color); }
+
+/* =========================================
+   10. STANDAR WAJIB: MARQUEE TEXT PROFIL
+   ========================================= */
+
+/* Area Tampilan untuk Username dan Email */
+.user-info {
+    /* Pastikan lebar tidak lebih dari lebar dropdown - padding/margin */
+    width: 170px; /* Sesuaikan sesuai kebutuhan agar pas dengan lebar dropdown */
+    overflow: hidden; /* Sembunyikan teks yang melebihi batas */
+    display: flex; /* Gunakan flexbox untuk menata elemen dalam baris terpisah */
+    flex-direction: column;
+}
+
+/* Teks yang akan berjalan (username dan email) */
+.user-info span {
+    /* Mengubah dari inline-block menjadi block untuk memastikan keduanya di baris terpisah */
+    display: block; 
+    
+    /* Gunakan properti ini pada SPAN agar teks di dalamnya tidak pecah baris */
+    white-space: nowrap; 
+    
+    /* Tambahkan 1px margin bawah antara username dan email */
+    margin-bottom: 1px;
+}
+
+/* Teks ANImasi (INNER SPAN) */
+.user-info span::before {
+    content: attr(data-text); /* Gunakan atribut data-text untuk konten teks */
+    display: inline-block;
+    padding-left: 100%; /* Mulai teks dari luar batas kanan */
+    animation: marquee 10s linear infinite; 
+    animation-play-state: running; /* Pastikan berjalan secara default */
+}
+
+/* Hentikan animasi saat hover (opsional: agar teks mudah dibaca) */
+.user-info:hover span::before {
+    animation-play-state: paused;
+}
+
+/* Keyframes untuk animasi marquee */
+@keyframes marquee {
+    0% { transform: translate(0, 0); } /* Posisi awal: 0 (sudah didorong 100% dari kiri parent) */
+    100% { transform: translate(-100%, 0); } /* Pindah ke kiri hingga mencapai batas kiri parent */
+}
+
+/* Catatan: Karena p didorong 100% dari kiri, 0% di sini adalah titik 'mulai terlihat' di ujung kanan. */

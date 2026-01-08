@@ -1,3 +1,7 @@
+// =======================================================
+// GLOBAL EVENT LISTENERS
+// =======================================================
+
 // Blokir seleksi teks via JavaScript
 document.addEventListener('selectstart', function(e) {
     e.preventDefault(); // Mencegah aksi default seleksi
@@ -17,42 +21,54 @@ document.addEventListener('dragstart', function(e) {
  * foto profil, username, dan email pada navbar dropdown.
  */
 function updateUserProfileUI() {
-    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
     const userDataJSON = localStorage.getItem('authUser');
-    
-    if (userDataJSON) {
-        try {
-            const userData = JSON.parse(userDataJSON);
-            
-            // 1. Update Profile Picture (ID harus 'profile-pic-img')
-            const profilePicImg = document.getElementById('profile-pic-img');
-            if (profilePicImg && userData.profilePictureUrl) {
-                profilePicImg.src = userData.profilePictureUrl;
-                
-                // Tambahkan error handler untuk berjaga-jaga jika URL eksternal gagal
-                profilePicImg.onerror = () => {
-                    console.warn("Gagal memuat foto profil eksternal. Menggunakan default HTML.");
-                    // Biarkan browser menggunakan src default yang sudah ada di HTML
-                };
-            }
-            
-            // 2. Update Username (ID atau Class)
-            const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
-            if (usernameEl && userData.username) {
-                usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
-                usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
-            }
-                
-            // 3. Update Email (ID atau Class)
-            const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
-            if (emailEl && userData.email) {
-                emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
-                emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
-            }
-                
-        } catch (error) {
-            console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
+    if (!userDataJSON) return;
+
+    try {
+        const userData = JSON.parse(userDataJSON);
+        const profileImages = document.querySelectorAll('.profile-pic img, .dropdown-header img');
+        
+        // Pastikan URL Google menggunakan HTTPS
+        let photoUrl = userData.profilePictureUrl;
+        if (photoUrl && photoUrl.startsWith('http://')) {
+            photoUrl = photoUrl.replace('http://', 'https://');
         }
+
+        profileImages.forEach(img => {
+            // Hindari reload gambar jika src sudah sama
+            if (img.src === photoUrl) return;
+
+            if (photoUrl) {
+                // Gunakan crossOrigin anonymous untuk menghindari blokir CORS/CORB pada gambar
+                img.crossOrigin = "anonymous"; 
+                img.src = photoUrl;
+            } else {
+                img.src = `https://placehold.co/40x40/2ecc71/fff?text=${userData.username.charAt(0)}`;
+            }
+
+            img.onerror = () => {
+                // Jika Google memblokir (429/CORB), gunakan inisial sebagai fallback terakhir
+                img.src = `https://placehold.co/40x40/2ecc71/fff?text=${userData.username.charAt(0)}`;
+                img.onerror = null; // Hentikan loop onerror
+            };
+        })
+            
+        // 2. Update Username (ID atau Class)
+        const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+        if (usernameEl && userData.username) {
+            usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+            usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
+        }
+                
+        // 3. Update Email (ID atau Class)
+        const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+        if (emailEl && userData.email) {
+            emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+            emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+        }
+                
+    } catch (error) {
+        console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
     }
 }
 
@@ -60,7 +76,7 @@ function updateUserProfileUI() {
 // FUNGSI UTAMA: CEK STATUS LOGIN DAN TAMPILKAN UI YANG SESUAI
 // =======================================================
 
-async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
+async function checkLoginState(navAuthLinks, profileDropdownWrapper, aiCtaSection, aiCtaLoginRequired, body) {
     // ✅ PERBAIKAN: Menggunakan kunci 'authToken'
     const token = localStorage.getItem('authToken');
     // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
@@ -71,6 +87,8 @@ async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
         // Logika sederhana: anggap token dan data di LS valid
         if (navAuthLinks) navAuthLinks.style.display = 'none';
         if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
+        if (aiCtaSection) aiCtaSection.style.display = 'flex';
+        if (aiCtaLoginRequired) aiCtaLoginRequired.style.display = 'none';
         if (body) body.dataset.loggedIn = 'true';
 
         // ⭐ Panggil fungsi untuk memperbarui UI profil ⭐
@@ -79,6 +97,8 @@ async function checkLoginState(navAuthLinks, profileDropdownWrapper, body) {
         // Pengguna belum login
         if (navAuthLinks) navAuthLinks.style.display = 'flex'; // Gunakan flex/block sesuai layout Anda
         if (profileDropdownWrapper) profileDropdownWrapper.style.display = 'none';
+        if (aiCtaSection) aiCtaSection.style.display = 'none';
+        if (aiCtaLoginRequired) aiCtaLoginRequired.style.display = 'flex';
         if (body) body.dataset.loggedIn = 'false';
     }
 }
@@ -103,6 +123,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const navMenu = document.getElementById('nav-menu');
     const navLinks = navMenu ? navMenu.querySelectorAll('.nav-links a') : []; 
     const themeToggle = document.getElementById('theme-toggle');
+    const profilePicBtn = document.getElementById('profile-pic-btn');
+    const profileDropdown = document.getElementById('profile-dropdown');
     const filterTags = document.querySelectorAll('.filter-tags .tag');
     const recipeGrid = document.querySelector('.recipe-grid');
     const recipeContainer = recipeGrid;
@@ -112,6 +134,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let totalRecipes = 0;
     let isLoading = false;
     let currentFilter = 'Semua';
+    let userFavorites = []; // Untuk menyimpan daftar ID resep yang difavoritkan
     
     const loadMoreBtnContainer = document.querySelector('.load-more-btn-container');
     const loadMoreBtn = loadMoreBtnContainer ? loadMoreBtnContainer.querySelector('.btn-primary') : null;
@@ -142,10 +165,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ========================================================
     const navAuthLinks = document.querySelector('.nav-auth-links');
     const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper');
+    const aiCtaSection = document.querySelector('.cta-chatbot-section');
+    const aiCtaLoginRequired = document.querySelector('ai-login-required');
     const logoutBtn = document.getElementById('logout-btn');
 
     // --- 2. Cek Status Login Saat Halaman Dimuat ---
-    checkLoginState(navAuthLinks, profileDropdownWrapper, body); 
+    checkLoginState(navAuthLinks, profileDropdownWrapper, aiCtaSection, aiCtaLoginRequired, body); 
 
     // Logika Logout
     if (logoutBtn) {
@@ -245,7 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } finally {
             isLoading = false;
             // Panggil kembali observer untuk animasi fade-in pada card baru
-            document.querySelectorAll('.recipe-card:not(.visible)').forEach(el => observer.observe(el));
+            document.querySelectorAll('.recipe-card-container:not(.visible)').forEach(el => observer.observe(el));
             // ✅ Panggil updatePaginationControls di sini setelah loading selesai
             updatePaginationControls();
         }
@@ -282,24 +307,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 👇👇 PERBAIKAN STRUKTUR HTML AGAR SESUAI DENGAN resep.html 👇👇
             const timeTotal = (recipe.prepTime || 0) + (recipe.cookTime || 0);
             const categoryDisplay = recipe.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            const isFavorited = userFavorites.includes(recipe._id);
 
             // Menggunakan URL fallback yang benar di onerror (Hanya jika belum diperbaiki di createRecipeCard)
             const fallbackUrl = 'https://placehold.co/300?text=Gambar+Hilang';
 
+            // Indikator Gembok Premium
+            const premiumBadge = recipe.isPremium 
+                ? `<div class="premium-lock-tag"><i class="fas fa-crown"></i> Premium</div>` 
+                : '';
+
             return `
-                <a href="resep_detail.html?id=${recipe._id}" class="recipe-card fade-in">
-                    <div class="card-image">
-                        <img src="${imageUrl}" alt="${recipe.title}" loading="lazy" onerror="this.src='via.placeholder.co'">
-                        <span class="category-badge">${categoryDisplay}</span>
-                        <button class="btn-fav" data-id="${recipe._id}" aria-label="Tambahkan ke Favorit">
-                            <i class="far fa-heart"></i>
-                        </button>
-                    </div>
-                    <div class="card-info">
-                        <h3>${recipe.title}</h3>
-                        <p class="duration"><i class="far fa-clock"></i> ${timeTotal} Menit</p>
-                    </div>
-                </a>
+                <div class="recipe-card-container fade-in">
+                    <!-- Link hanya membungkus area informasi resep -->
+                    <a href="resep_detail.html?id=${recipe._id}" class="recipe-card ${recipe.isPremium ? 'premium-card' : ''}">
+                        <div class="card-image">
+                            <img src="${imageUrl}" alt="${recipe.title}" loading="lazy">
+                            <span class="category-badge">${categoryDisplay}</span>
+                            ${premiumBadge}
+                        </div>
+                        <div class="card-info">
+                            <h3>${recipe.title}</h3>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> ${timeTotal} Menit</p>
+                                <p class="star-rating">
+                                    ${starHTML} 
+                                    <span class="rating-number">${ratingValue.toFixed(1)}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Tombol sekarang di luar <a> tapi masih di dalam container -->
+                    <button class="btn-fav ${isFavorited ? 'active' : ''}" data-id="${recipe._id}" aria-label="Favorit">
+                        <i class="${isFavorited ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
+                </div>
             `;
             // 👆👆 SELESAI PERBAIKAN STRUKTUR HTML 👆👆
         }).join('');
@@ -311,148 +354,149 @@ document.addEventListener('DOMContentLoaded', async () => {
             recipeGrid.innerHTML = newRecipeHTML;
         }
         
-        const newlyAddedElements = recipeGrid.querySelectorAll('.recipe-card:not(.visible)');
+        const newlyAddedElements = recipeGrid.querySelectorAll('.recipe-card-container:not(.visible)');
         newlyAddedElements.forEach(el => observer.observe(el));
 
         // 👇👇 2. PANGGIL FUNGSI UNTUK PASANG LISTENER FAVORIT 👇👇
         attachFavoriteListeners();
     }
 
-    // ========================================================
-    // 🆕 FUNGSI LOGIKA FAVORIT (Tambahkan ini di resep.js)
-    // ========================================================
-    // File: js/resep.js (Ganti fungsi attachFavoriteListeners dengan ini)
+        // Delegasi event untuk klik kartu resep
+        recipeGrid.addEventListener('click', async (e) => {
+            const cardLink = e.target.closest('.recipe-card');
+            if (!cardLink) return;
 
-    function attachFavoriteListeners() {
-        // Ambil semua tombol, termasuk yang baru dirender
-        const favButtons = document.querySelectorAll('.btn-fav');
-        
-        favButtons.forEach(btn => {
-            // Hapus listener lama dengan cara cloning
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
+            // Ambil ID resep dari URL di href
+            const urlParams = new URLSearchParams(new URL(cardLink.href).search);
+            const recipeId = urlParams.get('id');
 
-            // Buat elemen Toast jika belum ada
-            if (!newBtn.querySelector('.fav-toast')) {
-                const toast = document.createElement('div');
-                toast.className = 'fav-toast';
-                newBtn.appendChild(toast);
-            }
-            
-            const toast = newBtn.querySelector('.fav-toast');
+            // Jika user mengklik resep, kita cek dulu aksesnya via Fetch sebelum pindah halaman
+            // ATAU biarkan pindah halaman tapi resep_detail.html yang menangani pop-up nya.
+            // DISARANKAN: Biarkan resep_detail.html yang menangani agar user bisa melihat preview judul/gambar.
+        });
 
-            // 🔥 EVENT LISTENER AGRESIF
-            newBtn.addEventListener('click', async (e) => {
-                // 1. Matikan semua aksi bawaan link
-                e.preventDefault(); 
-                e.stopPropagation();
-                e.stopImmediatePropagation(); // Memastikan tidak ada event lain yang jalan
+    async function fetchUserFavorites() {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
 
-                const token = localStorage.getItem('authToken');
-                if (!token) {
-                    alert("Silakan login untuk menyimpan resep!");
-                    return;
-                }
-
-                const recipeId = newBtn.getAttribute('data-id');
-                const icon = newBtn.querySelector('i');
-                const isCurrentlyActive = newBtn.classList.contains('active');
-
-                // 2. UI Optimistik
-                if (isCurrentlyActive) {
-                    newBtn.classList.remove('active');
-                    icon.classList.replace('fas', 'far'); // Jadi outline
-                    toast.textContent = "Dihapus";
-                } else {
-                    newBtn.classList.add('active');
-                    icon.classList.replace('far', 'fas'); // Jadi solid
-                    toast.textContent = "Disimpan!";
-                }
-
-                // Tampilkan Toast
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2000);
-
-                // 3. Panggil API
-                try {
-                    const url = `${API_BASE_URL}/favorites`; 
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ recipeId: recipeId })
-                    });
-
-                    if (!res.ok) throw new Error("Gagal update backend");
-                } catch (error) {
-                    console.error("Error fav:", error);
-                    // Revert UI jika gagal
-                    if (isCurrentlyActive) {
-                        newBtn.classList.add('active');
-                        icon.classList.replace('far', 'fas');
-                    } else {
-                        newBtn.classList.remove('active');
-                        icon.classList.replace('fas', 'far');
-                    }
+        try {
+            const res = await fetch(`${API_BASE_URL}/favorites`, {
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
                 }
             });
-        });
+            if (res.ok) {
+                const data = await res.json();
+                // Simpan hanya ID-nya saja agar mudah dicek
+                userFavorites = data.map(fav => fav._id || fav.id);
+            }
+        } catch (err) {
+            console.error("Gagal mengambil data favorit:", err);
+        }
     }
     
-    // Fungsi untuk membuat markup HTML untuk satu resep (sekitar baris 265 di kode Anda)
-    function createRecipeCard(recipe) {
-        const timeTotal = (recipe.prepTime || 0) + (recipe.cookTime || 0);
-        const categoryDisplay = recipe.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    /**
+     * FUNGSI LOGIKA FAVORIT (File: js/resep.js)
+     * Menggunakan sistem modular: POST untuk simpan, DELETE untuk hapus.
+     */
+    function attachFavoriteListeners() {
+        // 1. Delegasi Event pada recipeGrid (Kontainer Utama)
+        // Ini memastikan tombol tetap berfungsi meskipun resep baru dimuat via "Load More"
+        const recipeGrid = document.querySelector('.recipe-grid');
+        if (!recipeGrid) return;
 
-        let imageUrl = recipe.imageUrl || ''; // Ambil URL dari data API
-        const fallbackUrl = 'https://placehold.co/800x450?text=Resep+Baru'; // Definisi fallback di sini
+        // Menghapus listener lama (jika ada) untuk mencegah double execution
+        recipeGrid.onclick = null; 
 
-        // ⭐ LOGIKA URL GAMBAR ROBUST (SOLUSI MASALAH PATH) ⭐
-        if (imageUrl) {
-            // Kasus 1: Gambar Diunggah Pengguna (Relatif ke Backend, contoh: /uploads/gambar.jpg)
-            if (imageUrl.startsWith('/')) {
-                // ⭐ PERBAIKAN NGROK KE URL ABSOLUT ⭐
-                imageUrl = `${PUBLIC_BACKEND_URL}${imageUrl}?ngrok-skip-browser-warning=1`;
-            } 
-            // Kasus 2: Gambar Eksternal/Placeholder (TAPI HILANG PROTOKOL, contoh: via.placeholder.co/800x450)
-            else if (!imageUrl.startsWith('http')) {
-                // Tambahkan protokol HTTPS secara eksplisit
-                imageUrl = `https://${imageUrl}`; 
+        recipeGrid.onclick = async (e) => {
+            // Cari apakah yang diklik adalah .btn-fav atau elemen di dalamnya (seperti icon <i>)
+            const btn = e.target.closest('.btn-fav');
+            
+            // Jika yang diklik bukan tombol favorit, biarkan event link <a> berjalan
+            if (!btn) return;
+
+            // 🔥 KUNCI: Hentikan bubbling agar tidak pindah ke halaman detail resep
+            e.preventDefault(); 
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+
+            // 2. Persiapan Data & Validasi Login
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert("Silakan login untuk menyimpan resep favorit!");
+                return;
             }
-            // Kasus 3: Gambar Eksternal (Lengkap dengan Protokol) - Tidak perlu diubah
-        } else {
-            // Fallback jika imageUrl kosong/null dari API
-            imageUrl = fallbackUrl;
-        }
-        // ⭐ AKHIR LOGIKA URL GAMBAR ⭐
 
-        // ⭐ TAMBAHKAN LOG INI ⭐
-        console.log("Final Image URL yang diminta browser:", imageUrl);
+            const recipeId = btn.getAttribute('data-id');
+            const icon = btn.querySelector('i');
+            const isCurrentlyActive = btn.classList.contains('active');
 
-        return `
-            <a href="resep_detail.html?id=${recipe._id}" class="recipe-card fade-in">
-                <div class="card-image">
-                    <img src="${imageUrl}" 
-                        alt="${recipe.title}" 
-                        loading="lazy" 
-                        onerror="this.onerror=null; this.src='${fallbackUrl}'">
-                    <span class="category-badge">${categoryDisplay}</span>
-                    <button class="btn-fav" aria-label="Tambahkan ke Favorit"><i class="far fa-heart"></i></button>
-                </div>
-                <div class="card-info">
-                    <h3>${recipe.title}</h3>
-                    <p class="duration"><i class="far fa-clock"></i> ${timeTotal} Menit</p>
-                </div>
-            </a>
-        `;
-    }
+            // Pastikan elemen toast ada untuk feedback visual
+            let toast = btn.querySelector('.fav-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'fav-toast';
+                btn.appendChild(toast);
+            }
 
-    // Fungsi untuk menambahkan resep ke kontainer
-    function renderRecipes(recipes) {
-        const html = recipes.map(createRecipeCard).join('');
-        recipeContainer.insertAdjacentHTML('beforeend', html);
+            // 3. UI OPTIMISTIK (Berikan respon instan ke user)
+            if (isCurrentlyActive) {
+                btn.classList.remove('active');
+                icon.classList.replace('fas', 'far'); // Kembali ke outline (Hapus)
+                toast.textContent = "Dihapus";
+            } else {
+                btn.classList.add('active');
+                icon.classList.replace('far', 'fas'); // Jadi solid (Simpan)
+                toast.textContent = "Disimpan!";
+            }
+
+            // Jalankan animasi Toast
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+
+            // 4. PANGGIL API BERDASARKAN STATUS (Modular)
+            try {
+                // Tentukan method dan URL berdasarkan status saat ini
+                // Jika aktif -> panggil DELETE ke /api/favorites/:id
+                // Jika tidak aktif -> panggil POST ke /api/favorites
+                const method = isCurrentlyActive ? 'DELETE' : 'POST';
+                const url = isCurrentlyActive 
+                    ? `${API_BASE_URL}/favorites/${recipeId}` 
+                    : `${API_BASE_URL}/favorites`;
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': 'true'
+                    },
+                    // Body hanya dikirim untuk method POST
+                    body: isCurrentlyActive ? null : JSON.stringify({ recipeId: recipeId })
+                });
+
+                const result = await res.json();
+                
+                if (!res.ok) {
+                    throw new Error(result.msg || "Gagal memperbarui database");
+                }
+                
+                console.log(`Berhasil ${isCurrentlyActive ? 'menghapus' : 'menambah'} favorit.`);
+
+            } catch (error) {
+                console.error("Error Favorite Action:", error);
+                
+                // 5. REVERT UI (Kembalikan tampilan jika API GAGAL)
+                alert("Terjadi kesalahan pada server. Perubahan gagal disimpan.");
+                if (isCurrentlyActive) {
+                    btn.classList.add('active');
+                    icon.classList.replace('far', 'fas');
+                } else {
+                    btn.classList.remove('active');
+                    icon.classList.replace('fas', 'far');
+                }
+            }
+        };
     }
 
     // Fungsi untuk mengupdate tombol Load More
@@ -481,15 +525,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Fungsi untuk membuat HTML bintang rating (disalin dari resep_detail.js)
     function createRatingStarsHTML(ratingValue) {
         let starsHTML = '';
-        const fullStars = Math.floor(ratingValue);
-        const hasHalfStar = (Math.round(ratingValue * 10) % 10) === 5; 
+        const rating = parseFloat(ratingValue) || 0;
 
         for (let i = 1; i <= 5; i++) {
-            if (i <= fullStars) {
-                starsHTML += '<i class="fas fa-star"></i>';
-            } else if (hasHalfStar && i === fullStars + 1) {
-                starsHTML += '<i class="fas fa-star-half-alt"></i>';
-            } else {
+            // Logika Bintang Full
+            if (i <= Math.floor(rating)) {
+                starsHTML += '<i class="fas fa-star active"></i>';
+            } 
+            // Logika Bintang Setengah (Jika sisa desimal >= 0.3 dan < 0.8)
+            else if (i === Math.ceil(rating) && (rating % 1 >= 0.3 && rating % 1 < 0.8)) {
+                starsHTML += '<i class="fas fa-star-half-alt active"></i>';
+            }
+            // Logika Pembulatan ke Atas (Jika desimal >= 0.8, dianggap bintang penuh)
+            else if (i === Math.ceil(rating) && (rating % 1 >= 0.8)) {
+                starsHTML += '<i class="fas fa-star active"></i>';
+            }
+            // Bintang Kosong
+            else {
                 starsHTML += '<i class="far fa-star"></i>';
             }
         }
@@ -518,17 +570,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     // START UP LOGIC (LOGIKA UTAMA YANG MENUNGGU config.js)
     // ========================================================
     
-    function initResepPage() {
-        // Ini adalah fungsi inisialisasi yang menunggu URL dimuat
-        console.log('⚡ Resep.js: Inisialisasi setelah URL backend dimuat:', API_BASE_URL);
-        checkLoginState(); // Cek status login setelah URL siap
-        fetchRecipes(); // Muat resep pertama kali (currentPage=0, filter default)
+    async function initResepPage() {
+        console.log('⚡ Resep.js: Inisialisasi...');
+        checkLoginState(); 
+        
+        // 1. Ambil data favorit dulu
+        await fetchUserFavorites(); 
+        
+        // 2. Baru kemudian ambil resep
+        fetchRecipes(); 
 
-        // Event Listener untuk tombol "Muat Lebih Banyak Resep" (Diaktifkan di sini)
         if (loadMoreBtn) {
             loadMoreBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                // currentPage sudah diincrement di fetchRecipes() sebelumnya
                 fetchRecipes(); 
             });
         }
@@ -574,6 +628,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    // A. Dropdown Menu Profil
+    if (profilePicBtn && profileDropdown) {
+        profilePicBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); // Penting untuk mencegah event close di bawah
+            profileDropdown.classList.toggle('active'); 
+        });
+        
+        // Tutup dropdown jika mengklik di luar
+        document.addEventListener('click', (e) => { 
+            if (profileDropdown && profilePicBtn && 
+                !profileDropdown.contains(e.target) && 
+                !profilePicBtn.contains(e.target)) 
+            {
+                profileDropdown.classList.remove('active');
+            }
+        });
+    }
 
     // B. Dark Mode Toggle
     if (themeToggle) {

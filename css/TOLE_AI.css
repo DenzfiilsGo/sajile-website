@@ -1,0 +1,946 @@
+/* =========================================
+   1. BASE VARIABLES & RESET (DARI SAJILE)
+   ========================================= */
+:root {
+    --hover-button: #98FB98;
+    --primary-color: #2ecc71;
+    --primary-dark: #27ae60;
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --card-bg: #f9f9f9;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    --nav-height: 70px;
+    --transition: all 0.3s ease; 
+    --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
+    --accent-color: #3498db; /* Biru untuk badge kategori */
+    --danger-color: #e74c3c; /* Merah untuk Logout */
+    --user-name-color: #4B0082; /* Warna Nama Pengguna */
+    --dropdown-bg: #ffffff; /* Tambahan untuk dropdown */
+    --border-color: #eeeeee; /* Tambahan untuk batas */
+    
+    /* Variable Khusus Chat */
+    --chat-bg-user: #e8f5e9; /* Hijau pudar */
+    --chat-bg-ai: #ffffff;
+    --sidebar-width: 280px;
+}
+
+/* DARK MODE VARIABLES */
+[data-theme="dark"] {
+    --bg-color: #121212; 
+    --text-color: #e0e0e0; 
+    --text-light: #aaaaaa; 
+    --card-bg: #1e1e1e;
+    --card-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+    --dropdown-bg: #1e1e1e; /* Dark mode dropdown */
+    --border-color: #333333; /* Dark mode batas */
+    
+    /* Variable Khusus Chat Dark */
+    --chat-bg-user: #1e3a29; /* Hijau tua */
+    --chat-bg-ai: #2a2a2a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { 
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--color-transition), color var(--color-transition); 
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    user-select: none; /* Mencegah seleksi teks */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge lama */
+}
+
+/* =========================================
+   2. NAVBAR STYLING (FIXED & SAFE - STANDAR WAJIB)
+   ========================================= */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    height: var(--nav-height);
+    background-color: var(--bg-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: background-color var(--color-transition), box-shadow var(--color-transition);
+}
+
+.nav-brand { 
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    flex-shrink: 0; 
+    color: #4B0082;
+    transition: color var(--color-transition);
+}
+.brand-highlight { color: var(--primary-color); transition: color var(--color-transition); }
+
+/* --- Container Menu (Desktop Mode) --- */
+.nav-menu-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    margin: 0 auto;
+}
+
+.nav-links a { 
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    position: relative;
+    white-space: nowrap;
+    transition: color var(--color-transition);
+}
+
+.nav-links a::after {
+    content: ''; position: absolute; width: 0; height: 2px;
+    bottom: -5px; left: 0; background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary-color); }
+
+.nav-actions { 
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.btn-primary { 
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+.btn-primary:hover {
+    background-color: transparent; border-color: var(--primary-color); color: var(--primary-color);
+}
+
+.btn-icon { 
+    background: none; border: none; font-size: 1.2rem; cursor: pointer; 
+    color: var(--text-color); padding: 5px; border-radius: 50%;
+    transition: color var(--color-transition), background-color var(--transition); 
+}
+.btn-icon:hover { background-color: rgba(0,0,0,0.05); color: #7296AB; }
+
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+/* Tambahan: Sembunyikan item mobile di desktop */
+.mobile-only-text, .profile-pic.mobile-only { display: none; } 
+/* Tambahan: Tampilkan item desktop di desktop */
+.profile-pic.desktop-only { display: block; }
+
+/* Hamburger Button */
+.hamburger {
+    display: none; cursor: pointer; background: none; border: none; padding: 10px; z-index: 1001;
+}
+.bar {
+    display: block; width: 25px; height: 3px; margin: 5px auto;
+    background-color: var(--text-color); transition: all 0.3s ease-in-out; border-radius: 3px;
+}
+/* Animasi Hamburger ke X */
+.hamburger.active .bar:nth-child(2) { opacity: 0; }
+.hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* --- KONTROL TAMPILAN BERDASARKAN STATUS MASUK --- */
+.logged-in-only { display: none; }
+.logged-out-only { display: flex; align-items: center; } /* Default: tampilkan tombol Masuk/Daftar */
+
+body[data-logged-in="true"] .logged-in-only { display: flex; } /* Tampilkan profil jika logged-in=true */
+body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan tombol Masuk/Daftar jika logged-in=true */
+
+/* =========================================
+    3. DROPDOWN PROFILE STYLING (STANDAR WAJIB)
+    ========================================= */
+.profile-dropdown-wrapper { position: relative; }
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.profile-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 30px); /* Jarak dari nav-actions */
+    right: -60px; /* Penyesuaian posisi kanan */
+    width: 300px;
+    background-color: var(--dropdown-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 15px 0;
+    z-index: 990;
+    
+    /* State Awal (Sembunyi) */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Kelas yang akan ditambahkan via JavaScript */
+.profile-dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    padding: 0 15px 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+.dropdown-header img {
+    width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+    margin-right: 10px; border: 2px solid var(--primary-color);
+}
+.user-info {
+    display: flex; flex-direction: column;
+}
+.username {
+    font-weight: 600; color: var(--text-color); font-size: 1rem;
+}
+.email {
+    font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.dropdown-links {
+    list-style: none; padding: 0; margin: 0;
+}
+.dropdown-links li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dropdown-links li a:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--primary-dark);
+}
+.dropdown-links li a i {
+    margin-right: 10px; width: 20px; text-align: center;
+}
+.dropdown-links li a.logout {
+    color: #e74c3c;
+}
+.dropdown-links li a.logout:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #c0392b;
+}
+
+.divider-item {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 5px 0;
+}
+
+.mobile-only-text { display: none; } /* Teks penjelasan icon di desktop sembunyi */
+
+/* Status Login Display */
+body[data-logged-in="true"] .logged-out-only { display: none !important; }
+body[data-logged-in="false"] .logged-in-only { display: none !important; }
+
+/* =========================================
+   3. TOLE AI LAYOUT (MODERN CHAT INTERFACE)
+   ========================================= */
+
+.ai-app-wrapper {
+    display: flex;
+    height: calc(100vh - var(--nav-height)); /* Tinggi sisa layar setelah navbar */
+    position: relative;
+    background-color: var(--bg-color);
+    transition: background-color var(--color-transition);
+}
+
+/* --- SIDEBAR --- */
+.ai-sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    z-index: 100;
+    transition: background-color var(--color-transition), border-right var(--color-transition);
+}
+
+.sidebar-header {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.new-chat-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: background-color var(--color-transition), border var(--color-transition), color var(--color-transition), box-shadow var(--color-transition);
+}
+
+.new-chat-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.2);
+    transition: border-color var(--color-transition), color var(--color-transition), box-shadow var(--color-transition);
+}
+
+.close-sidebar-btn {
+    display: none; /* Hanya muncul di mobile */
+    background: none; border: none; font-size: 1.2rem; color: var(--text-light); cursor: pointer;
+    transition: color var(--color-transition);
+}
+
+.history-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Scrollbar styling for sidebar */
+.history-list::-webkit-scrollbar { width: 5px; }
+.history-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 5px; }
+
+.history-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin: 15px 0 5px 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: color var(--color-transition);
+}
+
+.history-item {
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    /* TAMBAHKAN INI */
+    padding-right: 40px; /* Ruang khusus untuk tombol delete di kanan */
+    position: relative;  /* Anchor untuk tombol absolute */
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-color);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background var(--color-transition), color var(--color-transition);
+}
+
+.delete-history-btn {
+    position: absolute;
+    right: 10px;         /* Tempel di pinggir kanan kartu */
+    opacity: 1;
+    background-color: transparent;
+    border-radius: 0px;
+    border-color: transparent;
+    transition: background-color var(--transition);
+    padding: 5px;
+}
+
+.history-item:hover .delete-history-btn {
+    opacity: 1;
+}
+
+.delete-history-btn i:hover {
+    color: red;
+    border-radius: 0px;
+    border-color: transparent;
+    transition: color var(--color-transition);
+    cursor: pointer;
+}
+
+.history-item i { font-size: 0.9rem; color: var(--text-light); transition: color var(--color-transition); }
+.history-item i.fa-message {
+    flex-shrink: 0; /* Ikon tetap utuh bulat/kotak */
+    margin-right: 8px;
+}
+.history-item .chat-title {
+    flex: 1; /* Ini yang akan mendorong tombol delete ke kanan */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+}
+.history-item:hover { background-color: rgba(46, 204, 113, 0.125); transition: background-color var(--color-transition); }
+.history-item.active { background-color: rgba(46, 204, 113, 0.25); color: var(--primary-dark); transition: background-color var(--color-transition), color var(--color-transition); }
+.history-item.active i { color: rgba(46, 204, 113, 1); transition: color var(--color-transition); }
+.history-item.active .delete-history-btn i:hover { color: var(--danger-color); }
+
+.sidebar-footer {
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+    margin-top: 10px;
+    transition: border-top var(--color-transition);
+}
+
+.pro-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    padding: 8px;
+    background-color: rgba(0,0,0,0.03);
+    border-radius: 6px;
+    transition: color var(--color-transition), background-color var(--color-transition);
+}
+
+/* --- MAIN CHAT AREA --- */
+.ai-chat-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+}
+
+.sidebar-toggle-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 90;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-light);
+    display: none; /* Hidden on desktop */
+    transition: background var(--color-transition), border var(--color-transition), color var(--color-transition);
+}
+
+/* 1. Daftarkan properti warna agar bisa dianimasikan */
+@property --grad-1 {
+  syntax: '<color>';
+  initial-value: #E0C3FC; /* Default Indigo Terang */
+  inherits: false;
+}
+
+@property --grad-2 {
+  syntax: '<color>';
+  initial-value: #D4F1C5; /* Default Zamrud Terang */
+  inherits: false;
+}
+
+/* Chat Window (Messages) */
+.chat-window {
+    /* Gunakan variabel warna yang baru didaftarkan */
+    background: linear-gradient(45deg, var(--grad-1), var(--grad-2));
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px; /* HAPUS padding 200px, gunakan padding normal */
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content max-width */
+    /* Gunakan variabel transisi global Anda tepat di sini! */
+    transition: 
+        --grad-1 var(--color-transition), 
+        --grad-2 var(--color-transition),
+        color var(--color-transition);
+}
+
+/* Welcome Screen */
+.welcome-screen {
+    text-align: center;
+    max-width: 700px;
+    margin-top: 5vh;
+    width: 100%;
+}
+
+.ai-avatar-large {
+    font-size: 4rem;
+    color: var(--primary-color);
+    background-color: rgba(46, 204, 113, 0.1);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    transition: color var(--color-transition), background-color var(--color-transition);
+}
+
+.main-brand {
+    color: #4B0082;
+    transition: color var(--color-transition);
+}
+.main-brand-highlight {
+    color: var(--primary-color);
+    transition: color var(--color-transition);
+}
+
+.welcome-screen h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--text-color); transition: color var(--color-transition); }
+.welcome-screen p { color: var(--text-light); margin-bottom: 40px; font-size: 1.1rem; transition: color var(--color-transition); }
+
+.suggestion-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.suggestion-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform var(--color-transition), background-color var(--color-transition), border var(--color-transition);
+}
+
+.suggestion-card i { color: var(--primary-color); font-size: 1.2rem; transition: color var(--color-transition); }
+.suggestion-card span { color: var(--text-color); font-weight: 500; font-size: 0.95rem; transition: color var(--color-transition); }
+.suggestion-card:hover { border-color: var(--primary-color); transform: translateY(-3px); box-shadow: var(--card-shadow); transition: transform var(--color-transition), border-color var(--color-transition), box-shadow var(--color-transition); }
+
+/* Ketika input-container memiliki class .locked-state (kredit habis) */
+.input-container.locked-state ~ .welcome-screen .suggestion-card,
+.input-container.locked-state ~ .suggestions-grid .suggestion-card {
+    cursor: not-allowed;
+    opacity: 0.6;
+    filter: grayscale(1);
+    pointer-events: none; /* Opsi paling aman: Mematikan semua klik */
+}
+
+/* Messages Styling */
+.messages-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.message-wrapper {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.message-wrapper.user {
+    flex-direction: row-reverse;
+}
+
+.chat-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.chat-avatar.ai { background-color: var(--primary-color); color: white; font-size: 1rem; transition: background-color var(--color-transition), color var(--color-transition); }
+
+.message-content {
+    max-width: 80%;
+    padding: 12px 18px;
+    border-radius: 15px;
+    font-size: 1rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+.message-wrapper.user .message-content {
+    background: linear-gradient(135deg, #6366F1, #4338CA);
+    color: white;
+    border-radius: 15px 15px 0 15px;
+    transition: background var(--color-transition), color var(--color-transition);
+}
+
+.message-wrapper.ai .message-content {
+    background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+    color: var(--text-color);
+    border: 1px solid rgba(80, 200, 120, 0.3); 
+    border-radius: 15px 15px 15px 0;
+    transition: background var(--color-transition), color var(--color-transition), border var(--color-transition);
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    gap: 15px;
+    margin-left: 0;
+    align-items: center;
+}
+.dots {
+    display: flex;
+    gap: 5px;
+    background-color: var(--card-bg);
+    padding: 10px 15px;
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    transition: background-color var(--color-transition), border var(--color-transition);
+}
+.dots span {
+    width: 8px;
+    height: 8px;
+    background-color: var(--text-light);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+    transition: background-color var(--color-transition);
+}
+.dots span:nth-child(1) { animation-delay: -0.32s; }
+.dots span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+/* Input Area (Fixed) */
+.input-area-wrapper {
+    width: 100%;
+    padding: 20px;
+    background-color: var(--bg-color);
+    border-top: 1px solid var(--border-color); /* Ubah border jadi top saja */
+    box-shadow: 0 -10px 20px rgba(0,0,0,0.1); /* Bayangan halus ke arah atas */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0; /* Pastikan input tidak menciut saat chat penuh */
+}
+/* Buat layer gradient sebagai background */
+.input-area-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Gunakan variabel warna Anda */
+    background: linear-gradient(to top, var(--bg-color) 80%, transparent);
+    z-index: -1; /* Supaya di bawah teks/input */
+    transition: background var(--color-transition);
+}
+
+.input-container {
+    width: 100%;
+    max-width: 800px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+    transition: background-color var(--color-transition), border var(--color-transition), box-shadow var(--color-transition);
+}
+
+.input-container:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2);
+    transition: border-color var(--color-transition), box-shadow var(--color-transition);
+}
+
+/* Efek saat kredit habis */
+.input-container.locked-state {
+    background-color: #f0f0f0 !important;
+    border: 1px solid #dcdcdc !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.input-container.locked-state textarea {
+    background: transparent;
+    cursor: not-allowed;
+    color: #999;
+}
+
+/* Tambahan: Animasi denyut halus pada placeholder saat terkunci */
+.input-container.locked-state textarea::placeholder {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+#chat-input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    max-height: 100px;
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 10px 5px;
+    line-height: 1.5;
+    transition: background var(--color-transition), color var(--color-transition);
+}
+
+#send-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--color-transition), color var(--color-transition);
+    margin-bottom: 3px;
+}
+
+#send-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transition: background-color var(--color-transition);
+}
+
+#send-btn:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+    transition: background-color var(--color-transition);
+}
+
+.disclaimer-text {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin-top: 10px;
+    text-align: center;
+    transition: color var(--color-transition);
+}
+
+/* =========================================
+   4. RESPONSIVE DESIGN
+   ========================================= */
+@media (max-width: 768px) {
+    .navbar { padding: 0 20px; }
+    .hamburger { display: block; }
+
+    /* Ubah Container jadi Dropdown Vertical */
+    .nav-menu-container {
+        position: absolute;
+        top: var(--nav-height); /* Dihitung dari variabel nav-height */
+        left: 0;
+        width: 100%;
+        margin: 0;
+        
+        /* Flex Column untuk Vertical Menu */
+        flex-direction: column;
+        background-color: var(--bg-color);
+        padding: 30px 20px;
+        
+        /* Style Dropdown */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        
+        /* STATE AWAL: Hidden & Slide Up */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        
+        /* TRANSISI SUPER HALUS */
+        transition: opacity 0.4s ease, 
+                        transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                        visibility 0.4s ease,
+                        background-color var(--color-transition);
+    }
+
+    /* KELAS ACTIVE (Saat hamburger diklik) */
+    .nav-menu-container.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Reset Link Styles */
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .nav-links a {
+        display: block; font-size: 1.2rem; padding: 10px 0;
+    }
+    
+    /* Actions di Bawah */
+    .nav-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+        border-top: 1px solid var(--text-light);
+        padding-top: 25px;
+        
+        /* Penting: Pastikan logged-in/out elemen juga diatur di sini */
+        display: flex; /* Override untuk memformat sebagai kolom */
+    }
+
+    .nav-auth-links {
+        width: 100%;
+        flex-direction: column; /* Tombol Masuk/Daftar jadi full-width */
+    }
+
+    .logged-out-only {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-dropdown-wrapper {
+        position: static; /* Dropdown di mobile tidak perlu absolute */
+        width: 100%;
+        order: -1; /* Pindah ke atas */
+        flex-direction: column;
+        gap: 10px;
+        /* Penting: Pastikan logged-in-only tampil sebagai flex saat login */
+        display: flex; 
+        
+        /* Dropdown Header Styling untuk Mobile */
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .profile-dropdown-wrapper .dropdown-header {
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+    }
+
+    /* Tombol Theme jadi baris panjang */
+    .btn-icon {
+        width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
+        border: 1px solid #ddd; border-radius: 10px; padding: 10px;
+    }
+    .mobile-only-text { display: inline; font-size: 1rem; font-weight: 500; }
+    
+    .btn-primary { width: 100%; text-align: center; padding: 12px; }
+    
+    .ai-sidebar {
+        position: absolute;
+        left: -100%;
+        height: 100%;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    }
+    
+    .ai-sidebar.active {
+        transform: translateX(100%);
+    }
+
+    .close-sidebar-btn { display: block; }
+    .sidebar-toggle-btn { display: block; }
+    
+    .chat-window { padding-top: 60px; } /* Space for toggle button */
+    
+    .suggestion-grid { grid-template-columns: 1fr; }
+    .welcome-screen h1 { font-size: 2rem; }
+    
+    /* Navbar styling from main files needs to apply here too (already included in logic above) */
+    .navbar { padding: 0 20px; }
+    .hamburger { display: block; }
+    .nav-menu-container {
+        position: absolute; top: var(--nav-height); left: 0; width: 100%; 
+        flex-direction: column; background: var(--bg-color); padding: 20px;
+        opacity: 0; visibility: hidden; transform: translateY(-20px);
+    }
+    .nav-menu-container.active { opacity: 1; visibility: visible; transform: translateY(0); }
+}
+
+/* Fade In Animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInAnim 0.6s forwards;
+}
+@keyframes fadeInAnim {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Marquee Logic (Standard Wajib) */
+.user-info { width: 170px; overflow: hidden; display: flex; flex-direction: column; }
+.user-info span { display: block; white-space: nowrap; margin-bottom: 1px; }
+.user-info span::before {
+    content: attr(data-text); display: inline-block; padding-left: 100%;
+    animation: marquee 10s linear infinite;
+}
+.user-info:hover span::before { animation-play-state: paused; }
+@keyframes marquee {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+}
+
+/* =========================================
+   6. DARK MODE STYLING (FIXED & MANDATORY)
+   ========================================= */
+
+[data-theme="dark"] .navbar { background-color: #1a1a1a; box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .nav-brand { color: #BB86FC; }
+[data-theme="dark"] .nav-links a { color: #cccccc; }
+[data-theme="dark"] .nav-links a:hover, 
+[data-theme="dark"] .nav-links a.active { color: var(--primary-color); }
+[data-theme="dark"] .btn-icon { color: #e0e0e0; }
+[data-theme="dark"] .btn-icon:hover { background-color: rgba(255, 255, 255, 0.05); color: #FFE87C; }
+[data-theme="dark"] .bar { background-color: #e0e0e0; }
+[data-theme="dark"] .profile-pic img { border-color: var(--primary-color); }
+[data-theme="dark"] .profile-dropdown-menu { background-color: var(--dropdown-bg); box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .divider-item { background-color: #333333; }
+[data-theme="dark"] .site-footer { background-color: #1a1a1a; color: #bbb; border-top-color: var(--primary-dark); }
+[data-theme="dark"] .about-we, [data-theme="dark"] .contact-we { color: #999999; }
+[data-theme="dark"] .about-we:hover, [data-theme="dark"] .contact-we:hover { color: var(--primary-color); }
+[data-theme="dark"] .footer-brand { color: #BB86FC; }
+
+[data-theme="dark"] .chat-window { background: linear-gradient(45deg, #2E0249, #064635); }
+[data-theme="dark"] .input-area-wrapper { background-color: var(--bg-color); border: 1px solid var(--border-color); box-shadow: 0 0 200px black; }
+[data-theme="dark"] .message-wrapper.user .message-content { background: linear-gradient(135deg, #4B0082, #310055); }
+[data-theme="dark"] .message-wrapper.ai .message-content { background: linear-gradient(135deg, #065F46, #064E3B); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }

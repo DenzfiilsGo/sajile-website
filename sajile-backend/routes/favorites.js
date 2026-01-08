@@ -4,31 +4,40 @@ const Favorite = require('../models/Favorite');
 const auth = require('../middleware/auth'); // Pastikan Anda punya middleware auth
 
 // @route   POST /api/favorites
-// @desc    Toggle Favorit (Jika ada hapus, jika tidak ada tambah)
-// @access  Private (Perlu Login)
+// @desc    Tambah resep ke favorit
+// @access  Private
 router.post('/', auth, async (req, res) => {
     const { recipeId } = req.body;
-
     try {
-        // Cek apakah sudah ada di favorit
-        const existingFav = await Favorite.findOne({ 
+        const existingFav = await Favorite.findOne({ user: req.user.id, recipe: recipeId });
+        if (existingFav) {
+            return res.status(400).json({ msg: 'Resep sudah ada di favorit' });
+        }
+
+        const newFav = new Favorite({ user: req.user.id, recipe: recipeId });
+        await newFav.save();
+        res.json({ msg: 'Resep ditambahkan', isFavorited: true });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   DELETE /api/favorites/:recipeId
+// @desc    Hapus resep dari favorit (Modular)
+// @access  Private
+router.delete('/:recipeId', auth, async (req, res) => {
+    try {
+        const result = await Favorite.findOneAndDelete({ 
             user: req.user.id, 
-            recipe: recipeId 
+            recipe: req.params.recipeId 
         });
 
-        if (existingFav) {
-            // HAPUS (Un-favorite)
-            await Favorite.findByIdAndDelete(existingFav._id);
-            return res.json({ msg: 'Resep dihapus dari favorit', isFavorited: false });
-        } else {
-            // TAMBAH (Favorite)
-            const newFav = new Favorite({
-                user: req.user.id,
-                recipe: recipeId
-            });
-            await newFav.save();
-            return res.json({ msg: 'Resep ditambahkan ke favorit', isFavorited: true });
+        if (!result) {
+            return res.status(404).json({ msg: 'Resep favorit tidak ditemukan' });
         }
+
+        res.json({ msg: 'Resep berhasil dihapus dari favorit', isFavorited: false });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

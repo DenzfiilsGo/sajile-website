@@ -110,7 +110,7 @@ body {
 .nav-actions { 
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     flex-shrink: 0;
 }
 
@@ -160,11 +160,12 @@ body {
 .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
 .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-/* Status Display Logic */
+/* --- KONTROL TAMPILAN BERDASARKAN STATUS MASUK --- */
 .logged-in-only { display: none; }
-.logged-out-only { display: flex; }
-body[data-logged-in="true"] .logged-in-only { display: flex; }
-body[data-logged-in="true"] .logged-out-only { display: none; }
+.logged-out-only { display: flex; align-items: center; } /* Default: tampilkan tombol Masuk/Daftar */
+
+body[data-logged-in="true"] .logged-in-only { display: flex; } /* Tampilkan profil jika logged-in=true */
+body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan tombol Masuk/Daftar jika logged-in=true */
 
 /* =========================================
     3. DROPDOWN PROFILE STYLING (STANDAR WAJIB)
@@ -408,7 +409,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; }
 .split-section { display: flex; align-items: center; gap: 50px; margin-bottom: 80px; }
 .split-text { flex: 1; }
 .split-image { flex: 1; }
-.split-image img { width: 100%; border-radius: 20px; box-shadow: var(--card-shadow); transition: transform 0.3s; }
+.split-image img { width: 100%; border-radius: 20px; box-shadow: var(--card-shadow); transition: transform var(--color-transition); }
 .split-image img:hover { transform: scale(1.02); }
 .content-text { font-size: 1.05rem; line-height: 1.8; color: var(--text-color); margin-bottom: 25px; }
 

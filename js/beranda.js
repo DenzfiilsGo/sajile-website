@@ -1,74 +1,65 @@
 // P5 Project/js/beranda.js
 
-// ⭐ IMPORT API URL DARI FILE CONFIG.JS ⭐
-// Pastikan file config.js berada di lokasi yang benar
 import { API_AUTH_URL, API_BASE_URL } from './config.js';
 
-// =======================================================
-// GLOBAL EVENT LISTENERS
-// =======================================================
-
-// Blokir seleksi teks via JavaScript
 document.addEventListener('selectstart', function(e) {
-    e.preventDefault(); // Mencegah aksi default seleksi
+    e.preventDefault();
 });
 
-// Opsional: Blokir drag teks/gambar
 document.addEventListener('dragstart', function(e) {
     e.preventDefault();
 });
 
-// =======================================================
-// FUNGSI UTAMA: UPDATE UI PROFIL (FOTO, NAMA, EMAIL)
-// =======================================================
-
-/**
- * Mengambil data pengguna dari localStorage dan memperbarui
- * foto profil, username, dan email pada navbar dropdown.
- */
 function updateUserProfileUI() {
-    // ✅ PERBAIKAN: Menggunakan kunci 'authUser'
     const userDataJSON = localStorage.getItem('authUser');
-    
-    if (userDataJSON) {
-        try {
-            const userData = JSON.parse(userDataJSON);
-            
-            // 1. Update Profile Picture (ID harus 'profile-pic-img')
-            const profilePicImg = document.getElementById('profile-pic-img');
-            if (profilePicImg && userData.profilePictureUrl) {
-                profilePicImg.src = userData.profilePictureUrl;
-                
-                // Tambahkan error handler untuk berjaga-jaga jika URL eksternal gagal
-                profilePicImg.onerror = () => {
-                    console.warn("Gagal memuat foto profil eksternal. Menggunakan default HTML.");
-                    // Biarkan browser menggunakan src default yang sudah ada di HTML
-                };
-            }
-            
-            // 2. Update Username (ID atau Class)
-            const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
-            if (usernameEl && userData.username) {
-                usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
-                usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
-            }
-                
-            // 3. Update Email (ID atau Class)
-            const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
-            if (emailEl && userData.email) {
-                emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
-                emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
-            }
-                
-        } catch (error) {
-            console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
+    if (!userDataJSON) return;
+
+    try {
+        const userData = JSON.parse(userDataJSON);
+        const profileImages = document.querySelectorAll('.profile-pic img, .dropdown-header img');
+        
+        // Pastikan URL Google menggunakan HTTPS
+        let photoUrl = userData.profilePictureUrl;
+        if (photoUrl && photoUrl.startsWith('http://')) {
+            photoUrl = photoUrl.replace('http://', 'https://');
         }
+
+        profileImages.forEach(img => {
+            // Hindari reload gambar jika src sudah sama
+            if (img.src === photoUrl) return;
+
+            if (photoUrl) {
+                // Gunakan crossOrigin anonymous untuk menghindari blokir CORS/CORB pada gambar
+                img.crossOrigin = "anonymous"; 
+                img.src = photoUrl;
+            } else {
+                img.src = `https://placehold.co/40x40/2ecc71/fff?text=${userData.username.charAt(0)}`;
+            }
+
+            img.onerror = () => {
+                // Jika Google memblokir (429/CORB), gunakan inisial sebagai fallback terakhir
+                img.src = `https://placehold.co/40x40/2ecc71/fff?text=${userData.username.charAt(0)}`;
+                img.onerror = null; // Hentikan loop onerror
+            };
+        })
+            
+        // 2. Update Username (ID atau Class)
+        const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+        if (usernameEl && userData.username) {
+            usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+            usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
+        }
+            
+        // 3. Update Email (ID atau Class)
+        const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+        if (emailEl && userData.email) {
+            emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+            emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+        }
+    } catch (error) {
+        console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
     }
 }
-
-// =======================================================
-// FUNGSI UTAMA: CEK STATUS LOGIN DAN TAMPILKAN UI YANG SESUAI
-// =======================================================
 
 async function checkLoginState(navAuthLinks, profileDropdownWrapper, ctaBannerSignIn, body) {
     // ✅ PERBAIKAN: Menggunakan kunci 'authToken'
@@ -95,12 +86,10 @@ async function checkLoginState(navAuthLinks, profileDropdownWrapper, ctaBannerSi
     }
 }
 
-// =======================================================
-// MAIN LOGIC (DOMContentLoaded)
-// =======================================================
 document.addEventListener('DOMContentLoaded', async () => {
     // --- 1. DEKLARASI VARIABEL DOM UTAMA ---
     const body = document.body;
+    const sajile_theme = localStorage.getItem('sajile_theme');
     const navAuthLinks = document.querySelector('.nav-auth-links'); // Container tombol Masuk
     const profileDropdownWrapper = document.querySelector('.profile-dropdown-wrapper'); // Container Profil
     const logoutBtn = document.getElementById('logout-btn');
@@ -179,12 +168,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     
-    // ⭐ FUNGSI BARU: Mengganti gambar berdasarkan mode gelap/terang ⭐
     function updateFeatureImage() {
-        if (!featureImage) return; // Hentikan jika gambar tidak ditemukan
+        if (!featureImage) return;
 
-        // Asumsi: Anda memiliki kelas CSS 'dark-mode-active' di body saat mode gelap aktif
-        const isDarkModeActive = body.classList.contains('dark-theme') || body.dataset.theme === 'dark';
+        // AMBIL NILAI TERBARU: Jangan gunakan variabel statis dari luar
+        // Kita cek langsung ke body dataset karena itu sumber kebenaran (source of truth) saat ini
+        const isDarkModeActive = document.body.dataset.theme === 'dark';
 
         if (isDarkModeActive) {
             featureImage.src = imgSrcDark;
@@ -199,8 +188,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     moveToSlide(0);
     // Mulai interval otomatis
     setInterval(nextSlide, intervalTime);
-    // ⭐ Panggil fungsi update gambar saat halaman dimuat ⭐
-    if ('dark-theme' in body.dataset || body.classList.contains('dark-theme')) updateFeatureImage();
+    //updateFeatureImage()
     
     // --- 2. Cek Status Login Saat Halaman Dimuat ---
     checkLoginState(navAuthLinks, profileDropdownWrapper, ctaBannerSignIn, body);
@@ -243,10 +231,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // B. Dark Mode Toggle
     if (themeToggle) {
         const icon = themeToggle.querySelector('i');
-        // ⭐ Gunakan kunci LS yang konsisten: sajile_theme
         const savedTheme = localStorage.getItem('sajile_theme') || 'light'; 
         
+        // Inisialisasi awal
         body.dataset.theme = savedTheme;
+        //updateFeatureImage(); // Pastikan gambar sesuai saat pertama kali load
+
         if (icon) {
             icon.classList.toggle('fa-sun', savedTheme === 'dark');
             icon.classList.toggle('fa-moon', savedTheme === 'light');
@@ -263,8 +253,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 icon.classList.toggle('fa-moon');
                 icon.classList.toggle('fa-sun');
             }
-            // Panggil fungsi update gambar setiap kali mode berubah
-            updateFeatureImage();
+            
+            // Sekarang ini akan bekerja karena mengambil data terbaru dari body.dataset
+            //updateFeatureImage();
         });
     }
 

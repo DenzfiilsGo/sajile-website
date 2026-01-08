@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="referrer" content="no-referrer">
+        <title>TOLE AI - Asisten Masak Cerdas - SajiLe</title>
+        <link rel="icon" href="../assets/sajile_icon.jpg" type="image/x-icon">
+        <link rel="stylesheet" href="../css/TOLE_AI.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+    <body data-logged-in="false">
+
+        <nav class="navbar">
+            <a class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
+
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <div class="nav-menu-container" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="../index.html">Beranda</a></li>
+                    <li><a href="daftar_makanan.html">Menu</a></li>
+                    <li><a href="resep.html">Resep</a></li>
+                    <li><a href="favorit.html">Favorit</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="btn-icon">
+                        <i class="fas fa-moon"></i>
+                        <span class="mobile-only-text">Mode Gelap</span>
+                    </button>
+                    
+                    <div class="nav-auth-links logged-out-only">
+                        <a href="daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
+                    </div>
+                    
+                    <div class="profile-dropdown-wrapper logged-in-only">
+                        <div class="profile-pic" id="profile-pic-btn">
+                            <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna" onerror="this.onerror=null; this.src='https://placehold.co/40x40/3498db/fff?text=U'">
+                        </div>
+                        
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <div class="dropdown-header">
+                                <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
+                                <div class="user-info">
+                                    <span class="username" data-text="Nama Pengguna Super Panjang">Nama Pengguna</span>
+                                    <span class="email" data-text="email.pengguna.panjang.sekali@namadomainyangsangatpanjang.com">user.email@mail.com</span>
+                                </div>
+                            </div>
+                            <ul class="dropdown-links">
+                                <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
+                                <li><a href="pengaturan_akun.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
+                                <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
+                                <li class="divider-item"></li>
+                                <li><a id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="ai-app-wrapper">
+            
+            <aside class="ai-sidebar" id="ai-sidebar">
+                <div class="sidebar-header">
+                    <button class="new-chat-btn" id="new-chat-btn">
+                        <i class="fas fa-plus"></i>
+                        <span>Percakapan Baru</span>
+                    </button>
+                </div>
+
+                <div class="history-list" id="history-list">
+                    <p class="history-label">Hari Ini</p>
+                    <button class="history-item active"><i class="far fa-message"></i> Resep Rendang Sapi</button>
+                    <button class="history-item"><i class="far fa-message"></i> Ide Bekal Anak TK</button>
+                    
+                    <p class="history-label">Kemarin</p>
+                    <button class="history-item"><i class="far fa-message"></i> Tips Agar Santan Tidak Pecah</button>
+                    <button class="history-item"><i class="far fa-message"></i> Pengganti Tepung Maizena</button>
+                </div>
+
+                <div class="sidebar-footer">
+                    <div class="pro-badge">
+                        <i class="fas fa-sparkles"></i>
+                        <span>TOLE AI v1.0 (Beta)</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="ai-chat-area">
+                
+                <button class="sidebar-toggle-btn" id="sidebar-toggle-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="chat-window" id="chat-window">
+                    
+                    <div class="welcome-screen fade-in" id="welcome-screen">
+                        <div class="ai-avatar-large">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h1>Halo, saya <span class="main-brand">TO<span class="main-brand-highlight">LE AI</span></span></h1>
+                        <p>Asisten dapur pribadimu. Mau masak apa kita hari ini?</p>
+                        
+                        <div class="suggestion-grid">
+                            <button class="suggestion-card" onclick="fillInput('Berikan resep nasi goreng simpel untuk sarapan')">
+                                <i class="fas fa-utensils"></i>
+                                <span>Resep nasi goreng simpel</span>
+                            </button>
+                            <button class="suggestion-card" onclick="fillInput('Apa pengganti santan yang sehat?')">
+                                <i class="fas fa-leaf"></i>
+                                <span>Pengganti santan sehat</span>
+                            </button>
+                            <button class="suggestion-card" onclick="fillInput('Saya punya telur dan tahu, masak apa ya?')">
+                                <i class="fas fa-search"></i>
+                                <span>Masak dari bahan sisa</span>
+                            </button>
+                            <button class="suggestion-card" onclick="fillInput('Tips agar daging cepat empuk')">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Tips daging empuk</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="messages-container" id="messages-container" style="display: none;">
+                        </div>
+
+                    <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                        <div class="chat-avatar ai"><i class="fas fa-robot"></i></div>
+                        <div class="dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    
+                    <div style="height: 20px;"></div>
+                </div>
+
+                <div class="input-area-wrapper">
+                    <div class="input-container">
+                        <textarea id="chat-input" placeholder="Tanya TOLE AI..." rows="1"></textarea>
+                        <button id="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                    <p class="disclaimer-text">TOLE AI bisa saja salah. Selalu cek kembali informasi gizi dan kesehatan.</p>
+                </div>
+
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script type="module" src="../js/TOLE_AI.js"></script>
+    </body>
+</html>

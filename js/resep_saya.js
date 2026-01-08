@@ -1,11 +1,28 @@
 // P5 Project/js/resep_saya.js
 
+// =======================================================
+// GLOBAL EVENT LISTENERS
+// =======================================================
+
+// Blokir seleksi teks via JavaScript
+document.addEventListener('selectstart', function(e) {
+    e.preventDefault(); // Mencegah aksi default seleksi
+});
+
+// Opsional: Blokir drag teks/gambar
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+});
+
 // ⭐ IMPORT API URL DAN AUTH MANAGER DARI FILE CONFIG.JS/AUTHMANAGER.JS ⭐
-import { PUBLIC_BACKEND_URL, API_BASE_URL } from './config.js'; 
+import { backendUrlReady, PUBLIC_BACKEND_URL, API_BASE_URL } from './config.js'; 
 import { getAuthToken, removeAuthToken, updateAuthUI } from './authManager.js'; // Menggunakan authManager
 
+// Tunggu sampai config selesai memuat URL
+await backendUrlReady;
+
 // Asumsi API untuk resep pengguna
-const API_MY_RECIPES_URL = `${API_BASE_URL}/recipes/my`; 
+//const API_MY_RECIPES_URL = `${API_BASE_URL}/recipes/my`; 
 const API_RECIPES_URL = `${API_BASE_URL}/recipes`; // Untuk Delete
 
 const RECIPES_PER_PAGE = 10;
@@ -32,7 +49,7 @@ let isLoading = false;
 let currentFilter = 'all'; // 'all', 'published', 'draft'
 
 // =======================================================
-// FUNGSI UTAMA: PENGELOLAAN OTENTIKASI (Dari resep.js yang diperbaiki)
+// FUNGSI UTAMA: UPDATE UI PROFIL (FOTO, NAMA, EMAIL)
 // =======================================================
 
 /**
@@ -40,27 +57,52 @@ let currentFilter = 'all'; // 'all', 'published', 'draft'
  * foto profil, username, dan email pada navbar dropdown.
  */
 function updateUserProfileUI() {
-    // Gunakan fungsi dari authManager jika tersedia, jika tidak gunakan local storage
-    const userStr = localStorage.getItem('authUser');
-    if (!userStr) return;
+    const userDataJSON = localStorage.getItem('authUser');
+    if (!userDataJSON) return;
 
     try {
-        const userData = JSON.parse(userStr);
+        const userData = JSON.parse(userDataJSON);
+        const profileImages = document.querySelectorAll('.profile-pic img, .dropdown-header img');
         
-        const profilePicImg = document.getElementById('profile-pic-img');
-        if (profilePicImg) profilePicImg.src = userData.profilePictureUrl || '../assets/default-avatar.png';
-        
-        const usernameEl = document.querySelector('.username');
-        if (usernameEl) {
-            usernameEl.textContent = userData.username; 
-            usernameEl.setAttribute('data-text', userData.username); 
+        // Pastikan URL Google menggunakan HTTPS
+        let photoUrl = userData.profilePictureUrl;
+        if (photoUrl && photoUrl.startsWith('http://')) {
+            photoUrl = photoUrl.replace('http://', 'https://');
         }
-        
-        const emailEl = document.querySelector('.email');
-        if (emailEl) {
-            emailEl.textContent = userData.email; 
-            emailEl.setAttribute('data-text', userData.email); 
+
+        profileImages.forEach(img => {
+            // Hindari reload gambar jika src sudah sama
+            if (img.src === photoUrl) return;
+
+            if (photoUrl) {
+                // Gunakan crossOrigin anonymous untuk menghindari blokir CORS/CORB pada gambar
+                img.crossOrigin = "anonymous"; 
+                img.src = photoUrl;
+            } else {
+                img.src = `https://placehold.co/40x40/2ecc71/fff?text=${userData.username.charAt(0)}`;
+            }
+
+            img.onerror = () => {
+                // Jika Google memblokir (429/CORB), gunakan inisial sebagai fallback terakhir
+                img.src = `https://placehold.co/40x40/2ecc71/fff?text=${userData.username.charAt(0)}`;
+                img.onerror = null; // Hentikan loop onerror
+            };
+        })
+            
+        // 2. Update Username (ID atau Class)
+        const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+        if (usernameEl && userData.username) {
+            usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+            usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
         }
+                
+        // 3. Update Email (ID atau Class)
+        const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+        if (emailEl && userData.email) {
+            emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+            emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+        }
+                
     } catch (error) {
         console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
     }
@@ -143,6 +185,10 @@ async function fetchMyRecipes(reset = false) {
         return;
     }
     
+    // ⭐ PERBAIKAN: Definisikan URL di dalam fungsi agar mendapat nilai API_BASE_URL terbaru
+    // Pastikan API_BASE_URL sudah terisi (import dari config.js)
+    const API_MY_RECIPES_URL = `${API_BASE_URL}/recipes/my`;
+
     const offset = (currentPage - 1) * RECIPES_PER_PAGE; 
     let url = `${API_MY_RECIPES_URL}?limit=${RECIPES_PER_PAGE}&offset=${offset}`;
 
@@ -229,8 +275,8 @@ function createMyRecipeCard(recipe) {
                 </div>
             </div>
             <div class="card-actions">
-                <a href="buat_resep.html?id=${recipe._id}" class="btn-action btn-edit"><i class="fas fa-edit"></i> Edit</a>
-                <button class="btn-action btn-delete" data-recipe-id="${recipe._id}"><i class="fas fa-trash-alt"></i> Hapus</button>
+                <a href="buat_resep.html?id=${recipe._id}" class="btn-action btn-edit"><i class="fas fa-edit"></i>&nbsp;&nbsp;Edit</a>
+                <a class="btn-action btn-delete" data-recipe-id="${recipe._id}"><i class="fas fa-trash-alt"></i>&nbsp;&nbsp;Hapus</a>
             </div>
         </div>
     `;
@@ -281,28 +327,45 @@ function updatePaginationControls(hasMore) {
 // FUNGSI UTAMA: HAPUS RESEP
 // =======================================================
 
+// 1. HAPUS variabel ini dari level global (baris 22-ish)
+// const API_RECIPES_URL = `${API_BASE_URL}/recipes`; 
+
+// 2. REVISI fungsi handleDeleteRecipe
 async function handleDeleteRecipe(e) {
     e.preventDefault();
-    const recipeId = e.currentTarget.dataset.recipeId;
-    const recipeCard = e.currentTarget.closest('.my-recipe-card');
+    
+    // Tunggu sampai config selesai memuat URL
+    await backendUrlReady;
 
-    if (!confirm("Apakah Anda yakin ingin menghapus resep ini? Aksi ini tidak dapat dibatalkan.")) {
+    // Ambil elemen tombol dengan benar
+    const btn = e.currentTarget;
+    const recipeId = btn.dataset.recipeId;
+    const recipeCard = btn.closest('.my-recipe-card');
+
+    if (!confirm("Apakah Anda yakin ingin menghapus resep ini?")) {
         return;
     }
 
     const token = getAuthToken();
     if (!token) return;
 
-    // Tampilkan indikator loading pada tombol
-    e.currentTarget.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hapus';
-    e.currentTarget.disabled = true;
+    // Simpan konten asli tombol untuk fallback jika gagal
+    const originalContent = btn.innerHTML;
+
+    // Tampilkan indikator loading
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.style.pointerEvents = 'none'; // Mencegah klik ganda
 
     try {
-        const url = `${API_RECIPES_URL}/${recipeId}`;
-        const res = await fetch(url, {
+        // ⭐ SOLUSI RACE CONDITION: Bangun URL di sini saat tombol diklik
+        const deleteUrl = `${API_BASE_URL}/recipes/${recipeId}`;
+        
+        console.log(`Menghapus resep ke: ${deleteUrl}`);
+
+        const res = await fetch(deleteUrl, {
             method: 'DELETE',
             headers: {
-                'x-auth-token': token // Kirim token untuk otorisasi
+                'x-auth-token': token 
             }
         });
 
@@ -312,25 +375,27 @@ async function handleDeleteRecipe(e) {
             throw new Error(result.data.msg || 'Gagal menghapus resep.');
         }
 
-        // Hapus elemen card dari DOM
+        // Animasi hapus dari DOM
         if (recipeCard) {
             recipeCard.style.opacity = '0';
             recipeCard.style.transform = 'scale(0.9)';
             setTimeout(() => {
                 recipeCard.remove();
-                // Muat ulang daftar resep secara total atau panggil update pagination
-                // Saya memilih untuk memuat ulang untuk kesederhanaan
                 alert('Resep berhasil dihapus!');
-                initApp(true); // Muat ulang resep dari awal (reset=true)
+                // Pastikan fungsi initApp(true) ada dan bekerja
+                initApp(true); 
             }, 300);
         }
 
     } catch (error) {
         console.error('Error saat menghapus resep:', error);
         alert(`Gagal menghapus resep: ${error.message}`);
-        // Kembalikan tombol ke keadaan semula
-        e.currentTarget.innerHTML = '<i class="fas fa-trash-alt"></i> Hapus';
-        e.currentTarget.disabled = false;
+        
+        // Kembalikan ke konten asli jika gagal (Aman dari null error)
+        if (btn) {
+            btn.innerHTML = originalContent;
+            btn.style.pointerEvents = 'auto';
+        }
     }
 }
 
@@ -392,7 +457,9 @@ function initApp(reset = false) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (confirm("Yakin ingin keluar?")) {
-                removeAuthToken(); // Menggunakan fungsi dari authManager
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('authUser');
+                window.location.href = '../index.html';
             }
         });
     }
@@ -415,9 +482,14 @@ function initApp(reset = false) {
     });
 }
 
-
-document.addEventListener('DOMContentLoaded', () => initApp(true));
-
-// Blokir seleksi teks via JavaScript (standar)
-document.addEventListener('selectstart', function(e) { e.preventDefault(); });
-document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+// --- LOGIKA STARTUP YANG MENUNGGU URL BACKEND SIAP ---
+// Baris ini memastikan tidak ada request ke localhost:8000 secara tidak sengaja
+if (API_BASE_URL) {
+    console.log("⚡ [ResepSaya] URL Ready, initializing...");
+    initApp();
+} else {
+    window.addEventListener('backend-url-changed', () => {
+        console.log("⚡ [ResepSaya] URL Received from config, initializing...");
+        initApp();
+    }, { once: true });
+}

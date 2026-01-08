@@ -25,4 +25,16 @@ router.post('/login', authController.login);
 // @access  Private (Membutuhkan token)
 router.get('/', auth, authController.getAuthUser);
 
+// @route   POST /api/auth/forgotpassword
+// @desc    Request link reset password
+// @access  Public
+router.post('/forgotpassword', authController.forgotPassword);
+
+// @route   PUT /api/auth/resetpassword/:resettoken
+// @desc    Proses reset password baru
+// @access  Public
+router.put('/resetpassword/:resettoken', authController.resetPassword);
+
+router.post('/google', authController.googleLogin);
+
 module.exports = router;

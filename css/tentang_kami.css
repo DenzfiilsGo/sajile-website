@@ -121,7 +121,7 @@ body {
 .nav-actions { 
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     flex-shrink: 0;
 }
 
@@ -170,6 +170,13 @@ body {
 .hamburger.active .bar:nth-child(2) { opacity: 0; }
 .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
 .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* --- KONTROL TAMPILAN BERDASARKAN STATUS MASUK --- */
+.logged-in-only { display: none; }
+.logged-out-only { display: flex; align-items: center; } /* Default: tampilkan tombol Masuk/Daftar */
+
+body[data-logged-in="true"] .logged-in-only { display: flex; } /* Tampilkan profil jika logged-in=true */
+body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan tombol Masuk/Daftar jika logged-in=true */
 
 /* =========================================
     3. DROPDOWN PROFILE STYLING (STANDAR WAJIB)

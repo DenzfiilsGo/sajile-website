@@ -18,6 +18,17 @@
     --user-name-color: #4B0082; /* Warna Nama Pengguna */
     --dropdown-bg: #ffffff; /* Tambahan untuk dropdown */
     --border-color: #eeeeee; /* Tambahan untuk batas */
+
+    --gold-aura: linear-gradient(135deg, #ffcc33 0%, #ffb347 100%);
+    --silver-aura: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
+    --bronze-aura: linear-gradient(135deg, #cd7f32 0%, #8b4513 100%);
+    --mythic-glow: 0 0 20px rgba(46, 204, 113, 0.4);
+
+    --color-rank-1: #1a1a1a; /* Hitam Legenda */
+    --color-rank-2: #8e44ad; /* Ungu Legenda */
+    --color-rank-3: #c0392b; /* Merah Legenda */
+    --color-rank-4: #f1c40f; /* Emas Legenda */
+    --aura-opacity: 0.6;
 }
 
 /* DARK MODE VARIABLES */
@@ -118,7 +129,7 @@ body {
 .nav-actions { 
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     flex-shrink: 0;
 }
 
@@ -319,6 +330,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     padding: 30px;
     margin-bottom: 40px;
     border: 1px solid var(--border-color);
+    transition: background-color var(--color-transition), box-shadow var(--color-transition), border var(--color-transition);
 }
 
 .profile-header {
@@ -327,6 +339,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     padding-bottom: 20px;
     margin-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
+    transition: border-bottom var(--color-transition);
 }
 
 /* Avatar/Foto Profil */
@@ -339,6 +352,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     border: 4px solid var(--primary-color);
     box-shadow: 0 0 0 4px var(--card-bg); /* Efek bingkai */
     margin-right: 25px;
+    transition: border var(--color-transition), box-shadow var(--color-transition);
 }
 
 .profile-avatar img {
@@ -352,6 +366,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     font-size: 2em;
     color: var(--text-color);
     margin: 0 0 5px 0;
+    transition: color var(--color-transition);
 }
 
 .bio-text {
@@ -359,6 +374,182 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     font-size: 0.95em;
     margin-bottom: 15px;
     max-width: 600px; /* Batasi lebar bio */
+    transition: color var(--color-transition);
+}
+
+/* --- EMBLEM GELAR / RANK STYLING --- */
+.name-badge-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.rank-container {
+    margin-top: 15px;
+    width: 100%;
+    max-width: 300px; /* Sesuaikan dengan layout Anda */
+}
+
+.rank-header {
+    min-width: 1000px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.rank-emblem {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow var(--color-transition);
+}
+
+#rank-title {
+    color: var(--primary-color);
+}
+
+#rank-xp-text {
+    text-align: end;
+    justify-content: space-between;
+    color: var(--text-light);
+    font-family: 'Courier New', Courier, monospace; /* Gaya angka skor */
+}
+
+.progress-bar-wrapper {
+    height: 12px;
+    min-width: 1000px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%; /* Diatur via JS */
+    background: linear-gradient(90deg, var(--primary-color), #3498db);
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+}
+
+/* Animasi kilau pada progress bar */
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    animation: barShine 3s infinite;
+}
+
+@keyframes barShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* TIER COLORS */
+.rank-emblem.tier-newbie { background: #95a5a6; color: white; }
+.rank-emblem.tier-assistant { background: #7f8c8d; color: white; }
+.rank-emblem.tier-rising { background: #3498db; color: white; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+.rank-emblem.tier-homechef { background: #e67e22; color: white; }
+.rank-emblem.tier-elite { background: #1abc9c; color: white; }
+.rank-emblem.tier-expert { background: #9b59b6; color: white; }
+.rank-emblem.tier-cuisine { background: #34495e; color: white; }
+.rank-emblem.tier-executive { background: #2c3e50; color: #f1c40f; border: 1px solid #f1c40f; }
+.rank-emblem.tier-master { 
+    background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); 
+    color: white;
+    animation: goldGlow 2s infinite alternate;
+}
+@keyframes goldGlow {
+    from { box-shadow: 0 0 5px #f1c40f; }
+    to { box-shadow: 0 0 20px #f1c40f, 0 0 10px #e67e22; }
+}
+.rank-emblem.tier-legend {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    animation: legendGlow 1.5s infinite alternate;
+    border: 2px solid gold;
+}
+@keyframes legendGlow {
+    from { box-shadow: 0 0 5px #e74c3c, 0 0 10px #e74c3c; }
+    to { box-shadow: 0 0 20px #e74c3c, 0 0 30px #f1c40f; }
+}
+
+
+
+/* --- RATING ANALYTICS --- */
+.rating-analytics-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.rating-box {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    transition: background var(--color-transition), border var(--color-transition);
+}
+
+.average-big {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin: 10px 0;
+    transition: color var(--color-transition);
+}
+
+.star-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+}
+
+.bar-container {
+    flex-grow: 1;
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: background var(--color-transition);
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--primary-color);
+    width: 0%; /* Diatur via JS */
+    transition: width 1s ease-out;
+}
+
+[data-theme="dark"] .bar-container { background: #333; transition: background var(--color-transition); }
+
+@media (max-width: 768px) {
+    .rating-analytics-section { grid-template-columns: 1fr; }
 }
 
 /* Grid Statistik (Resep, Likes, Bergabung) */
@@ -369,6 +560,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     padding: 15px 0;
     margin-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
+    transition: border-bottom var(--color-transition);
 }
 
 .stat-item {
@@ -379,6 +571,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     font-size: 1.5em;
     color: var(--primary-color);
     margin-bottom: 5px;
+    transition: color var(--color-transition);
 }
 
 .stat-value {
@@ -387,12 +580,14 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     font-weight: bold;
     color: var(--text-color);
     line-height: 1;
+    transition: color var(--color-transition);
 }
 
 .stat-label {
     display: block;
     font-size: 0.85em;
     color: var(--text-light);
+    transition: color var(--color-transition);
 }
 
 /* Detail Lain (Email, Verifikasi) */
@@ -402,6 +597,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     gap: 10px;
     font-size: 0.95em;
     color: var(--text-color);
+    transition: color var(--color-transition);
 }
 
 .detail-item {
@@ -413,6 +609,7 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     width: 20px;
     margin-right: 10px;
     color: var(--primary-dark);
+    transition: color var(--color-transition);
 }
 
 .verified-status-badge {
@@ -421,16 +618,368 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     font-size: 0.85em;
     font-weight: bold;
     color: white;
+    transition: color var(--color-transition);
 }
 
 .status-verified {
     background-color: var(--primary-color);
+    transition: background-color var(--color-transition);
 }
 
 .status-unverified {
     background-color: var(--danger-color);
+    transition: background-color var(--color-transition);
 }
 
+/* =========================================
+   LEADERBOARD CARD STYLING
+   ========================================= */
+
+.leaderboard-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    margin: 25px 0 25px 0;
+    padding: 50px 50px 50px 50px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+    overflow: visible !important;
+    transition: background var(--color-transition), box-shadow var(--color-transition), border var(--color-transition);
+}
+
+.leaderboard-header {
+    padding: 25px 0 25px 0;
+}
+
+.leaderboard-header h3 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 25px 0 25px 0;
+}
+.leaderboard-header h3 i {
+    color: #f1c40f;
+    transition: color var(--color-transition);
+}
+.main-brand {
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    color: #4B0082;
+    transition: color var(--color-transition);
+}
+.main-brand-highlight {
+    color: var(--primary-color);
+    transition: color var(--color-transition);
+}
+
+/* Tab Styling yang lebih keren */
+.leaderboard-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 25px 0 25px 0;
+    padding: 5px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 30px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    border-radius: 25px;
+    color: var(--text-light);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    transform: translateY(-2px);
+}
+
+.sticky-rank-card-container-top {
+    min-height: 77px; /* Agar container tidak nol pixel */
+    background-color: rgba(0,0,0,0.05);
+    padding: 0 50px 0 50px;
+    border-radius: 0 0 20px 20px;
+}
+
+/* Tambahkan/Edit bagian pembungkus list peringkat */
+.leaderboard-list {
+    background-color: rgba(0,0,0,0.05);
+    overflow: hidden; /* Sembunyikan apa pun yang keluar dari batas */
+    max-height: 250px; /* TENTUKAN TINGGI TETAP DI SINI (Misal: 500px) */
+    overflow-y: auto;  /* Aktifkan scrollbar vertikal jika konten penuh */
+    padding: 50px 50px 50px 50px;     /* Berikan padding di dalam scroll */
+    position: relative;
+}
+
+/* Opsional: Mempercantik Scrollbar */
+.leaderboard-list::-webkit-scrollbar {
+    width: 6px;
+}
+.leaderboard-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+/* Item List Base */
+.leader-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 15px;
+    background: var(--bg-color);
+    border: 1px solid transparent;
+    transition: transform var(--color-transition), background var(--color-transition), border var(--color-transition);
+    position: relative;
+    overflow: hidden; /* Penting untuk efek aura interior */
+    z-index: 1;
+}
+
+.leader-item:hover {
+    transform: scale(1.02);
+    z-index: 2;
+    transition: transform var(--color-transition);
+}
+
+/* Rank Number Decor */
+.leader-rank {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 900;
+    margin-right: 15px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 3;
+    transition: background var(--color-transition);
+}
+
+/* Avatar Aura */
+.leader-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    object-fit: cover;
+    position: relative;
+    z-index: 3;
+    transition: border var(--color-transition), box-shadow var(--color-transition);
+}
+
+/* Text & Score Styling */
+.leader-name {
+    flex: 1;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-color);
+    position: relative;
+    z-index: 3;
+    transition: color var(--color-transition);
+}
+
+.leader-score {
+    background: var(--primary-color);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    z-index: 3;
+    transition: background var(--color-transition), color var(--color-transition);
+}
+
+.sticky-rank-card-container-bottom {
+    min-height: 77px; /* Agar container tidak nol pixel */
+    background-color: rgba(0,0,0,0.05);
+    padding: 0 50px 0 50px;
+    border-radius: 0 0 20px 20px;
+}
+
+/* Styling untuk Kartu yang di-Pin */
+.user-rank-pin {
+    display: none;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 15px;
+    background: var(--bg-color);
+    border: 1px solid transparent;
+    transition: background var(--color-transition), border var(--color-transition);
+    position: relative;
+    overflow: hidden; /* Penting untuk efek aura interior */
+    z-index: 1;
+}
+
+/* Pastikan item di dalamnya tetap rapi */
+.user-rank-pin .leader-item {
+    margin-bottom: 0;
+    width: 100%;
+    background: var(--bg-color);
+}
+
+.user-rank-pin.pin-top,
+.user-rank-pin.pin-bottom {
+    display: flex !important;
+    animation: slideInRank 0.5s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+
+@keyframes slideInRank {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   RANK SPECIAL STYLING (ADVANCED AURA & NOISE)
+   ========================================= */
+
+/* Common Pseudo-element untuk Efek Noise Hidup pada Rank Legenda */
+.rank-1::before, .rank-2::before, .rank-3::before, .rank-4::before {
+    content: '';
+    position: absolute;
+    inset: -50%; /* Lebih lebar untuk rotasi/pergerakan noise */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    filter: contrast(120%) brightness(100%);
+    opacity: 0.15;
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    animation: noise-move-random 10s steps(10) infinite;
+}
+
+/* --- PERINGKAT 1: HITAM LEGENDA (Deep Void & Emerald Glow) --- */
+.rank-1 {
+    background: 
+        radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(46, 204, 113, 0.25) 0%, transparent 50%),
+        linear-gradient(135deg, #1a1c1e 0%, #000000 40%, #0a2e1a 100%) !important;
+    border: 1px solid rgba(46, 204, 113, 0.4) !important;
+    animation: aura-black 3s infinite alternate ease-in-out;
+}
+.rank-1 .leader-name, .rank-1 .leader-rank { color: #fff !important; text-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
+.rank-1 .leader-score { background: #fff; color: #000; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
+.rank-1 .leader-avatar { border-color: #2ecc71; filter: drop-shadow(0 0 8px #2ecc71); }
+
+/* --- PERINGKAT 2: UNGU LEGENDA (Nebula Deep Purple) --- */
+.rank-2 {
+    background: 
+        radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.2) 0%, transparent 60%),
+        linear-gradient(135deg, #4b0082 0%, #8e44ad 40%, #2c003e 80%, #6c5ce7 100%) !important;
+    border: 1px solid rgba(162, 155, 254, 0.5) !important;
+    animation: aura-purple 3s infinite alternate ease-in-out;
+}
+.rank-2 .leader-name, .rank-2 .leader-rank { color: #fff !important; }
+.rank-2 .leader-score { background: #a29bfe; color: #2c003e; }
+
+/* --- PERINGKAT 3: MERAH LEGENDA (Volcanic Deep Red) --- */
+.rank-3 {
+    background: 
+        radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 77, 77, 0.2) 0%, transparent 60%),
+        linear-gradient(135deg, #78281f 0%, #e74c3c 40%, #5d0d04 80%, #ff4d4d 100%) !important;
+    border: 1px solid rgba(250, 177, 160, 0.5) !important;
+    animation: aura-red 3s infinite alternate ease-in-out;
+}
+.rank-3 .leader-name, .rank-3 .leader-rank { color: #fff !important; }
+.rank-3 .leader-score { background: #fab1a0; color: #78281f; }
+
+/* --- PERINGKAT 4: EMAS LEGENDA (Luxury Amber Gold) --- */
+.rank-4 {
+    background: 
+        radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.3) 0%, transparent 60%),
+        linear-gradient(135deg, #b8860b 0%, #f1c40f 40%, #8c6a00 80%, #ffeaa7 100%) !important;
+    border: 1px solid rgba(255, 234, 167, 0.6) !important;
+    animation: aura-gold 3s infinite alternate ease-in-out;
+}
+.rank-4 .leader-name, .rank-4 .leader-rank { color: #fff !important; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+.rank-4 .leader-score { background: #ffd700; color: #5a4500; }
+
+/* =========================================
+   EFFECTS (SHINE, SHIMMER, NOISE MOVE)
+   ========================================= */
+
+/* Efek Kilau Diagonal (Pseudo-element After) */
+.rank-1::after, .rank-2::after, .rank-3::after, .rank-4::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -150%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: skewX(-25deg);
+    animation: shimmer 4s infinite;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* =========================================
+   KEYFRAMES
+   ========================================= */
+
+/* Animasi Pergerakan Noise secara Acak untuk Kedalaman */
+@keyframes noise-move-random {
+    0% { transform: translate(0, 0); }
+    20% { transform: translate(-5%, 5%); }
+    40% { transform: translate(-10%, -2%); }
+    60% { transform: translate(5%, -8%); }
+    80% { transform: translate(8%, 4%); }
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes aura-black {
+    0% { box-shadow: 0 0 10px #000, 0 0 20px rgba(46, 204, 113, 0.2); transform: scale(1); }
+    100% { box-shadow: 0 0 30px #000, 0 0 60px rgba(46, 204, 113, 0.5); transform: scale(1.05); }
+}
+
+@keyframes aura-purple {
+    0% { box-shadow: 0 0 10px #4b0082; transform: scale(1); }
+    100% { box-shadow: 0 0 25px #9b59b6, 0 0 45px rgba(155, 89, 182, 0.4); transform: scale(1.0375); }
+}
+
+@keyframes aura-red {
+    0% { box-shadow: 0 0 10px #78281f; transform: scale(1); }
+    100% { box-shadow: 0 0 25px #e74c3c, 0 0 40px rgba(231, 76, 60, 0.4); transform: scale(1.025); }
+}
+
+@keyframes aura-gold {
+    0% { box-shadow: 0 0 5px #b8860b; transform: scale(1); }
+    100% { box-shadow: 0 0 20px #f1c40f, 0 0 35px rgba(241, 196, 15, 0.3); transform: scale(1.0125);}
+}
+
+@keyframes shine-move {
+    0% { background-position: -200% -200%; }
+    100% { background-position: 200% 200%; }
+}
+
+@keyframes shimmer {
+    0% { left: -150%; }
+    30% { left: 150%; }
+    100% { left: 150%; }
+}
+
+/* Pulse Animations (Utility jika diperlukan untuk badge) */
+@keyframes pulse-gold {
+    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
 
 /*
  * -------------------------------------------------------------------
@@ -442,14 +991,14 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     margin-bottom: 25px;
     font-size: 1.8em;
     color: var(--text-color);
+    transition: color var(--color-transition);
 }
 
 /* Grid untuk menampilkan daftar resep (Asumsi 3 kolom) */
 .recipe-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(4, 1fr); /* 4 kolom desktop */
     gap: 25px;
-    min-height: 100px;
 }
 
 /* Placeholder loading untuk daftar resep */
@@ -458,6 +1007,153 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
     text-align: center;
     padding: 30px 20px;
     color: var(--text-light);
+    transition: color var(--color-transition);
+}
+
+.recipe-card {
+    position: relative;
+    z-index: 1; /* Layer dasar */
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    background: var(--card-bg); /* Menggunakan card-bg */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transform: translateY(0px);
+    transition: transform var(--color-transition), box-shadow var(--color-transition), background var(--color-transition);
+}
+
+/* Hilangkan efek hover lama pada card agar tidak double */
+.recipe-card:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+    transition: box-shadow var(--color-transition), transform var(--color-transition);
+}
+
+.card-image {
+    position: relative;
+    z-index: 2; /* Layer gambar */
+    height: 180px;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.category-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--accent-color);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: background-color var(--color-transition), color var(--color-transition);
+}
+
+.btn-fav {
+    position: absolute;
+    top: 135px;
+    right: 15px;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--text-color);
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: transform var(--color-transition), background-color var(--color-transition), color var(--color-transition), box-shadow var(--color-transition);
+}
+.btn-fav:hover {
+    background-color: var(--danger-color);
+    color: white;
+    transform: scale(1.1);
+    transition: background-color var(--color-transition), color var(--color-transition), transform var(--color-transition);
+}
+.btn-fav.active {
+    transform: none;
+    background-color: rgba(255, 255, 255, 0.9); /* Sedikit lebih tebal agar kontras */
+    color: var(--danger-color);
+    transition: transform var(--color-transition), background-color var(--color-transition), color var(--color-transition);
+}
+.btn-fav.active:hover {
+    background-color: var(--danger-color);
+    color: white;
+    transform: scale(1.1);
+    transition: background-color var(--color-transition), color var(--color-transition), transform var(--color-transition);
+}
+.card-info {
+    padding: 15px;
+}
+
+.card-info h3 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 10px; 
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    transition: color var(--color-transition);
+}
+
+.recipe-card:hover .card-info h3 { 
+    color: var(--primary-color); 
+}
+
+.card-more-info {
+    display: grid;
+    grid-template-columns: auto auto; 
+    justify-content: space-between; 
+    align-items: center; 
+    width: 100%; 
+}
+
+/* Pastikan selector class sesuai dengan HTML Anda (.card-more-info) */
+.card-more-info .duration {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-light);
+    transition: color var(--color-transition);
+}
+.card-more-info .duration i {
+    color: var(--primary-color);
+    margin-right: 5px;
+    transition: color var(--color-transition);
+}
+
+.card-more-info .save-recipe-for-like {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-light);
+    transition: color var(--color-transition);
+}
+.card-more-info .save-recipe-for-like i {
+    color: var(--danger-color);
+    margin-right: 5px;
+    transition: color var(--color-transition);
+}
+
+.card-more-info .star-rating {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-light);
+    transition: color var(--color-transition);
+}
+.card-more-info .star-rating i {
+    color: #f1c40f;
+    margin-right: 5px;
+    transition: color var(--color-transition);
 }
 
 /* Placeholder untuk card resep (Gunakan gaya dari main.css/resep.css) */
@@ -715,6 +1411,11 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
 [data-theme="dark"] .about-we, [data-theme="dark"] .contact-we { color: #999999; }
 [data-theme="dark"] .about-we:hover, [data-theme="dark"] .contact-we:hover { color: var(--primary-color); }
 [data-theme="dark"] .footer-brand { color: #BB86FC; }
+
+[data-theme="dark"] .main-brand { color: #BB86FC; }
+[data-theme="dark"] .recipe-card { background: var(--card-bg); box-shadow: var(--card-shadow); }
+[data-theme="dark"] .recipe-card:hover { box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15); }
+[data-theme="dark"] .recipe-card:hover .course-info h3 { color: var(--primary-color); }
 
 /* =========================================
    10. STANDAR WAJIB: MARQUEE TEXT PROFIL

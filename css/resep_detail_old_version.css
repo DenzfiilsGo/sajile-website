@@ -1,0 +1,649 @@
+/* --- 1. BASE VARIABLES & RESET (Sama dengan file lain) --- */
+:root {
+    --hover-button: #98FB98; /* Dari daftar_makanan */
+    --primary-color: #2ecc71; 
+    --primary-dark: #27ae60;
+    --accent-color: #3498db;
+    --danger-color: #e74c3c; /* Warna baru untuk Hapus */
+    --edit-color: #f39c12;   /* Warna baru untuk Edit */
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --card-bg: #f9f9f9;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    --nav-height: 70px;
+    
+    /* Transisi Konsisten */
+    --transition: all 0.3s ease; 
+    --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
+    
+    /* Warna Khusus Rating */
+    --star-color-filled: gold;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --text-light: #aaaaaa;
+    --card-bg: #1e1e1e;
+    --card-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+    --star-color-filled: #ffc107; /* Bintang agar lebih terlihat di latar belakang gelap */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--color-transition), color var(--color-transition);
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-wrapper { 
+    flex-grow: 1;
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 20px;
+    width: 100%;
+}
+
+/* =========================================
+   2. NAVBAR STYLING (FIXED & Sesuai daftar_makanan.css)
+   ========================================= */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    height: var(--nav-height);
+    background-color: var(--bg-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: background-color var(--color-transition), box-shadow var(--color-transition);
+}
+
+.nav-brand { 
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    flex-shrink: 0; 
+}
+.brand-highlight { color: var(--primary-color); }
+
+/* --- Container Menu (Desktop Mode) --- */
+.nav-menu-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; 
+    flex-grow: 1;
+    gap: 20px;
+}
+
+/* Hapus .nav-links karena kita menggunakan .nav-actions */
+.nav-links {
+    display: none; 
+}
+
+.nav-actions { 
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.btn-primary { 
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: var(--transition);
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+.btn-primary:hover {
+    background-color: transparent; border-color: var(--primary-color); color: var(--primary-color);
+}
+
+.btn-icon { 
+    background: none; border: none; font-size: 1.2rem; cursor: pointer; 
+    color: var(--text-color); padding: 5px; border-radius: 50%;
+    transition: color var(--color-transition), background-color var(--transition); 
+}
+.btn-icon:hover { background-color: rgba(0,0,0,0.05); color: var(--primary-color); }
+
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.mobile-only-text { display: none; } 
+
+/* Hamburger Button */
+.hamburger {
+    display: none; cursor: pointer; background: none; border: none; padding: 10px; z-index: 1001;
+}
+.bar {
+    display: block; width: 25px; height: 3px; margin: 5px auto;
+    background-color: var(--text-color); transition: all 0.3s ease-in-out; border-radius: 3px;
+}
+/* Animasi Hamburger ke X */
+.hamburger.active .bar:nth-child(2) { opacity: 0; }
+.hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+
+/* =========================================
+   3. BREAKPOINT AMAN & DROPDOWN (Sesuai daftar_makanan.css)
+   ========================================= */
+@media (max-width: 1024px) { 
+    .navbar { padding: 0 20px; }
+    .hamburger { display: block; }
+    .nav-menu-container {
+        position: absolute;
+        top: var(--nav-height); 
+        left: 0;
+        width: 100%;
+        margin: 0;
+        
+        flex-direction: column;
+        background-color: var(--bg-color);
+        padding: 30px 20px;
+        
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        
+        /* STATE AWAL: Hidden & Slide Up */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        
+        /* TRANSISI SUPER HALUS */
+        transition: opacity 0.4s ease, 
+                    transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                    visibility 0.4s ease,
+                    background-color var(--color-transition);
+    }
+
+    /* KELAS ACTIVE (Saat hamburger diklik) */
+    .nav-menu-container.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Tampilkan nav-links di mode mobile */
+    .nav-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        list-style: none; 
+    }
+    .nav-links a {
+        display: block; font-size: 1.2rem; padding: 10px 0;
+        position: relative;
+    }
+    .nav-links a::after {
+        content: ''; position: absolute; width: 0; height: 2px;
+        bottom: 0px; left: 50%; transform: translateX(-50%); 
+        background-color: var(--primary-color);
+        transition: width 0.3s;
+    }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 40%; }
+    
+    /* Actions di Bawah */
+    .nav-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+        border-top: 1px solid var(--text-light);
+        padding-top: 25px;
+    }
+    
+    .btn-icon {
+        width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
+        border: 1px solid #ddd; border-radius: 10px; padding: 10px;
+    }
+    .mobile-only-text { display: inline; font-size: 1rem; font-weight: 500; }
+    
+    .btn-primary { width: 100%; text-align: center; padding: 12px; }
+    
+    .profile-pic { order: -1; margin-bottom: 10px; } 
+    .profile-pic img { width: 80px; height: 80px; }
+}
+
+
+/* =========================================
+   4. STYLING KHUSUS DETAIL RESEP
+   ========================================= */
+.recipe-hero {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.recipe-hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--primary-dark);
+    transition: color var(--color-transition);
+}
+
+.recipe-hero p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 25px;
+}
+
+.recipe-image-container {
+    max-width: 800px;
+    margin: 0 auto 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.recipe-image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Metadata Bar */
+.recipe-meta-bar {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    background-color: var(--card-bg);
+    padding: 15px 30px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    box-shadow: var(--card-shadow);
+    transition: background-color var(--color-transition), box-shadow var(--color-transition);
+}
+
+.meta-item {
+    text-align: center;
+}
+
+.meta-item i {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+/* Action Buttons (Save/Print) */
+.recipe-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Tombol Khusus Save/Favorite */
+.btn-save {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: 2px solid var(--text-light);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+}
+
+.btn-save i {
+    margin-right: 8px;
+    color: #e74c3c; /* Default warna hati */
+}
+
+.btn-save.active {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+}
+
+.btn-save.active i {
+    color: white;
+}
+.btn-save:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* GRID KONTEN UTAMA */
+.recipe-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr; 
+    gap: 40px;
+    margin-bottom: 50px;
+}
+
+.section-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 30px;
+    transition: background-color var(--color-transition), box-shadow var(--color-transition);
+}
+
+.section-card h2 {
+    font-size: 1.8rem;
+    color: var(--primary-dark);
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    font-weight: 700;
+}
+
+/* Styling Daftar Bahan & Langkah */
+.ingredients-list, .steps-list {
+    list-style: none;
+}
+
+.ingredients-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.steps-list li {
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    gap: 15px;
+}
+
+.step-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    flex-shrink: 0; 
+    width: 30px;
+    text-align: center;
+}
+
+/* Kalkulator Porsi */
+.serving-calculator {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: color-mix(in srgb, var(--primary-color) 10%, transparent); 
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.serving-calculator button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.serving-calculator button:hover { background: var(--primary-dark); }
+.serving-calculator span { font-weight: 600; font-size: 1.1rem; }
+
+/* Nilai Gizi */
+.nutrition-facts table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.nutrition-facts th, .nutrition-facts td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+.nutrition-facts th {
+    font-weight: 600;
+    color: var(--text-color);
+}
+.nutrition-facts td {
+    color: var(--text-light);
+}
+
+/* Section Ulasan */
+.comments-section {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #ddd;
+}
+.comment-form textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    resize: vertical;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    transition: all var(--color-transition);
+}
+
+/* Styling Input Rating Bintang */
+.rating-input {
+    display: inline-block;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+.rating-input .star {
+    cursor: pointer;
+    color: #ccc; 
+    transition: color 0.2s;
+}
+.rating-input .star.filled {
+    color: var(--star-color-filled); /* Menggunakan variabel baru */
+}
+.rating-input .rating-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-left: 10px;
+}
+
+.comment-list {
+    margin-top: 30px;
+}
+
+.comment-item {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid var(--card-bg);
+    border-radius: 10px;
+    background-color: var(--card-bg);
+    transition: background-color var(--color-transition);
+    animation: fadeInComment 0.5s ease-out; 
+}
+
+@keyframes fadeInComment {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.comment-avatar { flex-shrink: 0; }
+.comment-avatar img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+.comment-body h4 { font-size: 1rem; margin-bottom: 5px; }
+.comment-body .rating { color: var(--star-color-filled); font-size: 0.9rem; margin-bottom: 5px; }
+.comment-body p { font-size: 0.95rem; color: var(--text-light); }
+
+.user-comment {
+    border: 2px solid var(--primary-color, #2ecc71);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* Animations */
+.fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+
+/* =========================================
+   5. COMMENT ACTION BUTTONS (Solid Style Baru)
+   ========================================= */
+.comment-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.comment-actions button {
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+
+.edit-comment-btn {
+    background-color: var(--edit-color);
+    color: white;
+}
+
+.edit-comment-btn:hover {
+    background-color: color-mix(in srgb, var(--edit-color) 80%, black);
+    transform: translateY(-1px);
+}
+
+.edit-comment-btn[data-edit-count="1"] {
+    background-color: #aaa; 
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.delete-comment-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.delete-comment-btn:hover {
+    background-color: color-mix(in srgb, var(--danger-color) 80%, black);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================
+   6. DARK MODE OVERRIDES KHUSUS DETAIL RESEP
+   ========================================= */
+
+[data-theme="dark"] .bar { background-color: #e0e0e0; }
+[data-theme="dark"] .nav-links a { color: #cccccc; }
+[data-theme="dark"] .nav-links a:hover, [data-theme="dark"] .nav-links a.active { color: var(--primary-color); }
+
+/* Konten Utama */
+[data-theme="dark"] .ingredients-list li,
+[data-theme="dark"] .steps-list li,
+[data-theme="dark"] .nutrition-facts th, 
+[data-theme="dark"] .nutrition-facts td { 
+    border-color: #333; 
+}
+
+[data-theme="dark"] .btn-save {
+    border-color: var(--text-light);
+    color: var(--text-color);
+    background-color: var(--card-bg);
+}
+
+[data-theme="dark"] .btn-save:hover {
+    border-color: var(--primary-color);
+}
+
+[data-theme="dark"] .comment-form textarea {
+    border-color: #444;
+}
+
+[data-theme="dark"] .comments-section {
+    border-top-color: #333;
+}
+
+[data-theme="dark"] .btn-icon { color: #e0e0e0; }
+[data-theme="dark"] .btn-icon:hover { background-color: rgba(255, 255, 255, 0.1); }
+
+
+/* Footer Styling */
+.site-footer {
+    background-color: #e8f5e9;
+    padding: 30px 20px;
+    text-align: center;
+    border-top: 4px solid var(--primary-color);
+    color: #555;
+    transition: background-color var(--color-transition), color var(--color-transition), border-top-color var(--color-transition);
+    margin-top: 50px;
+}
+.site-footer a { 
+    color: var(--text-light); 
+    text-decoration: none; 
+    font-weight: 600; 
+    transition: color var(--transition); 
+}
+.site-footer a:hover { color: var(--primary-color); }
+[data-theme="dark"] .site-footer { 
+    background-color: #0f0f0f; 
+    color: #aaa; 
+    border-top-color: var(--primary-dark); 
+}
+[data-theme="dark"] .site-footer a { color: #ccc; }
+
+
+/* =========================================
+   7. RESPONSIVE DESIGN (Diperbarui untuk mengikuti struktur daftar_makanan)
+   ========================================= */
+@media (max-width: 1024px) {
+    /* Navbar dan Dropdown diatur di bagian 3 */
+    .recipe-content-grid {
+        grid-template-columns: 1fr; 
+        gap: 20px;
+    }
+    .recipe-meta-bar {
+        padding: 15px 10px;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar { padding: 0 20px; }
+    
+    .hamburger { 
+        display: block; 
+        font-size: 1.5rem; 
+        color: var(--text-color);
+        transition: color var(--color-transition);
+    }
+    
+    .recipe-hero h1 { font-size: 2.5rem; }
+    .recipe-meta-bar { flex-wrap: wrap; }
+}
+
+@media (max-width: 480px) {
+    .recipe-hero h1 { font-size: 2rem; }
+    .meta-item { width: 45%; } 
+    .section-card { padding: 20px; }
+    .steps-list li { padding: 15px 0; }
+    
+    .recipe-actions { flex-direction: column; gap: 10px; }
+    .btn-save, .btn-primary { width: 100%; text-align: center; }
+}

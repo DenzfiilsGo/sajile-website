@@ -11,7 +11,6 @@
     --card-bg: #f9f9f9;
     --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
     --nav-height: 70px;
-    --transition: all 0.3s ease; 
     --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
     --accent-color: #3498db; /* Biru untuk badge kategori */
     --danger-color: #e74c3c; /* Merah untuk Logout */
@@ -118,7 +117,7 @@ body {
 .nav-actions { 
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     flex-shrink: 0;
 }
 
@@ -130,8 +129,8 @@ body {
     text-decoration: none;
     font-weight: 600;
     white-space: nowrap;
-    transition: var(--transition);
     border: 2px solid transparent;
+    transition: background-color var(--color-transition), color var(--color-transition), border var(--color-transition);
 }
 .btn-primary:hover {
     background-color: transparent; border-color: var(--primary-color); color: var(--primary-color);
@@ -140,9 +139,9 @@ body {
 .btn-icon { 
     background: none; border: none; font-size: 1.2rem; cursor: pointer; 
     color: var(--text-color); padding: 5px; border-radius: 50%;
-    transition: color var(--color-transition), background-color var(--transition); 
+    transition: color var(--color-transition), background var(--color-transition); 
 }
-.btn-icon:hover { background-color: rgba(0,0,0,0.05); color: #7296AB; }
+.btn-icon:hover { background-color: rgba(0,0,0,0.05); color: #7296AB; transition: background-color var(--color-transition), color var(--color-transition); }
 
 .profile-pic img { 
     width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
@@ -489,7 +488,8 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
 .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 60px; }
 .feature-card {
     background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: var(--card-shadow);
-    text-align: center; transition: transform 0.3s ease, background-color var(--color-transition), box-shadow var(--color-transition);
+    text-align: center;
+    transition: transform var(--color-transition), background var(--color-transition), box-shadow var(--color-transition);
 }
 .feature-card:hover { transform: translateY(-10px); }
 .img-placeholder {
@@ -511,17 +511,56 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
 .split-section { display: flex; align-items: center; gap: 50px; margin-bottom: 60px; }
 .split-section.reverse { flex-direction: row-reverse; }
 .split-text { flex: 1; }
-.split-image { flex: 1; }
-.split-image img {
-    width: 100%; border-radius: 20px; box-shadow: var(--card-shadow); transition: var(--transition);
+.split-image {
+    flex: 1;
+    display: grid; /* Membuat tumpukan layer */
+    place-items: center;
 }
-.split-image img:hover { transform: scale(1.02); }
+.split-image img {
+    grid-area: 1 / 1; /* Menumpuk kedua gambar di grid cell yang sama */
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    
+    /* Gunakan variabel transisi standar Anda */
+    transition: opacity var(--color-transition), transform var(--color-transition);
+    pointer-events: none; /* Mencegah gambar yang transparan menghalangi klik */
+}
+
+/* State Terang */
+.light-img {
+    opacity: 1;
+    z-index: 2; /* Di depan */
+    pointer-events: auto;
+}
+.dark-img {
+    opacity: 0;
+    z-index: 1; /* Di belakang */
+    pointer-events: none;
+}
+
+/* State Gelap */
+[data-theme="dark"] .dark-img {
+    opacity: 1;
+    z-index: 2; /* Pindah ke depan */
+    pointer-events: auto;
+}
+[data-theme="dark"] .light-img {
+    opacity: 0;
+    z-index: 1; /* Pindah ke belakang */
+    pointer-events: none;
+}
+
+.split-image:hover img { 
+    transform: scale(1.02); 
+}
 .highlight-text { font-size: 2rem; margin-bottom: 15px; color: var(--primary-color); }
 .btn-secondary {
     margin-top: 20px; padding: 10px 25px; background: transparent; border: 2px solid var(--primary-color);
-    color: var(--primary-color); border-radius: 25px; font-weight: 600; cursor: pointer; transition: var(--transition);
+    color: var(--primary-color); border-radius: 25px; font-weight: 600; cursor: pointer;
+    transition: background var(--color-transition), border var(--color-transition), color var(--color-transition);
 }
-.btn-secondary:hover { background: var(--primary-color); color: white; }
+.btn-secondary:hover { background: var(--primary-color); color: white; transition: background var(--color-transition), color var(--color-transition) }
 
 /* Food Grid Section */
 .food-grid-section, .course-container { margin-bottom: 60px; }
@@ -532,9 +571,8 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
 }
 .grid-5-col { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
 .food-card, .course-card {
-    background-color: var(--card-bg); border-radius: 10px; overflow: hidden; box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, background-color var(--color-transition), box-shadow var(--color-transition);
-    cursor: pointer;
+    background-color: var(--card-bg); border-radius: 10px; overflow: hidden; box-shadow: var(--card-shadow); cursor: pointer;
+    transition: transform var(--color-transition), background-color var(--color-transition), box-shadow var(--color-transition);
 }
 .food-card:hover, .course-card:hover { transform: translateY(-5px); }
 .fc-img, .cc-img {
@@ -564,7 +602,8 @@ body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan t
 .cta-content p { margin-bottom: 30px; font-size: 1.1rem; }
 .btn-cta {
     background-color: white; color: var(--primary-color); padding: 12px 40px; border-radius: 30px;
-    text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: var(--transition); display: inline-block;
+    text-decoration: none; font-weight: 700; font-size: 1.1rem; display: inline-block;
+    transition: transform var(--color-transition), background-color var(--color-transition), color var(--color-transition), box-shadow var(--color-transition);
 }
 .btn-cta:hover { background-color: #f0f0f0; transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 

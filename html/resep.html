@@ -3,11 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="referrer" content="no-referrer">
         <title>Kumpulan Resep - SajiLe</title>
         <link rel="icon" href="../assets/sajile_icon.jpg" type="image/x-icon">
         <link rel="stylesheet" href="..\css\resep.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body data-logged-in="false"> 
 
@@ -56,7 +57,7 @@
                                 <li><a href="pengaturan_akun.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
                                 <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
                                 <li class="divider-item"></li>
-                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                                <li><a id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
                             </ul>
                         </div>
                     </div>
@@ -75,7 +76,7 @@
             
             <section class="search-filter-section fade-in">
                 <div class="search-bar">
-                    <input type="text" placeholder="Cari resep favoritmu (misal: Rendang, Soto Ayam)...">
+                    <input type="text" placeholder="Cari resep favoritmu...">
                     <button class="btn-icon" aria-label="Cari Resep"><i class="fas fa-search"></i></button>
                 </div>
                 
@@ -101,7 +102,10 @@
                             <button class="btn-fav" aria-label="Tambahkan ke Favorit"><i class="far fa-heart"></i></button> </div>
                         <div class="card-info">
                             <h3>Ayam Geprek Sambal Korek</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 45 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
 
@@ -113,7 +117,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Sop Buntut Segar Tradisional</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 90 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -125,7 +132,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Sayur Lodeh Komplit</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 30 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -137,7 +147,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Sate Lilit Ikan Laut</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -149,7 +162,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Kue Cubit Cokelat Keju</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 20 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -161,7 +177,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Nasi Goreng Kampung Pedas</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 15 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -173,7 +192,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Gulai Kambing Premium</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 120 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -185,7 +207,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Rawon Daging Sapi Khas Jatim</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 150 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -197,7 +222,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Pempek Khas Palembang Asli</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 60 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -209,7 +237,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Gado-Gado Siram Betawi</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 35 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -221,7 +252,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Klepon Gula Merah Pandan</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 40 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                     
@@ -233,7 +267,10 @@
                         </div>
                         <div class="card-info">
                             <h3>Telur Dadar Super Praktis</h3>
-                            <p class="duration"><i class="far fa-clock"></i> 10 Menit</p>
+                            <div class="card-more-info">
+                                <p class="duration"><i class="far fa-clock"></i> 50 Menit</p>
+                                <p class="star-rating"><i class="fas fa-star"></i> 5</p>
+                            </div>
                         </div>
                     </a>
                 </div> 
@@ -250,7 +287,16 @@
                     <h2>Kebingungan Pilih Resep? Tanyakan pada TOLE AI!</h2>
                     <p>Minta rekomendasi resep berdasarkan bahan yang ada di kulkasmu.</p>
                 </div>
-                <button class="btn-primary">Tanya TOLE Sekarang</button>
+                <a href="TOLE_AI.html" class="btn-ask-ai-now">Tanya TOLE Sekarang</a>
+            </section>
+
+            <section class="ai-login-required logged-out-only fade-in">
+                <div class="chatbot-icon"><i class="fas fa-robot"></i></div>
+                <div class="chatbot-text">
+                    <h2>Rekrut Asisten Hebat Pribadimu Sendiri!</h2>
+                    <p>Silakan Masuk atau Daftar untuk dapat berinteraksi dengan TOLE AI untuk menjawab pertanyaanmu.</p>
+                </div>
+                <a href="daftar_atau_login.html" class="btn-login-required">Masuk/Daftar Sekarang</a>
             </section>
 
         </div>

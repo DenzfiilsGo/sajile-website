@@ -1,0 +1,2346 @@
+/* =========================================
+   1. VARIABLES & RESET (Deep Onyx & Gold Theme)
+   ========================================= */
+:root {
+    --bg-onyx: #050505;
+    --bg-sidebar: #0a0a0a;
+    --bg-panel: #0f0f0f;
+    
+    --primary-gold: #d4af37;
+    --bright-gold: #f1c40f;
+    --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f1c40f 100%);
+    --danger-color: #e74c3c;
+    
+    --glass-bg: rgba(20, 20, 20, 0.75);
+    --glass-border: rgba(212, 175, 55, 0.15);
+    --glass-blur: blur(12px);
+
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    
+    --bubble-me: #1e2a1e; /* Dark Greenish tint */
+    --bubble-me-border: #2ecc71;
+    --bubble-other: #1a1a1a;
+    --bubble-other-border: #333;
+
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Poppins', sans-serif;
+    --accent-green: #2ecc71;
+
+    --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+body.theme-onyx {
+    background-color: var(--bg-onyx);
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* =========================================
+   2. GATEKEEPER OVERLAY (Loading Screen)
+   ========================================= */
+.gatekeeper-overlay {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 99999;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 0.8s ease-in-out;
+}
+
+.luxury-loader {
+    position: relative; width: 100px; height: 100px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 30px;
+}
+
+.gold-ring {
+    position: absolute; inset: 0;
+    border: 2px solid transparent;
+    border-top-color: var(--primary-gold);
+    border-bottom-color: var(--primary-gold);
+    border-radius: 50%;
+    animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+.logo-pulse img {
+    width: 50px; height: 50px; border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.auth-text { font-family: var(--font-heading); color: var(--primary-gold); letter-spacing: 2px; }
+.auth-sub { color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px; }
+
+/* =========================================
+   3. TRIPLE PANE LAYOUT
+   ========================================= */
+.app-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr 300px; /* Sidebar | Chat | Info */
+    height: 100vh;
+    width: 100vw;
+    background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+}
+
+/* --- Pane 1: Sidebar --- */
+.sidebar-pane {
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--glass-border);
+    display: flex; flex-direction: column;
+    z-index: 100;
+}
+
+.sidebar-header {
+    height: 70px; padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.brand-identity { display: flex; align-items: center; gap: 10px; color: var(--primary-gold); font-family: var(--font-heading); font-size: 1.2rem; }
+.mobile-close-btn { display: none; background: none; border: none; color: #fff; font-size: 1.2rem; }
+
+.search-container { padding: 20px; }
+.glass-search {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 10px 15px;
+    display: flex; align-items: center; gap: 10px;
+}
+.glass-search input { background: transparent; border: none; color: #fff; width: 100%; }
+
+.chat-list-wrapper { flex: 1; overflow-y: auto; }
+.list-category { padding: 10px 20px; font-size: 0.75rem; color: var(--text-secondary); letter-spacing: 1px; }
+
+/* Styling Daftar Chat di Sidebar */
+.chat-item {
+    padding: 12px 15px;
+    margin: 4px 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+.chat-item:hover {
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.chat-item.active {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+.chat-item-icon {
+    width: 45px;
+    height: 45px;
+    background: var(--glass-bg);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+}
+
+.chat-item-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.chat-item-title {
+    font-weight: 500;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.chat-item-preview {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Badge untuk Kontak Pribadi Tim SajiLe */
+.private-badge {
+    background: linear-gradient(135deg, #d4af37, #f1c40f);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.chat-avatar {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: #1a1a1a; color: var(--primary-gold);
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+}
+
+.chat-meta { flex: 1; overflow: hidden; }
+.chat-row-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.chat-name { font-weight: 600; font-size: 0.95rem; }
+.chat-time { font-size: 0.75rem; color: var(--text-secondary); }
+.chat-preview { font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.user-profile-dock {
+    padding: 15px; background: rgba(0,0,0,0.4);
+    border-top: 1px solid var(--glass-border);
+    display: flex; align-items: center; gap: 12px;
+}
+.user-avatar-frame { position: relative; }
+.user-avatar-frame img { width: 45px; height: 45px; border-radius: 10px; border: 1px solid var(--primary-gold); }
+.status-dot { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; position: absolute; bottom: -2px; right: -2px; border: 2px solid #000; }
+.user-details h4 { font-size: 0.9rem; margin-bottom: 2px; }
+.rank-badge { font-size: 0.65rem; background: var(--gold-gradient); color: #000; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+.logout-btn { margin-left: auto; background: none; border: none; color: var(--text-secondary); cursor: pointer; transition: 0.3s; }
+.logout-btn:hover { color: #e74c3c; }
+
+/* --- Pane 2: Main Chat --- */
+.chat-pane {
+    display: flex; 
+    flex-direction: column;
+    position: relative;
+    min-height: 0; /* PENTING: Agar flex child bisa scroll */
+    height: 100vh;
+    background-image: url('https://www.transparenttextures.com/patterns/black-linen.png'); /* Pattern subtle */
+}
+
+.glass-header {
+    height: 70px; padding: 0 25px;
+    background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 10;
+}
+
+.header-left { display: flex; align-items: center; gap: 15px; }
+.mobile-toggle { display: none; background: none; border: none; color: #fff; font-size: 1.2rem; }
+.active-chat-info h3 { font-family: var(--font-heading); letter-spacing: 0.5px; }
+.status-text { font-size: 0.8rem; color: var(--accent-green); }
+
+.icon-action {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.05); border: none; color: #fff;
+    margin-left: 8px; cursor: pointer; transition: 0.3s;
+}
+.icon-action:hover { background: var(--primary-gold); color: #000; }
+
+/* =========================================
+   NO RESULTS STATE (Sidebar Search)
+   ========================================= */
+.no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    animation: fadeIn 0.4s ease-out;
+}
+
+.no-results i {
+    font-size: 2.5rem;
+    color: rgba(212, 175, 55, 0.2); /* Emas sangat redup */
+    margin-bottom: 15px;
+}
+
+.no-results p {
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    letter-spacing: 1px;
+    opacity: 0.7;
+    font-weight: 300;
+}
+
+/* Animasi halus saat muncul */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(5px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* --- CALL INTERFACE & OVERLAY SYSTEM --- */
+.call-interface {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #050505;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.call-container {
+    position: relative;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Meta Info (Timer) */
+.call-meta {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    padding: 25px;
+    text-align: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+    z-index: 100;
+}
+
+.call-meta h2 {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+/* Video Grid System */
+.video-grid {
+    flex: 1;
+    display: grid;
+    gap: 20px;
+    padding: 100px 40px 140px 40px;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    align-content: center;
+    justify-content: center;
+}
+
+/* Video Box & Layering */
+.video-box {
+    position: relative;
+    background: #000;
+    border-radius: 24px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, #1a1a1a 0%, #050505 100%);
+    z-index: 1;
+}
+
+.call-avatar-img {
+    width: clamp(80px, 15vw, 130px);
+    height: clamp(80px, 15vw, 130px);
+    border-radius: 50%;
+    border: 3px solid var(--primary-gold);
+    object-fit: cover;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+}
+
+.video-box video {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+}
+
+.video-box video.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* User Label */
+.user-label {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    color: var(--primary-gold);
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-dot {
+    font-size: 8px;
+    color: var(--accent-green);
+}
+
+/* Control Bar */
+.call-controls-bar {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    padding: 15px 35px;
+    background: rgba(15, 15, 15, 0.85);
+    backdrop-filter: blur(20px);
+    border-radius: 100px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    z-index: 110;
+}
+
+.ctrl-btn {
+    width: 55px; height: 55px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.ctrl-btn:hover {
+    background: var(--primary-gold);
+    color: black;
+    transform: translateY(-3px);
+}
+
+.ctrl-btn.end-call-btn {
+    background: #ff3b30;
+    border: none;
+}
+
+.ctrl-btn.end-call-btn:hover {
+    background: #d63027;
+    color: white;
+}
+
+/* Responsivitas Mobile */
+@media (max-width: 768px) {
+    .video-grid {
+        grid-template-columns: 1fr;
+        padding: 80px 15px 120px 15px;
+    }
+    .video-box {
+        aspect-ratio: 4 / 3;
+    }
+    .call-controls-bar {
+        width: 90%;
+        gap: 10px;
+        padding: 10px 20px;
+    }
+}
+
+/* Incoming Call Toast */
+.incoming-call-toast {
+    position: fixed; top: 20px; right: 20px;
+    width: 350px; background: var(--bg-panel);
+    border: 1px solid var(--primary-gold);
+    border-radius: 15px; padding: 15px; z-index: 10001;
+    display: flex; align-items: center; gap: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: slideInRight 0.5s ease;
+}
+
+/* Pastikan Viewport bisa Scroll */
+.chat-viewport {
+    flex: 1;
+    overflow-y: scroll !important; /* Paksa scroll bar selalu aktif agar browser tidak bingung hitung tinggi */
+    display: flex;
+    flex-direction: column;
+    padding: 20px 5%;
+    height: 100%;
+    scroll-behavior: smooth;
+}
+.messages-feed { display: flex; flex-direction: column; gap: 20px; padding-bottom: 20px; }
+
+/* --- CHAT COLUMN SPECIFIC LOADER --- */
+.chat-loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%; /* Mengisi seluruh area chat */
+    min-height: 300px;
+    gap: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.chat-luxury-spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.chat-luxury-spinner .gold-ring {
+    position: absolute;
+    inset: 0;
+    border: 3px solid rgba(212, 175, 55, 0.1); /* Ring tipis transparan */
+    border-top: 3px solid var(--primary-gold);
+    border-bottom: 3px solid var(--primary-gold);
+    border-radius: 50%;
+    animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.chat-luxury-spinner .logo-mini {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--primary-gold);
+    animation: pulse 2s infinite;
+}
+
+.loader-text {
+    font-family: var(--font-body);
+    color: var(--primary-gold);
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Penanda Waktu Pesan */
+.date-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    color: var(--primary-gold);
+    font-size: 0.8rem;
+    font-family: var(--font-body);
+}
+.date-separator::before, .date-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+.date-separator span {
+    padding: 0 15px;
+    background: var(--bg-onyx); /* Agar teks menutupi garis */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Message Bubble Styling */
+.msg-row { display: flex; width: 100%; margin-bottom: 5px; }
+.msg-row.me { justify-content: flex-end; }
+
+/* --- MESSAGE BATCHING / FAMILY STYLES --- */
+
+/* Pesan PERTAMA dalam keluarga (batch-start) */
+.msg-row.batch-start {
+    margin-bottom: 0 !important;
+}
+/* Pesan Awal: Radius bawah kotak */
+.msg-row.batch-start .msg-bubble {
+    border-bottom-left-radius: 6px !important;
+    border-bottom-right-radius: 6px !important;
+}
+
+/* Pesan Lanjutan: Hapus margin atas & radius sudut atas */
+.msg-row.batch-continue {
+    margin-top: -6px !important;
+    padding-top: 0 !important;
+}
+
+.msg-row.batch-continue .msg-bubble {
+    box-shadow: none !important;
+    border-top-left-radius: 6px !important;
+    border-top-right-radius: 6px !important;
+}
+
+/* Pesan TERAKHIR dalam keluarga (Kita atur pakai selector + sibling CSS jika mau sempurna, 
+   tapi karena dinamis JS, cukup default radius bubble 18px di css utama untuk yang terakhir) 
+*/
+
+/* Sembunyikan Ekor (Pseudo-element) pada pesan lanjutan */
+/* Hapus pseudo tail */
+.msg-row.batch-continue .msg-bubble::before {
+    display: none !important;
+}
+
+/* Tombol opsi mini pada batch lanjutan */
+.menu-trigger.mini {
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+}
+.menu-trigger.mini:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+.msg-bubble {
+    max-width: 75%; padding: 12px 18px; position: relative;
+    border-radius: 18px; font-size: 0.95rem; line-height: 1.5;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.msg-row.others .msg-bubble {
+    background: var(--bubble-other);
+    border-top-left-radius: 2px;
+    border: 1px solid var(--bubble-other-border);
+}
+
+.msg-row.me .msg-bubble {
+    background: var(--bubble-me);
+    border-top-right-radius: 2px;
+    border: 1px solid var(--bubble-me-border);
+    color: #e8f5e9;
+}
+
+.batch-item {
+    margin-top: 8px;
+    padding-top: 0;
+}
+
+.batch-item .msg-meta {
+    margin-top: 4px;
+    opacity: 0.8;
+    font-size: 0.75rem;
+}
+
+.sender-info {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.sender-label {
+    cursor: pointer;
+    color: var(--primary-gold);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.sender-email-tag {
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.65rem;
+    opacity: 0.6;
+    font-weight: 300;
+}
+
+/* Efek saat bubble di-hover, email lebih terlihat */
+.msg-bubble:hover .sender-email-tag {
+    opacity: 1;
+    transition: 0.3s;
+}
+
+/* =========================================
+   MESSAGE ACTIONS (Edit/Delete Menu)
+   ========================================= */
+
+/* Header Pesan agar bisa menampung tombol titik tiga */
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; /* Penting untuk posisi menu absolute */
+    margin-bottom: 6px;
+}
+
+/* Container Opsi (Titik Tiga) */
+.message-options {
+    position: relative;
+    margin-left: 10px;
+    z-index: 100; /* Pastikan di atas konten lain */
+}
+
+/* Tombol Titik Tiga */
+.menu-trigger {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.menu-trigger:hover {
+    color: var(--primary-gold);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+/* Pop-up Menu Bubble */
+.message-action-popup {
+    position: absolute;
+    right: 0;
+    top: 25px; /* Muncul di bawah tombol */
+    width: 140px;
+    background: rgba(15, 15, 15, 0.95);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--primary-gold);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    overflow: hidden;
+    z-index: 1000;
+    animation: scaleIn 0.2s ease-out;
+    transform-origin: top right;
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Item Menu */
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    font-size: 0.8rem;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: left;
+}
+
+.menu-item i {
+    width: 16px;
+    text-align: center;
+}
+
+.menu-item:hover {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--primary-gold);
+}
+
+/* Tombol Hapus (Merah) */
+.menu-item.delete:hover {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+}
+
+/* Jika tombol edit disabled (lewat waktu) */
+.menu-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: none !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Indikator Pesan Diedit */
+.edited-mark {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-left: 5px;
+    opacity: 0.7;
+}
+
+/* Menyembunyikan menu (Utility) */
+.hidden {
+    display: none !important;
+}
+
+.reply-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.reply-multiplier {
+    font-size: 12px;
+    opacity: 0.75;
+    margin-right: 8px;
+}
+
+.reply-image-strip {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    justify-content: flex-end;
+}
+
+.reply-image-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--glass-border);
+}
+
+/* Styling Kartu Media agar Rapi */
+.chat-img-bubble {
+    max-width: 100%;
+    border-radius: 12px;
+    margin-top: 5px;
+    cursor: pointer;
+    border: 1px solid var(--glass-border);
+}
+
+/* Container utama tetap sama */
+.file-bubble-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+/* Desain Bubble - Sekarang seragam untuk Dokumen & Audio */
+.file-bubble {
+    display: flex;
+    align-items: center; /* Ubah ke flex-start agar konten audio memanjang ke bawah */
+    gap: 12px;
+    background: rgba(255,255,255,0.05);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.file-info-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Mengambil sisa ruang */
+    overflow: hidden;
+}
+
+.file-name {
+    font-size: 0.85rem;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-size {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.file-bubble:hover {
+    background: rgba(255,255,255,0.08);
+}
+.file-bubble i { font-size: 1.5rem; color: var(--primary-gold); }
+.file-bubble span { font-size: 0.85rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.chat-audio-bubble {
+    width: 100%;
+    height: 35px;
+    margin-top: 8px;
+}
+
+/* --- KUSTOM PHOTO VIEWER FULLSCREEN --- */
+.photo-viewer-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    z-index: 100000;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.3s ease;
+}
+
+.viewer-container {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+}
+
+.viewer-header {
+    height: 60px; padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--glass-border);
+}
+
+.viewer-info { display: flex; align-items: center; gap: 12px; color: var(--primary-gold); }
+
+.viewer-btn {
+    background: none; border: none; color: #fff;
+    font-size: 1.2rem; cursor: pointer; margin-left: 15px; transition: 0.3s;
+}
+.viewer-btn:hover { color: var(--primary-gold); }
+.close-btn { font-size: 1.5rem; }
+
+/* Ganti selector ini di percakapan_eksklusif.css */
+.viewer-main {
+    flex: 1; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    padding: 20px; 
+    position: relative;
+    overflow: hidden; /* Tambahkan ini agar tidak ada kebocoran layout */
+}
+
+.image-wrapper {
+    flex: 1; height: 100%; display: flex; align-items: center; justify-content: center;
+}
+
+/* Container gambar utama */
+.image-wrapper img {
+    transition: opacity var(--color-transition), transform var(--color-transition);
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* State saat gambar sedang memuat/berhenti */
+.image-wrapper img.changing {
+    opacity: 0;
+    transform: scale(0.95); /* Efek mengecil sedikit saat menghilang */
+}
+
+#active-full-img {
+    /* Hapus max-height: 85vh; */
+    max-width: 95%; 
+    max-height: 100%; /* Gambar tidak akan pernah lebih tinggi dari viewer-main */
+    object-fit: contain; 
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+
+.nav-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+    color: #fff; width: 50px; height: 50px; border-radius: 50%;
+    cursor: pointer; transition: 0.3s;
+}
+.nav-btn:hover { background: var(--primary-gold); color: #000; }
+
+.viewer-footer {
+    height: 120px; background: rgba(0,0,0,0.8);
+    display: flex; align-items: center; justify-content: center;
+    padding: 10px;
+}
+
+.thumbnail-strip {
+    display: flex; 
+    gap: 10px; 
+    overflow-x: auto; 
+    padding: 10px;
+    max-width: 90vw; /* Pastikan strip tidak melebar melebihi layar */
+    scrollbar-width: thin; /* Untuk browser modern */
+}
+
+/* Opsional: Sembunyikan scrollbar agar lebih mewah */
+.thumbnail-strip::-webkit-scrollbar {
+    height: 4px;
+}
+.thumbnail-strip::-webkit-scrollbar-thumb {
+    background: var(--primary-gold);
+    border-radius: 10px;
+}
+
+.thumb-item {
+    width: 70px; 
+    height: 70px;
+    border-color: none;
+    border-radius: 8px;
+    border: 2px solid transparent; 
+    cursor: pointer;
+    opacity: 0.4;
+    transform: none;
+    transition: transform var(--color-transition), opacity var(--color-transition), border-color var(--color-transition);
+}
+.thumb-item.active { border-color: var(--primary-gold); opacity: 1; transform: scale(1.1); transition: transform var(--color-transition), opacity var(--color-transition), border-color var(--color-transition); }
+
+/* --- KUSTOM MEDIA PLAYER FULLSCREEN --- */
+.media-element {
+    max-width: 80%;
+    max-height: 70vh;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+    border: 1px solid var(--glass-border);
+    background: #000;
+    transition: opacity var(--color-transition), transform var(--color-transition);
+}
+
+.media-element.changing {
+    opacity: 0;
+    transform: scale(0.98);
+}
+
+#audio-visualizer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+/* Kustomisasi Kontrol Video agar sesuai tema Gold */
+video::-webkit-media-controls-panel {
+    background-image: linear-gradient(transparent, rgba(0,0,0,0.9));
+}
+video::-webkit-media-controls-play-button, 
+video::-webkit-media-controls-current-time-display {
+    color: var(--primary-gold) !important;
+}
+
+/* --- ANIMASI TRANSISI MEDIA PLAYER --- */
+
+/* Terapkan pada video dan container visualizer audio */
+#active-full-video, 
+#audio-visualizer-container {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity var(--color-transition), transform var(--color-transition);
+}
+
+/* State saat sedang berpindah data (Fade Out) */
+#active-full-video.changing, 
+#audio-visualizer-container.changing {
+    opacity: 0;
+    transform: scale(0.98); /* Efek mengecil sedikit */
+}
+
+/* Tambahan: Pastikan visualizer audio terlihat elegan saat muncul */
+#audio-visualizer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+/* --- KUSTOMISASI BINGKAI MEDIA (STRIP) --- */
+.thumbnail-strip {
+    display: flex;
+    gap: 12px;
+    padding: 15px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    /* Hilangkan Scrollbar untuk Chrome/Safari */
+    -webkit-overflow-scrolling: touch;
+}
+
+.thumbnail-strip::-webkit-scrollbar {
+    display: none; /* Sembunyikan scrollbar yang kotor */
+}
+
+.thumbnail-strip {
+    scrollbar-width: none; /* Untuk Firefox */
+    -ms-overflow-style: none;  /* Untuk Edge */
+}
+
+/* Jika hanya satu media, buat posisinya di tengah */
+.thumbnail-strip.single-item {
+    justify-content: center;
+}
+
+.media-thumb-item {
+    height: 50px;
+    transform: none;
+    background: rgba(255, 255, 255, 0.03); /* Lebih menyatu dengan background */
+    border-color: none;
+    box-shadow: none;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    cursor: pointer;
+    flex-shrink: 0; /* Penting agar item tidak menciut saat banyak file */
+    transition: transform var(--color-transition), background var(--color-transition), border-color var(--color-transition), box-shadow var(--color-transition);
+}
+
+.media-thumb-item:hover {
+    background: rgba(212, 175, 55, 0.05);
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+.media-thumb-item.active {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+    transform: translateY(-3px);
+}
+
+.media-thumb-item i {
+    font-size: 1rem;
+    margin-right: 12px;
+    color: var(--primary-gold);
+}
+
+.media-thumb-item .thumb-info {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.media-thumb-item .thumb-name {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: none;
+    white-space: nowrap;
+    /* --- PERUBAHAN UTAMA DISINI --- */
+    overflow: visible;         /* Izinkan teks terlihat */
+    text-overflow: clip;      /* Jangan gunakan titik-titik (...) */
+    max-width: none;          /* Hapus batasan lebar 130px */
+    /* ------------------------------ */
+    transition: color var(--color-transition), font-weight var(--color-transition);
+}
+
+.media-thumb-item.active .thumb-name {
+    color: #fff;
+    font-weight: 500;
+}
+
+/* Indikator Navigasi (Next/Prev) dalam Player */
+.nav-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+    color: var(--primary-gold);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background var(--color-transition), color var(--color-transition);
+}
+
+.nav-btn:hover {
+    background: var(--primary-gold);
+    color: #000;
+}
+
+/* Style untuk Loader Mini di dalam SweetAlert */
+.no-bg-swal { box-shadow: none !important; }
+.luxury-loader-mini {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+.luxury-loader-mini .gold-ring {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(212, 175, 55, 0.2);
+    border-top: 3px solid var(--primary-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Memastikan video memenuhi area viewer namun tetap proporsional */
+#active-full-video {
+    max-width: 90%;
+    max-height: 70vh;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    border-radius: 8px;
+}
+
+/* Container Media Grid */
+.media-grid-container {
+    display: grid;
+    gap: 4px;
+    margin-top: 8px;
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 400px;
+}
+
+/* Variasi Grid berdasarkan jumlah gambar */
+.grid-1 { grid-template-columns: 1fr; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 200px 200px; }
+.grid-3 img:first-child { grid-row: span 2; }
+.grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 150px 150px; }
+
+.media-grid-item {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.media-grid-item img {
+    width: 100%;
+    height: 100%;
+    min-height: 100px; /* Atau tinggi estimasi lainnya */
+    background: #1a1a1a; /* Placeholder warna gelap */
+    object-fit: cover;
+    transition: 0.3s;
+}
+
+.media-grid-item img:hover { filter: brightness(0.8); }
+
+/* Overlay +N */
+.more-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Dokumen & Audio List */
+.attachment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.sender-label { font-size: 0.75rem; font-weight: 700; color: var(--primary-gold); display: block; margin-bottom: 4px; }
+.msg-meta { display: flex; justify-content: flex-end; align-items: center; gap: 5px; margin-top: 5px; font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+.msg-meta i { font-size: 0.8rem; }
+.read-receipt.read { color: var(--bright-gold); }
+
+.encryption-notice {
+    text-align: center; margin: 20px 0; font-size: 0.75rem; color: var(--primary-gold);
+    background: rgba(212, 175, 55, 0.1); padding: 8px 15px; border-radius: 20px; display: inline-block;
+    align-self: center; width: fit-content; margin-left: auto; margin-right: auto;
+}
+
+.chat-divider {
+    text-align: center; margin: 20px 0; position: relative;
+}
+.chat-divider span {
+    background: var(--bg-onyx); padding: 0 15px; font-size: 0.7rem; color: var(--text-secondary);
+    position: relative; z-index: 1;
+}
+.chat-divider::after {
+    content: ''; position: absolute; left: 0; top: 50%;
+    width: 100%; height: 1px; background: var(--glass-border);
+}
+
+/* Typing Indicator */
+.typing-indicator { padding: 10px 25px; font-size: 0.8rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px; }
+.typing-dots span {
+    display: inline-block; width: 4px; height: 4px; background: var(--text-secondary); border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out both; margin-right: 2px;
+}
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+/* Input Area */
+.glass-footer {
+    padding: 15px 25px; background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+    border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px;
+}
+
+/* --- FIX BUG 1: Footer Transformation --- */
+.footer-mode-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    animation: fadeIn 0.3s ease;
+}
+
+.spread-layout-footer {
+    display: flex;
+    justify-content: space-between;
+}
+.spread-info-ui {
+    flex: 1;
+    background: var(--bg-onyx); /* Latar lebih gelap untuk mode aksi */
+    padding: 10px 15px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+}
+
+.spread-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.spread-actions-group {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-cancel-spread {
+    background: none; border: none; color: #fff;
+    font-size: 1.4rem; cursor: pointer; margin-left: 15px; transition: 0.3s;
+}
+.btn-cancel-spread:hover { color: var(--primary-gold); }
+.btn-settings-spread {
+    background: none; border: none; color: #fff;
+    font-size: 1.4rem; cursor: pointer; margin-left: 15px; transition: 0.3s;
+}
+.btn-settings-spread:hover { color: var(--primary-gold); }
+/*.close-btn { font-size: 1.5rem; }*/
+
+.btn-spreading {
+    margin-left: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--primary-gold);
+    border: none; color: #000; font-size: 1.1rem; cursor: pointer; transition: transform 0.2s;
+}
+.btn-spreading:hover { transform: scale(1.1); background: var(--bright-gold); }
+
+.text-input-wrapper {
+    flex: 1; background: #1a1a1a; border-radius: 25px; padding: 10px 20px;
+    display: flex; align-items: center; border: 1px solid var(--glass-border);
+}
+.text-input-wrapper textarea { background: transparent; border: none; color: #fff; width: 100%; resize: none; font-family: var(--font-body); }
+
+/* --- LUXURY EMOJI PICKER STYLE --- */
+.text-input-wrapper {
+    position: relative; /* Penting agar popup mengambang di atasnya */
+}
+
+.emoji-picker-popup {
+    will-change: transform, opacity; /* Siapkan GPU untuk animasi */
+    pointer-events: auto;
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 15px;
+    z-index: 1000;
+    filter: drop-shadow(0 10px 25px rgba(0,0,0,0.5));
+    border: 1px solid var(--primary-gold);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===============================
+   WHATSAPP-GRADE EMOJI PICKER
+   =============================== */
+
+.emoji-wa {
+    width: 320px;
+    height: 360px;
+    background: #0f0f0f;
+    border: 1px solid var(--primary-gold);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    contain: strict;
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* HEADER */
+.emoji-wa-header {
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #d4af37;
+    border-bottom: 1px solid rgba(212,175,55,0.15);
+}
+
+/* VIEWPORT (PALSU, BUKAN SCROLL DOM) */
+.emoji-wa-viewport {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+/* CONTENT YANG DIGESER */
+.emoji-wa-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    will-change: transform;
+}
+
+/* SEARCH INPUT */
+.emoji-search-input {
+    width: 100%;
+    background: #111;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 13px;
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+
+.emoji-search-input::placeholder {
+    color: #666;
+}
+
+/* CATEGORY BAR */
+.emoji-wa-categories {
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    border-bottom: 1px solid rgba(212,175,55,0.1);
+    overflow-x: auto;
+}
+
+.emoji-wa-categories span {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.emoji-wa-categories span:hover,
+.emoji-wa-categories span.active {
+    opacity: 1;
+    background: rgba(212,175,55,0.2);
+}
+
+
+/* GRID */
+.emoji-row {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    height: 36px;
+}
+
+.emoji-item {
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 36px;
+    text-align: center;
+    user-select: none;
+    border-radius: 6px;
+}
+
+.emoji-item:hover {
+    background: rgba(212,175,55,0.15);
+}
+
+/* FOOTER */
+.emoji-wa-footer {
+    padding: 6px;
+    text-align: center;
+    font-size: 11px;
+    color: #777;
+    border-top: 1px solid rgba(212,175,55,0.1);
+}
+
+/* Reply Bar */
+.reply-preview-bar {
+    background: var(--bg-panel);
+    border-left: 4px solid var(--primary-gold);
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideUp 0.3s ease;
+}
+
+.msg-reply-bubble {
+    background: rgba(255,255,255,0.05);
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-bottom: 8px;
+    display: flex;
+    font-size: 0.85em;
+    cursor: pointer;
+}
+
+.reply-bar {
+    width: 3px;
+    background: var(--primary-gold);
+    margin-right: 10px;
+    border-radius: 2px;
+}
+
+.reply-media-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.reply-text-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Maksimal 2 baris */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- SPREAD FEATURE STYLES --- */
+
+.message-card.selected {
+    background: rgba(212, 175, 55, 0.15) !important; /* Gold Tint */
+    position: relative;
+}
+/* --- FIX BUG 2 & 3: Checkbox Visibility --- */
+/* Checkbox selalu ada di DOM tapi hidden default */
+.msg-checkbox {
+    position: absolute;
+    left: -40px; /* Di luar area bubble */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    accent-color: var(--primary-gold);
+    cursor: pointer;
+    opacity: 0;          /* Sembunyi tapi ada */
+    pointer-events: none; /* Tidak bisa diklik saat mode mati */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+}
+/* Saat Container Induk (Feed) masuk mode selection */
+.messages-feed.selection-active .msg-checkbox {
+    opacity: 1;          /* Muncul */
+    pointer-events: auto; /* Bisa diklik */
+    left: 10px;          /* Geser masuk ke view */
+}
+/* Geser kartu pesan ke kanan saat mode aktif */
+.messages-feed.selection-active .msg-row {
+    transition: padding 0.3s ease;
+    position: relative; /* Context untuk absolute checkbox */
+}
+/* Hover effect untuk membantu navigasi mata */
+.selection-active .msg-row:hover {
+    cursor: pointer;
+    background-color: rgba(212, 175, 55, 0.05); /* Onyx dengan hint Gold sangat tipis */
+}
+/* Override posisi checkbox untuk pesan 'me' (kanan) atau biarkan di kiri semua */
+/* Desain UX umum: Checkbox seleksi selalu di kiri, bubble geser */
+
+/* 2. Spread Action Bar */
+.spread-bar {
+    position: absolute;
+    bottom: 80px; /* Di atas input message */
+    left: 20px; right: 20px;
+    background: var(--bg-sidebar);
+    border: 1px solid var(--primary-gold);
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    z-index: 100;
+    animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.btn-ghost-gold { background: transparent; border: 1px solid #555; color: #aaa; padding: 5px 15px; border-radius: 6px; cursor: pointer; }
+.btn-solid-gold { background: var(--bg-panel); border: 1px solid var(--primary-gold); color: var(--primary-gold); padding: 5px 15px; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+.btn-solid-gold:hover { background: var(--primary-gold); color: #000; }
+
+/* 3. Advanced Config Modal */
+.spread-modal-container {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-onyx);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+}
+
+.spread-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+.spread-layout {
+    display: flex; /* Ubah ke flex agar kontrol distribusi ruang lebih mudah */
+    flex-direction: row;
+    gap: 40px;
+    flex: 1; /* Ambil sisa tinggi modal setelah header */
+    min-height: 0; /* Penting agar kontainer tidak meledak saat konten panjang */
+    overflow: hidden;
+}
+
+/* Carousel */
+.spread-preview-section { 
+    display: flex; 
+    flex-direction: column; 
+    flex: 1;
+    background: rgba(255,255,255,0.02); 
+    border-radius: 12px; 
+    padding: 20px; 
+    position: relative; 
+    min-width: 0;
+}
+.carousel-wrapper { 
+    display: flex; 
+    align-items: center; 
+    width: 100%; 
+    flex: 1;
+    justify-content: center; 
+    gap: 20px; 
+    min-height: 0;
+}
+
+.carousel-viewport {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    overflow: hidden; 
+    display: block;
+}
+
+.carousel-viewport::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50px;
+    background: linear-gradient(to top, var(--bg-onyx) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.msg-preview-card {
+    padding: 20px;
+    border-radius: 12px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    color: white;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+}
+.msg-preview-card > .msg-row {
+    margin-top: auto;
+    margin-bottom: auto;
+    flex-shrink: 0; 
+    width: 100%;
+}
+
+.msg-preview-card::-webkit-scrollbar {
+    display: none;
+}
+
+/* Menimpa perilaku default chat agar rata tengah di dalam modal preview */
+#spread-carousel-viewport .msg-row {
+    justify-content: center !important; /* Menimpa justify-content: flex-end dari .me */
+    align-items: center !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+#spread-carousel-viewport .msg-bubble {
+    max-width: 90% !important; /* Beri sedikit ruang napas */
+    margin: 0 auto !important;  /* Pastikan bubble-nya sendiri di tengah */
+    border-radius: 18px !important; /* Opsional: buat sudutnya simetris kembali */
+    text-align: left; /* Teks tetap rata kiri agar mudah dibaca, atau center jika suka */
+}
+
+
+.nav-btn { 
+    background: transparent; 
+    border: 1px solid var(--primary-gold); 
+    color: var(--primary-gold); 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+.nav-btn:hover {
+    background: var(--primary-gold);
+    color: black;
+}
+
+/* Inputs */
+.onyx-input, .onyx-select {
+    width: 100%; background: #111; border: 1px solid #333; color: white; padding: 10px; border-radius: 6px; margin-top: 5px;
+}
+.onyx-input:focus { border-color: var(--primary-gold); outline: none; }
+
+/* Controls Right Side */
+.spread-controls-section { overflow-y: auto; padding-right: 10px; }
+.control-group { margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+.toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; color: #ccc; font-size: 0.9rem; }
+.toggle-row.column { flex-direction: column; align-items: flex-start; }
+
+/* Custom Switch */
+.gold-switch { accent-color: var(--primary-gold); transform: scale(1.2); cursor: pointer; }
+.mini-select { background: #222; color: white; border: 1px solid #444; border-radius: 4px; padding: 2px 5px; }
+
+/* Sortable List */
+.sortable-item { background: #222; border: 1px solid #333; padding: 8px; margin-bottom: 5px; cursor: grab; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: #ccc; }
+.sortable-item:active { cursor: grabbing; border-color: var(--primary-gold); }
+.sortable-handle { color: var(--primary-gold); }
+
+.btn-action-gold-large { width: 100%; background: var(--gold-gradient); border: none; padding: 15px; color: black; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-heading); letter-spacing: 1px; }
+
+/* Container Utama Preview */
+.upload-preview-bar {
+    background: rgba(15, 15, 15, 0.98);
+    border-top: 2px solid var(--primary-gold);
+    padding: 15px;
+    display: flex;
+    flex-wrap: wrap; /* Supaya file meluap ke bawah jika banyak */
+    gap: 12px;
+    max-height: 250px;
+    overflow-y: auto;
+    backdrop-filter: blur(15px);
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Kotak Render File Individu */
+.preview-item {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    transition: all 0.2s;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.preview-item i {
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+}
+
+.preview-item .file-name-mini {
+    font-size: 0.6rem;
+    color: #ccc;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.reply-content-wrapper {
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    max-width: 100%;
+}
+
+.close-reply-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s;
+}
+.close-reply-btn:hover {
+    color: var(--primary-gold);
+}
+
+/* Teks dipotong jika gambar banyak */
+.reply-text-body {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.85;
+}
+
+/* Container konten reply preview (di atas input) */
+.reply-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Kolom kiri: ikon + teks */
+.reply-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0; /* PENTING agar teks bisa terpotong */
+}
+
+/* Preview gambar DI KANAN */
+.reply-image-preview {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;      /* sesuai permintaan */
+    justify-content: flex-end;
+    flex-shrink: 0;
+    margin: 0;                  /* HILANGKAN margin-bottom lama */
+}
+
+/* Thumbnail reply */
+.reply-image-preview img {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--glass-border);
+}
+
+.reply-preview-images {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.reply-preview-thumb {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--glass-border);
+}
+
+/* Tombol X Hapus di dalam kotak */
+.remove-preview {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 22px;
+    height: 22px;
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.7rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 10;
+    transition: transform 0.2s;
+}
+
+.remove-preview:hover {
+    transform: scale(1.2) rotate(90deg);
+    background: #ff6b81;
+}
+
+/* Scrollbar halus untuk area preview */
+.upload-preview-bar::-webkit-scrollbar { width: 4px; }
+.upload-preview-bar::-webkit-scrollbar-thumb { background: var(--primary-gold); border-radius: 10px; }
+
+.send-btn {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--primary-gold);
+    border: none; color: #000; font-size: 1.1rem; cursor: pointer; transition: transform 0.2s;
+}
+.send-btn:hover { transform: scale(1.1); background: var(--bright-gold); }
+
+.attach-btn, .emoji-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; }
+
+/* --- Pane 3: Info Panel --- */
+.info-pane {
+    background: var(--bg-panel); border-left: 1px solid var(--glass-border);
+    display: flex; flex-direction: column; overflow: hidden;
+}
+.info-header {
+    height: 70px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--glass-border);
+}
+.info-content { flex: 1; padding: 25px; overflow-y: auto; }
+
+.room-hero { text-align: center; margin-bottom: 30px; }
+.room-avatar-large {
+    width: 80px; height: 80px; margin: 0 auto 15px;
+    border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--primary-gold);
+    display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--primary-gold);
+}
+
+.accordion-header {
+    display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333;
+    margin-bottom: 15px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);
+}
+
+/* Container Media di Tab Info */
+.media-grid {
+    display: grid;
+    /* Grid akan menyesuaikan jumlah kolom secara otomatis sesuai lebar panel info */
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
+    gap: 8px;
+    padding: 10px 0;
+}
+
+/* Kartu Gambar Persegi */
+.image-card {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+}
+
+.image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.3s;
+}
+
+/* Kartu Dokumen/Audio/Video Persegi agar seragam */
+.doc-card {
+    aspect-ratio: 1 / 1;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.doc-card:hover, .image-card:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--primary-gold);
+}
+
+.doc-card i {
+    margin-top: 15px;
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+}
+
+.doc-card .file-info-text {
+    margin-top: 5px;
+    width: 100%;
+    overflow: hidden;
+    gap: 2.5px;
+}
+
+.doc-card .file-name {
+    display: block;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-primary);
+}
+
+.doc-card .file-size {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 320px) {
+    .media-grid {
+        grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+    }
+    .doc-card .file-name {
+        font-size: 0.6rem; /* Lebih kecil saat sempit */
+    }
+}
+
+/* =========================================
+   MEDIA ARCHIVE MODAL (Luxury Smooth Transition)
+   ========================================= */
+
+/* 1. Modal Container & Animation State */
+.media-modal { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 9999; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    /* Transisi saat modal muncul/hilang */
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--color-transition);
+}
+
+/* State Aktif untuk Modal (Gunakan class .active di JS) */
+.media-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-overlay { 
+    position: absolute; 
+    inset: 0; 
+    background: rgba(0,0,0,0.85); 
+    backdrop-filter: blur(15px); 
+    transition: all var(--color-transition);
+}
+
+.modal-content { 
+    position: relative; 
+    width: 90%; 
+    height: 90%; 
+    background: var(--bg-panel); 
+    border: 1px solid var(--glass-border); 
+    border-radius: 20px; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden;
+    /* Efek slide up saat muncul */
+    transform: translateY(30px);
+    transition: all var(--color-transition);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+.media-modal.active .modal-content {
+    transform: translateY(0);
+    border-color: var(--primary-gold);
+}
+
+/* 2. Modal Header & Filters */
+.modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 30px;
+    border-bottom: 1px solid var(--glass-border);
+    background: var(--bg-onyx);
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;
+}
+
+.header-main {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin-bottom: 10px;
+    width: 100%;
+    position: relative;
+}
+
+.header-main h2 {
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-family: var(--font-heading);
+    letter-spacing: 1px;
+}
+
+.header-main h2 i {
+    -webkit-text-fill-color: var(--primary-gold);
+    background: none;
+}
+
+.close-modal {
+    position: absolute;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: all var(--color-transition);
+}
+
+.close-modal:hover {
+    color: var(--bright-gold);
+    transform: rotate(90deg);
+}
+
+.header-desc { 
+    color: var(--text-secondary); 
+    font-size: 0.9rem; 
+    margin-bottom: 25px; 
+}
+
+/* 3. Category Filters (The Buttons) */
+.category-filters { 
+    display: flex; 
+    gap: 12px; 
+    width: 100%; 
+    max-width: 900px; 
+    margin: 0 auto;
+}
+
+.filter-btn { 
+    flex: 1; 
+    padding: 12px 5px; 
+    border-radius: 12px; 
+    border: 1px solid var(--glass-border);
+    background: transparent;
+    color: var(--text-secondary); 
+    cursor: pointer; 
+    white-space: nowrap; 
+    font-size: 0.85rem;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: all var(--color-transition);
+}
+
+/* Pseudo-element untuk background gradient yang halus */
+.filter-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--gold-gradient);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity var(--color-transition);
+}
+
+.filter-btn:hover, 
+.filter-btn.active { 
+    color: #000; 
+    border-color: var(--bright-gold);
+    font-weight: 600;
+}
+
+.filter-btn:hover::before,
+.filter-btn.active::before {
+    opacity: 1;
+}
+
+/* 4. Grid Content & Items */
+.modal-body { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 30px; 
+    display: flex; 
+    flex-direction: column; 
+    background: var(--bg-panel);
+}
+
+.archive-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    justify-content: center;
+}
+
+.archive-item {
+    height: 75px;
+    background: var(--bg-sidebar);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    padding: 0 25px;
+    gap: 18px;
+    cursor: pointer;
+    flex: 0 0 auto; 
+    width: max-content;
+    position: relative;
+    overflow: hidden;
+    /* Gunakan variabel transisi standar wajib */
+    transition: all var(--color-transition);
+}
+
+.archive-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--primary-gold);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Image Card specific */
+.archive-item.image-card {
+    width: 75px;
+    padding: 0;
+    justify-content: center;
+}
+
+.archive-item.image-card img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transition: transform var(--color-transition);
+}
+
+.archive-item.image-card:hover img {
+    transform: scale(1.1);
+}
+
+/* Info Logic */
+.archive-item.doc-card, 
+.archive-item.media-card {
+    min-width: 220px;
+}
+
+.archive-item i { 
+    font-size: 1.5rem; 
+    color: var(--primary-gold);
+    transition: transform var(--color-transition);
+}
+
+.archive-item:hover i {
+    transform: scale(1.2);
+}
+
+.archive-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.archive-name {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.archive-size {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+/* Custom Scrollbar for Luxury Feel */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 10px;
+}
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-gold);
+}
+
+/* Tombol Selengkapnya di Sidebar */
+.more-media-btn {
+    width: 100%; padding: 10px; margin-top: 10px; background: transparent;
+    border: 1px dashed var(--primary-gold); color: var(--primary-gold);
+    border-radius: 5px; cursor: pointer; font-size: 0.8rem; transition: 0.3s;
+}
+.more-media-btn:hover { background: rgba(212, 175, 55, 0.1); }
+
+/* Fix Avatar Member */
+.member-img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--primary-gold);
+}
+
+.member-row { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.member-row img { width: 35px; height: 35px; border-radius: 8px; }
+.member-row .role { display: block; font-size: 0.7rem; }
+.role.master { color: #3498db; }
+.role.eternal { color: var(--primary-gold); }
+.admin-badge { margin-left: auto; font-size: 0.6rem; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; }
+
+.member-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.member-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.member-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.member-avatar {
+    width: 35px;
+    height: 35px;
+    background: var(--gold-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.member-info .member-name {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.member-info .member-status {
+    font-size: 0.7rem;
+    color: var(--accent-green);
+}
+
+/* FAB */
+.fab-scroll {
+    position: absolute; bottom: 20px; right: 20px; width: 40px; height: 40px;
+    border-radius: 50%; background: var(--bg-sidebar); border: 1px solid var(--primary-gold);
+    color: var(--primary-gold); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 50; transition: 0.3s;
+}
+.hidden { display: none !important; }
+
+/* --- RESPONSIVE LOGIC --- */
+@media (max-width: 1024px) {
+    .app-layout { grid-template-columns: 280px 1fr 0; } /* Hide info panel by default */
+    .info-pane.active { position: absolute; right: 0; top: 0; bottom: 0; width: 300px; z-index: 200; box-shadow: -5px 0 20px rgba(0,0,0,0.5); background: var(--bg-panel); }
+}
+
+@media (max-width: 768px) {
+    .app-layout { grid-template-columns: 1fr; }
+    .sidebar-pane { position: absolute; left: -100%; top: 0; bottom: 0; width: 85%; transition: 0.3s ease; box-shadow: 5px 0 20px #000; }
+    .sidebar-pane.active { left: 0; }
+    .mobile-toggle, .mobile-close-btn { display: block; }
+    .chat-header { padding: 0 15px; }
+    .active-chat-info h3 { font-size: 1rem; }
+    .close-info { display: block; background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+}
+
+/* Animations */
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+@keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }

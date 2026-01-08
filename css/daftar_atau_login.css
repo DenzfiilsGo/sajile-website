@@ -94,35 +94,57 @@ h1 {
     color: var(--text-dark);
 }
 
-span {
-    font-size: 12px;
-    color: #888;
-    margin: 15px 0;
-}
-
-/* Social Buttons */
+/* Update Social Container */
 .social-container {
     margin: 20px 0;
-}
-
-.social-container a {
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    display: inline-flex;
+    width: 100%;
+    display: flex;
     justify-content: center;
-    align-items: center;
-    margin: 0 5px;
-    height: 40px;
-    width: 40px;
-    text-decoration: none;
-    color: #333;
-    transition: 0.3s;
 }
 
-.social-container a:hover {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+/* Tombol Google Premium */
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background-color: #ffffff;
+    color: #444;
+    border: 1px solid #dadce0;
+    border-radius: 8px; /* Sudut lebih modern */
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: none; /* Menghilangkan UPPERCASE bawaan button */
+    letter-spacing: normal;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 280px;
+    margin-top: 0; /* Reset margin dari button umum */
+}
+
+.btn-google img {
+    width: 20px;
+    height: 20px;
+}
+
+.btn-google:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(60,64,67,0.3);
+    border-color: #d2e3fc;
+    transform: none; /* Tidak perlu membesar seperti button hijau */
+}
+
+.btn-google:active {
+    background-color: #eeeeee;
+    transform: scale(0.98);
+}
+
+/* Penyesuaian teks span di bawah tombol */
+span {
+    font-size: 13px;
+    color: #666;
+    margin: 10px 0;
 }
 
 /* Input Styles */
@@ -322,49 +344,27 @@ button.ghost:hover {
        Untuk UX terbaik di HP, biasanya overlay dihilangkan, tapi ini cukup oke. */
 }
 
-/* =========================================
-   10. STANDAR WAJIB: MARQUEE TEXT PROFIL
-   ========================================= */
-
-/* Area Tampilan untuk Username dan Email */
-.user-info {
-    /* Pastikan lebar tidak lebih dari lebar dropdown - padding/margin */
-    width: 170px; /* Sesuaikan sesuai kebutuhan agar pas dengan lebar dropdown */
-    overflow: hidden; /* Sembunyikan teks yang melebihi batas */
-    display: flex; /* Gunakan flexbox untuk menata elemen dalam baris terpisah */
-    flex-direction: column;
+/* Kustomisasi SajiLe untuk SweetAlert2 */
+.sajile-swal-popup {
+    border-radius: 20px !important; /* Membuat sudut popup lebih bulat */
+    padding: 2rem !important;
 }
 
-/* Teks yang akan berjalan (username dan email) */
-.user-info span {
-    /* Mengubah dari inline-block menjadi block untuk memastikan keduanya di baris terpisah */
-    display: block; 
-    
-    /* Gunakan properti ini pada SPAN agar teks di dalamnya tidak pecah baris */
-    white-space: nowrap; 
-    
-    /* Tambahkan 1px margin bawah antara username dan email */
-    margin-bottom: 1px;
+.sajile-swal-title {
+    color: #2c3e50 !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 700 !important;
 }
 
-/* Teks ANImasi (INNER SPAN) */
-.user-info span::before {
-    content: attr(data-text); /* Gunakan atribut data-text untuk konten teks */
-    display: inline-block;
-    padding-left: 100%; /* Mulai teks dari luar batas kanan */
-    animation: marquee 10s linear infinite; 
-    animation-play-state: running; /* Pastikan berjalan secara default */
+.sajile-swal-confirm {
+    border-radius: 10px !important; /* Menyamakan dengan style tombol kita */
+    padding: 12px 30px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* Hentikan animasi saat hover (opsional: agar teks mudah dibaca) */
-.user-info:hover span::before {
-    animation-play-state: paused;
+/* Mengubah warna loading spinner di dalam tombol */
+.swal2-loader {
+    border-color: #ffffff transparent #ffffff transparent !important;
 }
-
-/* Keyframes untuk animasi marquee */
-@keyframes marquee {
-    0% { transform: translate(0, 0); } /* Posisi awal: 0 (sudah didorong 100% dari kiri parent) */
-    100% { transform: translate(-100%, 0); } /* Pindah ke kiri hingga mencapai batas kiri parent */
-}
-
-/* Catatan: Karena p didorong 100% dari kiri, 0% di sini adalah titik 'mulai terlihat' di ujung kanan. */

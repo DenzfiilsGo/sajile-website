@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="referrer" content="no-referrer">
+        <title>Kursus Memasak - SajiLe</title>
+        <link rel="icon" href="../assets/sajile_icon.jpg" type="image/x-icon">
+        <link rel="stylesheet" href="../css/kursus.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+    <body data-theme="light">
+        <nav class="navbar">
+            <a class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
+
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <div class="nav-menu-container" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="../index.html">Beranda</a></li>
+                    <li><a href="daftar_makanan.html">Menu</a></li>
+                    <li><a href="resep.html">Resep</a></li>
+                    <li><a href="favorit.html">Favorit</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="btn-icon">
+                        <i class="fas fa-moon"></i>
+                        <span class="mobile-only-text">Mode Gelap</span>
+                    </button>
+                    
+                    <div class="nav-auth-links logged-out-only">
+                        <a href="daftar_atau_login.html" class="btn-primary" id="login-btn">Masuk/Daftar</a>
+                    </div>
+                    
+                    <div class="profile-dropdown-wrapper logged-in-only">
+                        <div class="profile-pic" id="profile-pic-btn">
+                            <img src="https://placehold.co/40x40/3498db/fff?text=U" alt="Profil Pengguna" onerror="this.onerror=null; this.src='https://placehold.co/40x40/3498db/fff?text=U'">
+                        </div>
+                        
+                        <div class="profile-dropdown-menu" id="profile-dropdown">
+                            <div class="dropdown-header">
+                                <img src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profil Pengguna">
+                                <div class="user-info">
+                                    <span class="username" data-text="Nama Pengguna Super Panjang">Nama Pengguna</span>
+                                    <span class="email" data-text="email.pengguna.panjang.sekali@namadomainyangsangatpanjang.com">user.email@mail.com</span>
+                                </div>
+                            </div>
+                            <ul class="dropdown-links">
+                                <li><a href="profil.html"><i class="fas fa-user-circle"></i> Lihat Profil</a></li>
+                                <li><a href="pengaturan_akun.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
+                                <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
+                                <li class="divider-item"></li>
+                                <li><a id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-container">
+            <header class="page-header">
+                <h1>Kursus Memasak <span class="brand-highlight">SajiLe</span></h1>
+                <p>Tingkatkan keahlian dapur Anda dengan instruktur profesional.</p>
+            </header>
+
+            <div class="filter-controls">
+                <button class="filter-btn active" data-filter="all">Semua</button>
+                <button class="filter-btn" data-filter="dasar">Teknik Dasar</button>
+                <button class="filter-btn" data-filter="nusantara">Masakan Nusantara</button>
+                <button class="filter-btn" data-filter="pastry">Pastry & Roti</button>
+            </div>
+
+            <div class="course-grid" id="course-container">
+                </div>
+        </div>
+
+        <footer class="site-footer">
+            <p>&copy; 2025 <a class="footer-brand"><strong>Sinau<span class="footer-brand-highlight">Le</span></strong></a>. Semua hak dilindungi.</p>
+            <p>
+                <a href="tentang_kami.html" class="about-we">Tentang Kami</a> | 
+                Email: <a href="mailto:sajile@gmail.com" class="contact-we">sajile@gmail.com</a> |
+                Whatsapp: <a href="tel:+6281234567890" class="contact-we">0812-3456-7890</a>
+            </p>
+            <p>
+                Dikelola oleh Tim 
+                <a class="footer-brand"><strong>Saji<span class="footer-brand-highlight">Le</span></strong></a> 
+                (ex-<a class="footer-brand"><strong>MBADOK<span class="footer-brand-highlight">Le</span></strong></a>) Indonesia
+            </p>
+        </footer>
+
+        <div id="video-modal" class="video-modal" onclick="closeVideoPlayer()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <button class="close-modal" onclick="closeVideoPlayer()">&times;</button>
+                <div class="video-wrapper">
+                    <div id="player-frame"></div>
+                </div>
+                <div class="video-details">
+                    <h2 id="modal-video-title">Judul Kursus</h2>
+                    <p id="modal-video-desc">Deskripsi kursus akan muncul di sini.</p>
+                </div>
+            </div>
+        </div>
+
+        <script src="../js/kursus.js"></script>
+    </body>
+</html>

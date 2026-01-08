@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Paket Premium - SajiLe</title>
+    <link rel="icon" href="../assets/sajile_icon.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="../css/paket_langganan.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <a href="../index.html" class="back-home-btn"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
+
+    <div class="pricing-header">
+        <h1>Buka Potensi Penuh <span class="brand-highlight">SajiLe</span></h1>
+        <p>Bergabunglah dengan ribuan Chef hebat lainnya dan kuasai peringkat teratas.</p>
+    </div>
+
+    <div class="pricing-header">
+        <h2 class="premium subscription header">Paket Standar Tanpa Biaya</h3>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="standard-card">
+        <div class="pricing-card" data-package="free">
+            <div class="card-tag">Standar</div>
+            <h3>Paket Standar</h3>
+            <div class="price">
+                <span class="currency">Rp</span>
+                <span class="amount">0</span>
+                <span class="period">/bulan</span>
+            </div>
+            <ul class="features">
+                <li><i class="fas fa-check"></i> Akses ke Semua Resep</li>
+                <li><i class="fas fa-check"></i> Cetak & Unduh Resep hingga 3 Kredit Perhari</li>
+                <li><i class="fas fa-check"></i> <strong>Akses TOLE AI hingga 5 Kredit Perhari</strong></li>
+            </ul>
+            <button class="btn-subscribe-original">Dipilih</button>
+        </div>
+    </div>
+
+    <div class="pricing-header">
+        <h2 class="premium subscription header">Pilihan Paket Langganan</h3>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="pricing-container">
+        <div class="pricing-card" data-package="starter_taster">
+            <div class="card-tag">Pemula</div>
+            <h3>Taster Pass</h3>
+            <div class="price">
+                <span class="currency">Rp</span>
+                <span class="amount">24.900</span>
+                <span class="period">/minggu</span>
+            </div>
+            <ul class="features">
+                <li><i class="fas fa-check"></i> Bebas Iklan</li>
+                <li><i class="fas fa-check"></i> Mode Memasak</li>
+                <li><i class="fas fa-check"></i> Kalkulator Porsi Premium</li>
+                <li><i class="fas fa-check"></i> Cetak & Unduh Resep hingga 5 Kredit Perhari</li>
+                <li><i class="fas fa-check"></i> <strong>Akses TOLE AI hingga 10 Kredit Perhari</strong></li>
+                <li><i class="fas fa-check"></i> <strong>Akun Eksklusif Berbatas Waktu</strong></li>
+            </ul>
+            <button class="btn-subscribe" onclick="handleSubscription('starter')">Coba Premium</button>
+        </div>
+
+        <div class="pricing-card" data-package="starter_pro">
+            <div class="card-tag">Pemula</div>
+            <h3>Quick Pro</h3>
+            <div class="price">
+                <span class="currency">Rp</span>
+                <span class="amount">44.900</span>
+                <span class="period">/minggu</span>
+            </div>
+            <ul class="features">
+                <li><i class="fas fa-check"></i> Bebas Iklan</li>
+                <li><i class="fas fa-check"></i> Mode Memasak</li>
+                <li><i class="fas fa-check"></i> Kalkulator Porsi Premium</li>
+                <li><i class="fas fa-check"></i> Cetak & Unduh Resep hingga 10 Kredit Perhari</li>
+                <li><i class="fas fa-check"></i> <strong>Akses TOLE AI hingga 15 Kredit Perhari</strong></li>
+                <li><i class="fas fa-check"></i> <strong>Akun Eksklusif Berbatas Waktu</strong></li>
+            </ul>
+            <button class="btn-subscribe" onclick="handleSubscription('starter')">Coba Premium</button>
+        </div>
+
+        <div class="pricing-card featured" data-package="premium_home">
+            <div class="card-tag gold">Paling Populer</div>
+            <h3>Home Cook</h3>
+            <div class="price">
+                <span class="currency">Rp</span>
+                <span class="amount">69.900</span>
+                <span class="period">/bulan</span>
+            </div>
+            <ul class="features">
+                <li><i class="fas fa-check"></i> Bebas Iklan</li>
+                <li><i class="fas fa-check"></i> Akses Resep Eksklusif</li>
+                <li><i class="fas fa-check"></i> Mode Memasak</li>
+                <li><i class="fas fa-check"></i> Kalkulator Porsi Premium</li>
+                <li><i class="fas fa-check"></i> Cetak & Unduh Resep hingga 15 Kredit Perhari</li>
+                <li><i class="fas fa-check"></i> XP Boost 1.5x</li>
+                <li><i class="fas fa-check"></i> <strong>Akses TOLE AI hingga 25 Kredit Perhari</strong></li>
+                <li><i class="fas fa-check"></i> <strong>Akun Eksklusif Berbatas Waktu</strong></li>
+            </ul>
+            <button class="btn-subscribe-main featured-btn" onclick="handleSubscription('premium')">Langganan Sekarang</button>
+            <p class="scarcity-text"><i class="fas fa-fire"></i> Sisa 12 slot promo hari ini!</p>
+        </div>
+
+        <div class="pricing-card featured" data-package="premium_elite">
+            <div class="card-tag gold">Paling Populer</div>
+            <h3>Elite Chef</h3>
+            <div class="price">
+                <span class="currency">Rp</span>
+                <span class="amount">89.900</span>
+                <span class="period">/bulan</span>
+            </div>
+            <ul class="features">
+                <li><i class="fas fa-check"></i> Bebas Iklan</li>
+                <li><i class="fas fa-check"></i> Akses Resep Eksklusif</li>
+                <li><i class="fas fa-check"></i> Mode Memasak</li>
+                <li><i class="fas fa-check"></i> Kalkulator Porsi Premium</li>
+                <li><i class="fas fa-check"></i> Cetak & Unduh Resep hingga 25 Kredit Perhari</li>
+                <li><i class="fas fa-check"></i> XP Boost 1.5x</li>
+                <li><i class="fas fa-check"></i> <strong>Akses TOLE AI hingga 50 Kredit Perhari</strong></li>
+                <li><i class="fas fa-check"></i> <strong>Akun Eksklusif Berbatas Waktu</strong></li>
+            </ul>
+            <button class="btn-subscribe-main featured-btn" onclick="handleSubscription('premium')">Langganan Sekarang</button>
+            <p class="scarcity-text"><i class="fas fa-fire"></i> Sisa 12 slot promo hari ini!</p>
+        </div>
+
+        <div class="pricing-card" data-package="legend_year">
+            <div class="card-tag">Investasi Terbaik</div>
+            <h3>Mastery Year</h3>
+            <div class="price">
+                <span class="currency">Rp</span>
+                <span class="amount">899.900</span>
+                <span class="period">/tahun</span>
+            </div>
+            <ul class="features">
+                <li><i class="fas fa-check"></i> Bebas Iklan</li>
+                <li><i class="fas fa-check"></i> Akses Resep Eksklusif</li>
+                <li><i class="fas fa-check"></i> Mode Memasak</li>
+                <li><i class="fas fa-check"></i> Kalkulator Porsi Premium</li>
+                <li><i class="fas fa-check"></i> Cetak & Unduh Resep hingga 50 Kredit Perhari</li>
+                <li><i class="fas fa-check"></i> XP Boost 2x</li>
+                <li><i class="fas fa-check"></i> Grup Percakapan Eksklusif Chef</li>
+                <li><i class="fas fa-check"></i> <strong>Akses TOLE AI hingga 120 Kredit Perhari</strong></li>
+                <li><i class="fas fa-check"></i> <strong>Akun Eksklusif Berbatas Waktu</strong></li>
+            </ul>
+            <button class="btn-subscribe" onclick="handleSubscription('legend')">Investasi Sekarang</button>
+        </div>
+
+        <div class="pricing-card" data-package="legend_eternal">
+            <div class="card-tag">Investasi Terbaik</div>
+            <h3>Eternal Legend</h3>
+            <div class="price">
+                <span class="currency">Rp</span>
+                <span class="amount">3.499.900</span>
+                <span class="period">/5 tahun</span>
+            </div>
+            <ul class="features">
+                <li><i class="fas fa-check"></i> Bebas Iklan</li>
+                <li><i class="fas fa-check"></i> Akses Resep Eksklusif</li>
+                <li><i class="fas fa-check"></i> Mode Memasak</li>
+                <li><i class="fas fa-check"></i> Kalkulator Porsi Premium</li>
+                <li><i class="fas fa-check"></i> Cetak & Unduh Resep hingga 100 Kredit Perhari</li>
+                <li><i class="fas fa-check"></i> XP Boost 2x</li>
+                <li><i class="fas fa-check"></i> Grup Percakapan Eksklusif Chef</li>
+                <li><i class="fas fa-check"></i> <strong>Akses TOLE AI hingga 300 Kredit Perhari</strong></li>
+                <li><i class="fas fa-check"></i> <strong>Akun Eksklusif Berbatas Waktu</strong></li>
+            </ul>
+            <button class="btn-subscribe" onclick="handleSubscription('legend')">Investasi Sekarang</button>
+        </div>
+    </div>
+
+    <div class="transparency-notice">
+        <div class="notice-card">
+            <i class="fas fa-shield-alt"></i>
+            <h4>Komitmen Transparansi SajiLe</h4>
+            <p>Harga yang tertera adalah <strong>Harga Final (Nett)</strong>. Kami menjamin:</p>
+            <ul class="trust-list">
+                <li><i class="fas fa-check-circle"></i> Sudah termasuk pajak (PPN)</li>
+                <li><i class="fas fa-check-circle"></i> Sudah termasuk biaya administrasi transaksi</li>
+                <li><i class="fas fa-check-circle"></i> Tanpa biaya tambahan saat checkout</li>
+                <li><i class="fas fa-check-circle"></i> Persetujuan layanan yang jelas dan jujur</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="../js/paket_langganan.js"></script>
+</body>
+</html>

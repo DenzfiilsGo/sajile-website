@@ -3,11 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Resep Favorit - SajiLe</title>
+        <meta name="referrer" content="no-referrer">
+        <title>Resep Favorit Pengguna - SajiLe</title>
         <link rel="icon" href="../assets/sajile_icon.jpg" type="image/x-icon">
         <link rel="stylesheet" href="..\css\favorit.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body data-logged-in="false">
 
@@ -56,7 +57,7 @@
                                 <li><a href="pengaturan_akun.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
                                 <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
                                 <li class="divider-item"></li>
-                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                                <li><a id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
                             </ul>
                         </div>
                     </div>
@@ -72,9 +73,9 @@
             </header>
 
             <section id="login-required-state" style="display: none; padding: 40px; text-align: center;">
-                <i class="fas fa-lock fa-3x" style="color: var(--primary-color);"></i>
+                <i class="fas fa-lock fa-3x" style="color: var(--primary-color); transition: color var(--color-transition);"></i>
                 <h2 style="margin-top: 15px;">Akses Dibatasi</h2>
-                <p style="color: var(--text-light); margin-bottom: 20px;">Anda harus masuk (login) untuk melihat dan mengelola daftar resep favorit.</p>
+                <p style="color: var(--text-light); margin-bottom: 20px; transition: color var(--color-transition);">Anda harus masuk (login) untuk melihat dan mengelola daftar resep favorit.</p>
                 <a href="daftar_atau_login.html" class="btn-primary">Masuk Sekarang</a>
             </section>
             

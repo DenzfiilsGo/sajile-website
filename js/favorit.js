@@ -3,37 +3,77 @@
 // ⭐ IMPORT API URL DARI FILE CONFIG.JS ⭐
 import { API_BASE_URL, PUBLIC_BACKEND_URL } from '../js/config.js';
 
-// Blokir seleksi teks
-document.addEventListener('selectstart', e => e.preventDefault());
+// =======================================================
+// GLOBAL EVENT LISTENERS
+// =======================================================
+
+// Blokir seleksi teks via JavaScript
+document.addEventListener('selectstart', function(e) {
+    e.preventDefault(); // Mencegah aksi default seleksi
+});
+
+// Opsional: Blokir drag teks/gambar
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+});
 
 // =======================================================
-// FUNGSI UTAMA: UPDATE UI PROFIL
+// FUNGSI UTAMA: UPDATE UI PROFIL (FOTO, NAMA, EMAIL)
 // =======================================================
+
+/**
+ * Mengambil data pengguna dari localStorage dan memperbarui
+ * foto profil, username, dan email pada navbar dropdown.
+ */
 function updateUserProfileUI() {
     const userDataJSON = localStorage.getItem('authUser');
-    if (userDataJSON) {
-        try {
-            const userData = JSON.parse(userDataJSON);
-            const profilePicImg = document.getElementById('profile-pic-img');
-            if (profilePicImg && userData.profilePictureUrl) {
-                profilePicImg.src = userData.profilePictureUrl;
-                profilePicImg.onerror = () => console.warn("Gagal memuat foto profil.");
-            }
-            
-            const usernameEl = document.querySelector('.username');
-            if (usernameEl && userData.username) {
-                usernameEl.textContent = userData.username;
-                usernameEl.setAttribute('data-text', userData.username);
-            }
-                
-            const emailEl = document.querySelector('.email');
-            if (emailEl && userData.email) {
-                emailEl.textContent = userData.email;
-                emailEl.setAttribute('data-text', userData.email);
-            }
-        } catch (error) {
-            console.error("Gagal parse data pengguna:", error);
+    if (!userDataJSON) return;
+
+    try {
+        const userData = JSON.parse(userDataJSON);
+        const profileImages = document.querySelectorAll('.profile-pic img, .dropdown-header img');
+        
+        // Pastikan URL Google menggunakan HTTPS
+        let photoUrl = userData.profilePictureUrl;
+        if (photoUrl && photoUrl.startsWith('http://')) {
+            photoUrl = photoUrl.replace('http://', 'https://');
         }
+
+        profileImages.forEach(img => {
+            // Hindari reload gambar jika src sudah sama
+            if (img.src === photoUrl) return;
+
+            if (photoUrl) {
+                // Gunakan crossOrigin anonymous untuk menghindari blokir CORS/CORB pada gambar
+                img.crossOrigin = "anonymous"; 
+                img.src = photoUrl;
+            } else {
+                img.src = `https://placehold.co/40x40/2ecc71/fff?text=${userData.username.charAt(0)}`;
+            }
+
+            img.onerror = () => {
+                // Jika Google memblokir (429/CORB), gunakan inisial sebagai fallback terakhir
+                img.src = `https://placehold.co/40x40/2ecc71/fff?text=${userData.username.charAt(0)}`;
+                img.onerror = null; // Hentikan loop onerror
+            };
+        })
+            
+        // 2. Update Username (ID atau Class)
+        const usernameEl = document.querySelector('.username'); // Atau gunakan ID jika ada
+        if (usernameEl && userData.username) {
+            usernameEl.textContent = userData.username; // Teks biasa (yang akan disembunyikan)
+            usernameEl.setAttribute('data-text', userData.username); // Teks untuk animasi marquee
+        }
+                
+        // 3. Update Email (ID atau Class)
+        const emailEl = document.querySelector('.email'); // Atau gunakan ID jika ada
+        if (emailEl && userData.email) {
+            emailEl.textContent = userData.email; // Teks biasa (yang akan disembunyikan)
+            emailEl.setAttribute('data-text', userData.email); // Teks untuk animasi marquee
+        }
+                
+    } catch (error) {
+        console.error("Gagal memparsing data pengguna dari LocalStorage:", error);
     }
 }
 
@@ -101,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (confirm("Yakin ingin keluar?")) {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('authUser');
-                window.location.href = '../index.html';
+                window.location.reload();
             }
         });
     }
@@ -264,13 +304,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 100);
     }
 
-    // LOGIKA HAPUS FAVORIT
+    // =======================================================
+    // LOGIKA HAPUS FAVORIT (Perbaikan di favorit.js)
+    // =======================================================
     function attachRemoveListeners() {
         const removeBtns = document.querySelectorAll('.btn-remove-fav');
         
         removeBtns.forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                e.preventDefault(); // Mencegah link ke detail
+                e.preventDefault(); 
                 e.stopPropagation();
 
                 if (!confirm("Hapus resep ini dari favorit?")) return;
@@ -279,40 +321,37 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const token = localStorage.getItem('authToken');
                 const card = btn.closest('.recipe-card');
 
-                try {
-                    // Endpoint Hapus: Sesuaikan dengan backend.
-                    // Opsi 1: DELETE /favorites (body: { recipeId }) -> Pola Toggle
-                    // Opsi 2: DELETE /favorites/:id
-                    
-                    const url = `${API_BASE_URL}/favorites`; // Gunakan endpoint utama
+                // 1. Perubahan URL: Tambahkan ID resep ke URL
+                const url = `${API_BASE_URL}/favorites/${recipeId}`; 
 
+                try {
                     const res = await fetch(url, {
-                        method: 'DELETE', // Konsisten dengan penghapusan
+                        method: 'DELETE', // Method DELETE modular
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ recipeId: recipeId }) 
+                            'Authorization': `Bearer ${token}`,
+                        }
                     });
 
                     if (res.ok) {
-                        // Animasi Hapus
+                        // Berhasil: Jalankan animasi hapus
                         card.style.transform = 'scale(0.8)';
                         card.style.opacity = '0';
                         
                         setTimeout(() => {
                             card.remove();
-                            // Cek jika habis
+                            // Cek jika grid sudah kosong, tampilkan empty state
                             if (document.querySelectorAll('.recipe-card').length === 0) {
                                 showEmptyState();
                             }
                         }, 300);
                     } else {
-                        alert("Gagal menghapus favorit.");
+                        const errorData = await res.json();
+                        alert(errorData.msg || "Gagal menghapus favorit.");
                     }
                 } catch (err) {
                     console.error("Error deleting fav:", err);
-                    alert("Kesalahan koneksi.");
+                    alert("Kesalahan koneksi ke server.");
                 }
             });
         });

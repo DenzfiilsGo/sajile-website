@@ -1,10 +1,7 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User'); // Import model User
 
-module.exports = function(req, res, next) {
-    // Support 2 format token:
-    // 1. x-auth-token header
-    // 2. Authorization: Bearer <token>
-    
+module.exports = async function(req, res, next) {
     let token = req.header('x-auth-token');
     
     if (!token) {
@@ -14,27 +11,25 @@ module.exports = function(req, res, next) {
         }
     }
 
-    if (!token) {
-        console.warn('[AUTH] No token provided - request rejected', {
-            path: req.path,
-            method: req.method,
-            ip: req.ip
-        });
-        return res.status(401).json({ msg: 'Tidak ada token, otorisasi ditolak.' });
-    }
+    if (!token) return res.status(401).json({ msg: 'Tidak ada token, otorisasi ditolak.' });
 
     try {
-        // Debug: log trimmed token start so we can inspect
-        console.log('[AUTH] Verifying token (start):', token.substring(0, 15) + '...');
-
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded.user;
+        const userData = decoded.user || decoded;
+
+        // Ambil data TERBARU dari database (termasuk status membership terbaru)
+        const user = await User.findById(userData.id).select('-password');
+        
+        if (!user) {
+            return res.status(401).json({ msg: 'User tidak ditemukan.' });
+        }
+
+        // Simpan objek user asli dari DB ke req.user
+        req.user = user; 
+        
         next();
     } catch (err) {
-        console.error('[AUTH] JWT verify error:', { name: err.name, message: err.message });
-        if (err.name === 'TokenExpiredError') {
-            return res.status(401).json({ msg: 'Token kedaluwarsa.' });
-        }
+        if (err.name === 'TokenExpiredError') return res.status(401).json({ msg: 'Token kedaluwarsa.' });
         return res.status(401).json({ msg: 'Token tidak valid.' });
     }
 };

@@ -3,12 +3,13 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Resep: Rendang Daging Sapi - SajiLe</title>
+        <meta name="referrer" content="no-referrer">
+        <title>Detail Resep - SajiLe</title>
 
         <link rel="icon" href="../assets/sajile_icon.jpg" type="image/x-icon">
         <link rel="stylesheet" href="..\css\resep_detail.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body data-logged-in="false"> 
 
@@ -57,7 +58,7 @@
                                 <li><a href="pengaturan_akun.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
                                 <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
                                 <li class="divider-item"></li>
-                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                                <li><a id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
                             </ul>
                         </div>
                     </div>
@@ -84,7 +85,11 @@
                     </button>
 
                     <button type="button" id="btn-print" class="btn-primary">
-                        <i class="fas fa-print"></i> Cetak Resep
+                        <i class="fas fa-print"></i> Cetak & Unduh Resep
+                    </button>
+
+                    <button type="button" id="btn-cooking-mode" class="btn-primary">
+                        <i class="fas fa-kitchen-set"></i> Mode Memasak
                     </button>
                 </div>
             </section>
@@ -116,26 +121,53 @@
 
                     <div class="section-card fade-in delay-2">
                         <h2>Bahan-bahan</h2>
-
-
                         <div class="serving-calculator">
                             <p>Ubah Porsi:</p>
-                            <button id="decrease-serving"><i class="fas fa-minus"></i></button>
-                            <span id="serving-multiplier">1x</span>
-                            <button id="increase-serving"><i class="fas fa-plus"></i></button>
+                            <div class="calc-controls">
+                                <button id="decrease-serving" title="Kurangi Porsi"><i class="fas fa-minus"></i></button>
+                                <span id="serving-multiplier">1x</span>
+                                <button id="increase-serving" title="Tambah Porsi"><i class="fas fa-plus"></i></button>
+                            </div>
                         </div>
 
                         <ul class="ingredients-list" id="ingredients-list">
-
                             <li data-original-qty="1000"><span>Daging Sapi (potong 12)</span><span class="qty">1000 gr</span></li>
-                            <li data-original-qty="1500"><span>Santan Kental dari 3 butir kelapa</span><span class="qty">1500 ml</span></li>
+                            <li data-original-qty="1500"><span>Santan Kental</span><span class="qty">1500 ml</span></li>
                             <li data-original-qty="2"><span>Sereh, memarkan</span><span class="qty">2 batang</span></li>
                             <li data-original-qty="4"><span>Daun Jeruk</span><span class="qty">4 lembar</span></li>
                             <li data-original-qty="2"><span>Asam Kandis</span><span class="qty">2 buah</span></li>
                         </ul>
                     </div>
 
-                    <div class="section-card fade-in delay-3">
+                    <!--Ini adalah tempat kartu untuk daftar alat!-->
+
+                    <div class="section-card fade-in delay-2" id="tools-card" style="display: none;">
+                        <h2>Alat-alat</h2>
+                        <ul class="tools-list" id="tools-list">
+                            </ul>
+                    </div>
+
+                    <div id="premium-calculator-card" class="section-card premium-feature fade-in delay-3">
+                        <div class="premium-badge"><i class="fas fa-crown"></i> Fitur Premium</div>
+                        <h2>Kalkulator Nutrisi & Biaya</h2>
+                        
+                        <div class="nutrition-summary">
+                            <div class="nutri-item">
+                                <span class="label">Total Kalori</span>
+                                <span id="total-calories-val" class="value">0 kcal</span>
+                            </div>
+                            <div class="nutri-item">
+                                <span class="label">Estimasi Biaya</span>
+                                <span id="total-cost-val" class="value">Rp 0</span>
+                            </div>
+                        </div>
+                        
+                        <button id="btn-analyze-premium" class="btn-premium-action">
+                            <i class="fas fa-chart-pie"></i> Analisis Detail
+                        </button>
+                    </div>
+
+                    <div class="section-card fade-in delay-3 nutrition-static-card">
                         <h2>Nilai Gizi Per Porsi</h2>
                         <div class="nutrition-facts">
                             <table>
@@ -143,7 +175,6 @@
                                 <tr><th>Protein</th><td>35 g</td></tr>
                                 <tr><th>Lemak</th><td>30 g</td></tr>
                                 <tr><th>Karbohidrat</th><td>10 g</td></tr>
-                                <tr><th>Serat</th><td>2 g</td></tr>
                             </table>
                         </div>
                     </div>
@@ -184,14 +215,15 @@
 
             
             <section class="comments-section fade-in">
-                <h2>Ulasan Pengguna (<span id="comment-count">3</span>)</h2>
+                <h2>Ulasan Pengguna (<span id="comment-count"></span>)</h2>
                 
-                <div class="comment-login-required logged-out-only section-card" style="text-align: center; padding: 20px;">
-                    <p><i class="fas fa-lock"></i> Silakan **Masuk** atau **Daftar** untuk dapat memberikan ulasan dan rating resep ini.</p>
-                    <a href="daftar_atau_login.html" class="btn-primary" style="margin-top: 10px;">Masuk/Daftar Sekarang</a>
+                <div class="comment-login-required logged-out-only section-card">
+                    <h2>Ekspresikan Perasaanmu terhadap Resep Ini!</h2>
+                    <p>Silakan Masuk atau Daftar untuk dapat memberikan ulasan dan komentar untuk resep ini.</p>
+                    <a href="daftar_atau_login.html" class="btn-primary">Masuk/Daftar Sekarang</a>
                 </div>
 
-                <div class="comment-form section-card logged-in-only" style="display:none;">
+                <div class="comment-form section-card logged-in-only">
                     <h4>Tulis Ulasanmu</h4>
                     <div class="rating-input" id="rating-input">
                         <span data-rating="1" class="star"><i class="far fa-star"></i></span>
@@ -204,6 +236,37 @@
                     <textarea id="comment-textarea" placeholder="Bagikan pengalaman memasak dan ratingmu..."></textarea>
                     <button id="submit-comment" class="btn-primary">Kirim Ulasan</button>
                     <div style="clear: both;"></div>
+                </div>
+
+                <div id="rating-monitor" class="rating-monitor-container">
+                    <div class="rating-summary-left">
+                        <h1 id="avg-rating-large">0.0</h1>
+                        <div id="avg-stars-display" class="rating-stars">
+                            </div>
+                        <p id="total-reviews-count">0 Ulasan</p>
+                    </div>
+                    <div class="rating-bars-right">
+                        <div class="rating-bar-item">
+                            <span>5</span>
+                            <div class="bar-container"><div id="bar-5" class="bar-fill"></div></div>
+                        </div>
+                        <div class="rating-bar-item">
+                            <span>4</span>
+                            <div class="bar-container"><div id="bar-4" class="bar-fill"></div></div>
+                        </div>
+                        <div class="rating-bar-item">
+                            <span>3</span>
+                            <div class="bar-container"><div id="bar-3" class="bar-fill"></div></div>
+                        </div>
+                        <div class="rating-bar-item">
+                            <span>2</span>
+                            <div class="bar-container"><div id="bar-2" class="bar-fill"></div></div>
+                        </div>
+                        <div class="rating-bar-item">
+                            <span>1</span>
+                            <div class="bar-container"><div id="bar-1" class="bar-fill"></div></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="comment-list" id="comment-list">
@@ -279,6 +342,37 @@
             </p>
         </footer>
 
+        <div id="cooking-mode-overlay" class="cooking-overlay" data-orientation="landscape">
+            <div class="cooking-status-bar">
+                <div id="status-voice" class="status-item muted">
+                    <i class="fas fa-microphone"></i> 
+                    <span>Mikrofon Nonaktif</span>
+                </div>
+                <div id="status-auto" class="status-item"><i class="fas fa-clock"></i> <span>Auto-Slide Aktif</span></div>
+            </div>
+
+            <button id="close-cooking" class="btn-close-overlay"><i class="fas fa-times"></i></button>
+
+            <div id="cooking-slider" class="cooking-slider">
+                </div>
+
+            <div class="cooking-footer">
+                <div class="progress-container-global">
+                    <div id="cooking-progress-bar" class="progress-bar-fill"></div>
+                </div>
+                <div class="footer-controls">
+                    <button id="prev-slide" class="nav-circle"><i class="fas fa-arrow-left"></i></button>
+                    <div id="slide-info">
+                        <span id="current-slide-num">01</span>
+                        <span class="divider">/</span>
+                        <span id="total-slide-num">15</span>
+                    </div>
+                    <button id="next-slide" class="nav-circle"><i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script type="module" src="../js/authManager.js"></script>
         <script type="module" src="../js/resep_detail.js"></script>
     </body>

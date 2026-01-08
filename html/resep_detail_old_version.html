@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resep: Rendang Daging Sapi - SajiLe</title>
+    <link rel="stylesheet" href="..\css\resep_detail_old_version.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* =========================================
+           GAYA MODAL (TEMPORARY: PINDAH KE CSS PRODUKSI NANTI)
+           ========================================= */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #edit-comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        /* Style Tambahan untuk Komentar (Sesuai dengan resep_detail.css sebelumnya) */
+        .user-comment {
+            border: 2px solid var(--primary-color, #2ecc71);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        /* Hapus style .comment-actions di sini karena sudah dipindahkan ke resep_detail.css */
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="#" class="nav-brand">Saji<span class="brand-highlight">Le</span></a>
+
+        <button class="hamburger" id="hamburger-menu" aria-label="Toggle Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        
+        <div class="nav-menu-container" id="vertical-dropdown">
+            
+            <ul class="nav-links">
+                <li><a href="..\index.html">Beranda</a></li>
+                <li><a href="daftar_makanan.html">Menu</a></li>
+                <li><a href="resep.html" class="active">Resep</a></li>
+                <li><a href="favorit.html">Favorit</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="btn-icon" id="theme-toggle" aria-label="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                    <span class="mobile-only-text">Mode Gelap/Terang</span>
+                </button>
+                <div class="profile-pic">
+                    <img src="https://placehold.co/40x40/png" alt="Profil">
+                </div>
+                <a href="daftar_atau_login.html" class="btn-primary">Masuk/Daftar</a>
+            </div>
+        </div>
+    </header>
+    <div class="main-wrapper">
+        
+        <section class="recipe-hero fade-in">
+            <h1>Resep Klasik: Rendang Daging Sapi Khas Minang</h1>
+            <p>Resep otentik yang menghadirkan kekayaan rasa dari bumbu dan santan terbaik. Wajib coba!</p>
+            
+            <div class="recipe-image-container">
+                <img src="https://placehold.co/800x450/2ecc71/ffffff?text=RENDANG+DAGING+SAPI" alt="Foto Rendang Daging Sapi">
+            </div>
+
+            <div class="recipe-actions">
+                <button id="btn-save" class="btn-save" data-saved="false">
+                    <i class="far fa-heart"></i> Simpan ke Favorit
+                </button>
+                <button id="btn-print" class="btn-primary">
+                    <i class="fas fa-print"></i> Cetak Resep
+                </button>
+            </div>
+        </section>
+
+        <section class="recipe-meta-bar fade-in delay-1">
+            <div class="meta-item">
+                <i class="far fa-clock"></i>
+                <p>Total Waktu: 3 Jam</p>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-utensils"></i>
+                <p><span id="serving-size">6</span> Porsi</p>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-chart-line"></i>
+                <p>Tingkat Kesulitan: Sulit</p>
+            </div>
+        </section>
+
+
+        <section class="recipe-content-grid">
+            
+            <aside class="left-column">
+                
+                <div class="section-card fade-in delay-2">
+                    <h2>Bahan-bahan Utama</h2>
+
+                    <div class="serving-calculator">
+                        <p>Ubah Porsi:</p>
+                        <button id="decrease-serving"><i class="fas fa-minus"></i></button>
+                        <span id="serving-multiplier">1x</span>
+                        <button id="increase-serving"><i class="fas fa-plus"></i></button>
+                    </div>
+
+                    <ul class="ingredients-list" id="ingredients-list">
+                        <li data-original-qty="1000"><span>Daging Sapi (potong 12)</span><span class="qty">1000 gr</span></li>
+                        <li data-original-qty="1500"><span>Santan Kental dari 3 butir kelapa</span><span class="qty">1500 ml</span></li>
+                        <li data-original-qty="2"><span>Sereh, memarkan</span><span class="qty">2 batang</span></li>
+                        <li data-original-qty="4"><span>Daun Jeruk</span><span class="qty">4 lembar</span></li>
+                        <li data-original-qty="2"><span>Asam Kandis</span><span class="qty">2 buah</span></li>
+                    </ul>
+                </div>
+
+                <div class="section-card fade-in delay-3">
+                    <h2>Nilai Gizi Per Porsi</h2>
+                    <div class="nutrition-facts">
+                        <table>
+                            <tr><th>Kalori</th><td>450 kcal</td></tr>
+                            <tr><th>Protein</th><td>35 g</td></tr>
+                            <tr><th>Lemak</th><td>30 g</td></tr>
+                            <tr><th>Karbohidrat</th><td>10 g</td></tr>
+                            <tr><th>Serat</th><td>2 g</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+            </aside>
+            
+            <main class="right-column">
+                
+                <div class="section-card fade-in delay-4">
+                    <h2>Langkah-langkah Memasak</h2>
+                    <ol class="steps-list">
+                        <li>
+                            <span class="step-number">1</span>
+                            <p>Haluskan semua bahan bumbu halus (cabai, bawang, jahe, kunyit) hingga benar-benar lembut. Tumis bumbu halus bersama serai, daun jeruk, dan asam kandis hingga harum dan matang. Gunakan api kecil.</p>
+                        </li>
+                        <li>
+                            <span class="step-number">2</span>
+                            <p>Masukkan daging sapi yang sudah dipotong ke dalam tumisan bumbu. Aduk hingga daging berubah warna dan bumbu meresap sempurna. Masak selama 15 menit.</p>
+                        </li>
+                        <li>
+                            <span class="step-number">3</span>
+                            <p>Tuangkan santan kental secara bertahap. Aduk terus agar santan tidak pecah. Kecilkan api. Tambahkan garam dan gula secukupnya. Masak dengan api sangat kecil.</p>
+                        </li>
+                        <li>
+                            <span class="step-number">4</span>
+                            <p>Proses memasak rendang membutuhkan waktu lama (2-3 jam). Terus aduk sesekali. Rendang akan melalui 3 fase: Gulai (cair), Kalio (berminyak), dan Rendang (kering, berminyak, hitam pekat). Masak hingga mencapai kekentalan yang diinginkan.</p>
+                        </li>
+                        <li>
+                            <span class="step-number">5</span>
+                            <p>Setelah santan mengering dan bumbu sudah sangat meresap, matikan api. Rendang siap disajikan hangat bersama nasi putih.</p>
+                        </li>
+                    </ol>
+                </div>
+            </main>
+        </section>
+
+        <section class="comments-section fade-in">
+            <h2>Ulasan Pengguna (<span id="comment-count">3</span>)</h2>
+            
+            <div class="comment-form section-card">
+                <h4>Tulis Ulasanmu</h4>
+                <div class="rating-input" id="rating-input">
+                    <span data-rating="1" class="star"><i class="far fa-star"></i></span>
+                    <span data-rating="2" class="star"><i class="far fa-star"></i></span>
+                    <span data-rating="3" class="star"><i class="far fa-star"></i></span>
+                    <span data-rating="4" class="star"><i class="far fa-star"></i></span>
+                    <span data-rating="5" class="star"><i class="far fa-star"></i></span>
+                    <span class="rating-text" id="rating-text"> (0/5)</span>
+                </div>
+                <textarea id="comment-textarea" placeholder="Bagikan pengalaman memasak dan ratingmu..."></textarea>
+                <button id="submit-comment" class="btn-primary">Kirim Ulasan</button>
+                <div style="clear: both;"></div>
+            </div>
+
+            <div class="comment-list" id="comment-list">
+                
+                <div class="comment-item user-comment" data-comment-id="1">
+                    <div class="comment-avatar">
+                        <img src="https://placehold.co/50x50/ffc107/000?text=KU" alt="Avatar Kamu">
+                    </div>
+                    <div class="comment-body">
+                        <h4>Kamu <span style="color: #2ecc71; font-size: 0.8em;">(Anda)</span></h4>
+                        <div class="rating" data-stars="5">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> (5/5)
+                        </div>
+                        <p class="comment-text-content">Ini adalah rendang paling enak yang pernah saya buat! Resepnya mudah diikuti dan hasilnya super empuk. Sangat direkomendasikan!</p>
+                        <div class="comment-actions">
+                            <button class="edit-comment-btn" data-edit-count="0" data-comment-id="1">Edit (1x)</button>
+                            <button class="delete-comment-btn" data-comment-id="1">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comment-item" data-comment-id="2">
+                    <div class="comment-avatar">
+                        <img src="https://placehold.co/50x50/ffb3ba/000?text=JD" alt="Avatar Jane Doe">
+                    </div>
+                    <div class="comment-body">
+                        <h4>Jane Doe</h4>
+                        <div class="rating" data-stars="4.5">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> (4.5/5)
+                        </div>
+                        <p class="comment-text-content">Resepnya otentik dan rasanya luar biasa! Membutuhkan kesabaran, tapi hasilnya sepadan. Dagingnya empuk dan bumbunya kaya. Terima kasih SajiLe!</p>
+                        </div>
+                </div>
+                
+                <div class="comment-item" data-comment-id="3">
+                    <div class="comment-avatar">
+                        <img src="https://placehold.co/50x50/b3d4ff/000?text=AP" alt="Avatar Ahmad Putra">
+                    </div>
+                    <div class="comment-body">
+                        <h4>Ahmad Putra</h4>
+                        <div class="rating" data-stars="4">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i> (4/5)
+                        </div>
+                        <p class="comment-text-content">Mantap! Saya kurangi sedikit cabai karena anak-anak ikut makan. Waktu memasak 3 jam memang pas untuk rendang yang sempurna.</p>
+                        </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+    
+    <div id="editCommentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Edit Ulasanmu</h3>
+            <textarea id="edit-comment-textarea"></textarea>
+            <p id="edit-message" style="color: var(--danger-color); font-size: 0.9em;">*Anda hanya dapat mengedit komentar ini satu kali.</p>
+            <button id="save-edit-btn" class="btn-primary">Simpan Perubahan</button>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <p>&copy; 2025 SajiLe. Semua hak dilindungi.</p>
+        <p><a href="tentang_kami.html">Tentang Kami</a> | Email: sajile@gmail.com | Whatsapp: 0812-3456-7890</p>
+        <p>Dikelola oleh Tim SajiLe (ex-MBADOKLE) Indonesia</p>
+    </footer>
+
+    <script src="..\js\resep_detail_old_version.js"></script> 
+</body>
+</html>

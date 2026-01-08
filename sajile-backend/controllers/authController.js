@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { sendVerificationEmail } = require('../utils/emailSender');
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // ==================================================================
 // 🔧 KONFIGURASI KRUSIAL: URL FRONTEND LOKAL (Live Server)
@@ -234,5 +236,169 @@ exports.getAuthUser = async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
+    }
+};
+
+// ---------------------------------------------------
+// 1. FORGOT PASSWORD (MENGIRIM LINK EMAIL)
+// ---------------------------------------------------
+exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            // Standar Keamanan: Jangan beritahu jika email tidak ditemukan untuk mencegah enumerasi user.
+            // Tapi untuk UX fase development, kita bisa return 404. 
+            // Untuk production, lebih baik return 200 dengan pesan "Jika email terdaftar, link telah dikirim".
+            return res.status(404).json({ msg: 'Email tidak terdaftar.' });
+        }
+
+        // Generate Reset Token
+        const resetToken = crypto.randomBytes(20).toString('hex');
+
+        // Hash token dan simpan ke database (Security Practice)
+        // Kita simpan versi hash di DB, kirim versi raw ke email
+        user.resetPasswordToken = crypto
+            .createHash('sha256')
+            .update(resetToken)
+            .digest('hex');
+
+        // Set expire (misal 10 menit dari sekarang)
+        user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+        await user.save();
+
+        // Buat Reset URL (Arahkan ke Frontend Page khusus Reset)
+        // Ganti URL ini sesuai alamat frontend Anda (misal 127.0.0.1:5500 atau domain production)
+        const frontendUrl = process.env.PUBLIC_FRONTEND_URL || 'http://127.0.0.1:5500'; 
+        const resetUrl = `${frontendUrl}/html/reset_password.html?token=${resetToken}`;
+
+        const message = `
+            <h1>Anda meminta reset kata sandi</h1>
+            <p>Silakan klik link di bawah ini untuk membuat kata sandi baru:</p>
+            <a href="${resetUrl}" clicktracking=off>${resetUrl}</a>
+            <p>Link ini akan kadaluarsa dalam 10 menit.</p>
+        `;
+
+        try {
+            // Gunakan fungsi kirim email Anda yang sudah ada
+            // Anda mungkin perlu memodifikasi utils/emailSender.js agar lebih dinamis (tidak hardcode subject verifikasi)
+            // Asumsi: sendVerificationEmail bisa kita refactor atau buat fungsi baru sendEmailGeneric
+            const { sendGenericEmail } = require('../utils/emailSender'); 
+            
+            await sendGenericEmail({
+                to: user.email,
+                subject: 'Reset Kata Sandi SajiLe',
+                html: message
+            });
+
+            res.status(200).json({ success: true, data: 'Email terkirim' });
+        } catch (err) {
+            console.error(err);
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpire = undefined;
+            await user.save();
+            return res.status(500).json({ msg: 'Email tidak dapat dikirim.' });
+        }
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+// ---------------------------------------------------
+// 2. RESET PASSWORD (MEMPROSES PASSWORD BARU)
+// ---------------------------------------------------
+exports.resetPassword = async (req, res) => {
+    // Ambil token dari URL params
+    const resetToken = req.params.resettoken;
+
+    // Hash token yang diterima untuk dicocokkan dengan di DB
+    const resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    try {
+        // Cari user dengan token valid dan belum expired
+        const user = await User.findOne({
+            resetPasswordToken,
+            resetPasswordExpire: { $gt: Date.now() } // $gt = Greater Than
+        });
+
+        if (!user) {
+            return res.status(400).json({ msg: 'Token tidak valid atau telah kadaluarsa.' });
+        }
+
+        // Set Password Baru
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(req.body.password, salt);
+
+        // Hapus field reset token
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save();
+
+        // Opsional: Langsung berikan token login (JWT) agar user tidak perlu login ulang
+        // Atau suruh login ulang (Standar keamanan tinggi biasanya suruh login ulang)
+        
+        res.status(200).json({ success: true, msg: 'Kata sandi berhasil diperbarui! Silakan login.' });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+exports.googleLogin = async (req, res) => {
+    const { token } = req.body;
+
+    try {
+        // Mengambil data user dari Google API menggunakan access_token
+        const googleRes = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`);
+        const googleUser = await googleRes.json();
+
+        if (!googleUser.email) {
+            return res.status(400).json({ msg: "Data Google tidak valid" });
+        }
+
+        const { email, name, picture } = googleUser;
+
+        // Cari user, jika tidak ada maka buat baru (Upsert)
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            user = new User({
+                username: name,
+                email: email,
+                password: Math.random().toString(36).slice(-10), // Password acak karena login via Google
+                profilePictureUrl: picture, // Menyimpan URL foto profil dari Google
+                isVerified: true
+            });
+        } else {
+            // Update foto profil jika user sudah ada
+            user.profilePictureUrl = picture;
+        }
+
+        await user.save();
+
+        // Buat JWT Token untuk sesi SajiLe
+        const authToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+        res.json({
+            token: authToken,
+            user: {
+                username: user.username,
+                email: user.email,
+                profilePictureUrl: user.profilePictureUrl // Foto dikirim kembali ke frontend
+            }
+        });
+
+    } catch (error) {
+        console.error("Error Google Auth:", error);
+        res.status(500).json({ msg: "Kesalahan server saat login Google" });
     }
 };

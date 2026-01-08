@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>SajiLe | Legend Lounge</title>
+    <link rel="icon" href="../assets/sajile_icon.jpg" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/percakapan_eksklusif.css">
+</head>
+<body class="theme-onyx">
+
+    <div id="protection-overlay" class="gatekeeper-overlay">
+        <div class="luxury-loader">
+            <div class="gold-ring"></div>
+            <div class="logo-pulse"><img src="../assets/sajile_icon.jpg" alt="SajiLe"></div>
+        </div>
+        <h2 class="auth-text">Verifying Legend Access</h2>
+        <p class="auth-sub">Mohon tunggu, Master Chef...</p>
+    </div>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar-pane" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-identity">
+                    <i class="fas fa-crown gold-icon"></i>
+                    <span class="brand-title">SajiLe Lounge Chat</span>
+                </div>
+                <button class="mobile-close-btn" id="close-sidebar"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="search-container">
+                <div class="glass-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cari percakapan...">
+                </div>
+            </div>
+
+            <div class="chat-list-wrapper">
+                <div class="list-category">KATEGORI PERCAKAPAN</div>
+                <ul class="chat-list" id="chat-list-container">
+                    </ul>
+            </div>
+
+            <div class="user-profile-dock">
+                <div class="user-avatar-frame">
+                    <img id="current-user-img" src="https://placehold.co/60x60/3498db/fff?text=U" alt="Profile">
+                    <span class="status-dot online"></span>
+                </div>
+                <div class="user-details">
+                    <h4 id="current-user-name">Memuat...</h4>
+                    <span id="current-user-rank" class="rank-badge">Legend</span>
+                </div>
+                <button id="logout-btn" class="logout-btn" title="Keluar Lounge">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
+
+        <main class="chat-pane">
+            <header class="chat-header glass-header">
+                <div class="header-left">
+                    <button class="mobile-toggle" id="toggle-sidebar"><i class="fas fa-bars"></i></button>
+                    <div class="active-chat-info">
+                        <h3 id="active-room-name">Dapur Utama Chef</h3>
+                        <p class="status-text"><span class="pulse-dot"></span> 12 Master Online</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="icon-action" id="make-voice-call" title="Panggilan Suara"><i class="fas fa-phone-alt"></i></button>
+                    <button class="icon-action" id="make-video-call" title="Panggilan Video"><i class="fas fa-video"></i></button>
+                    <button class="icon-action toggle-info-btn" id="toggle-info"><i class="fas fa-columns"></i></button>
+                </div>
+
+                <div id="incoming-call-toast" class="incoming-call-toast hidden">
+                    <div class="toast-content">
+                        <img src="../assets/sajile_icon.jpg" class="caller-avatar">
+                        <div class="caller-info">
+                            <b id="incoming-caller-name">Master Chef</b>
+                            <span>Panggilan Video Masuk...</span>
+                        </div>
+                        <div class="toast-actions">
+                            <button class="accept-btn" id="accept-call"><i class="fas fa-phone"></i></button>
+                            <button class="reject-btn" id="reject-call"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="chat-viewport" id="chat-viewport">
+                <div class="encryption-notice">
+                    <i class="fas fa-lock"></i>&nbsp;&nbsp;Pesan dienkripsi secara end-to-end untuk privasi eksklusif.
+                </div>
+                
+                <div id="messages-feed" class="messages-feed">
+                    </div>
+
+                <button id="fab-scroll" class="fab-scroll hidden"><i class="fas fa-chevron-down"></i></button>
+            </div>
+
+            <div id="typing-indicator" class="typing-indicator hidden">
+                <div class="typing-dots"><span></span><span></span><span></span></div>
+            </div>
+
+            <div id="reply-preview-container" class="reply-preview-bar hidden">
+                <div class="reply-content-wrapper">
+                    <div class="reply-indicator-line"></div>
+                    <div class="reply-body-info">
+                        <div class="reply-header">
+                            <span id="reply-user" class="gold-text"></span>
+                            <span id="reply-email" class="email-tag-mini"></span>
+                        </div>
+                        <div id="reply-text-preview" class="reply-text"></div>
+                    </div>
+                    <button class="close-reply-btn" onclick="app.cancelReply()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <footer class="chat-input-area glass-footer">
+                <div id="footer-normal" class="footer-mode-group">
+                    <button class="attach-btn"><i class="fas fa-plus"></i></button>
+                    <div class="text-input-wrapper">
+                        <div id="emoji-picker-container" class="emoji-picker-popup hidden"></div> 
+                        <textarea id="message-input" placeholder="Tulis pesan rahasia..." rows="1"></textarea>
+                        <button class="emoji-btn"><i class="far fa-smile"></i></button>
+                    </div>
+                    <button id="send-btn" class="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+
+                <!--<footer class="chat-input-area glass-footer">
+                    <button class="attach-btn"><i class="fas fa-plus"></i></button>
+                    <div class="text-input-wrapper">
+                        <div id="emoji-picker-container" class="emoji-picker-popup hidden"></div> <textarea id="message-input" placeholder="Tulis pesan rahasia..." rows="1"></textarea>
+                        <button class="emoji-btn"><i class="far fa-smile"></i></button>
+                    </div>
+                    <button id="send-btn" class="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </footer>-->
+
+                <div id="footer-spread" class="footer-mode-group hidden spread-layout-footer">
+                    <div class="spread-info-ui">
+                        <div class="spread-status">
+                            <i class="fas fa-message gold-icon"></i>
+                            <span id="spread-count">0 Terpilih</span>
+                        </div>
+                    </div>
+                    
+                    <div class="spread-actions-group">
+                        <button class="btn-cancel-spread" onclick="app.cancelSpreadMode()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="btn-settings-spread" onclick="app.openSpreadConfig()">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <button class="btn-spreading" onclick="app.quickSpread()">
+                            <i class="fas fa-share"></i>
+                        </button>
+                    </div>
+                </div>
+            </footer>
+        </main>
+
+        <aside class="info-pane" id="info-panel">
+            <div class="info-header">
+                <h3>Info Lounge</h3>
+                <button class="close-info" id="close-info"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="info-content scroll-thin">
+                <div class="room-hero">
+                    <div class="room-avatar-large">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h4>Legend Kitchen</h4>
+                    <p>Tempat para legenda berbagi rahasia rasa.</p>
+                </div>
+
+                <div class="accordion-section">
+                    <div class="accordion-header">
+                        <span>Media Bersama</span>
+                        <span class="count">14</span>
+                    </div>
+                    <div class="media-grid">
+                        <div class="media-item image"><img src="https://placehold.co/40x40/3498db/fff?text=Image" alt="m"></div>
+                        <div class="media-item image"><img src="https://placehold.co/40x40/3498db/fff?text=Image" alt="m"></div>
+                        <div class="media-item file"><i class="fas fa-file-pdf"></i><span>SOP.pdf</span></div>
+                        <!--Di sinilah tombol "Selengkapnya" berada-->
+                    </div>
+                </div>
+
+                <div class="accordion-section">
+                    <div class="accordion-header">
+                        <span>Anggota Elite</span>
+                    </div>
+                    <ul class="member-list">
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <div id="photo-viewer-overlay" class="photo-viewer-overlay hidden">
+        <div class="viewer-container">
+            <div class="viewer-header">
+                <div class="viewer-info">
+                    <i class="fas fa-image gold-icon"></i>
+                    <span id="viewer-filename">Gallery Lounge</span>
+                </div>
+                <div class="viewer-actions">
+                    <button id="viewer-download" class="viewer-btn" title="Unduh Gambar"><i class="fas fa-download"></i></button>
+                    <button id="viewer-close" class="viewer-btn close-btn" title="Tutup (Esc)"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            
+            <div class="viewer-main">
+                <button id="prev-photo" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+                <div class="image-wrapper">
+                    <img id="active-full-img" src="" alt="Fullscreen View">
+                </div>
+                <button id="next-photo" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+
+            <div class="viewer-footer">
+                <div id="viewer-thumbnails" class="thumbnail-strip">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="media-viewer-overlay" class="photo-viewer-overlay hidden">
+        <div class="viewer-container">
+            <div class="viewer-header">
+                <div class="viewer-info">
+                    <i id="media-type-icon" class="fas fa-play-circle gold-icon"></i>
+                    <span id="media-viewer-filename">Media Lounge</span>
+                </div>
+                <div class="viewer-actions">
+                    <button id="media-viewer-close" class="viewer-btn close-btn"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            
+            <div class="viewer-main">
+                <button id="prev-media" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+                
+                <div class="image-wrapper">
+                    <video id="active-full-video" controls class="hidden"></video>
+                    <div id="audio-visualizer-container" class="audio-container hidden">
+                        <div class="audio-art">
+                            <i class="fas fa-music fa-5x gold-icon"></i>
+                        </div>
+                        <audio id="active-full-audio" controls></audio>
+                    </div>
+                </div>
+
+                <button id="next-media" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+
+            <div class="viewer-footer">
+                <div id="media-thumbnails" class="thumbnail-strip media-strip">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="call-interface" class="call-interface hidden">
+        <div class="call-container">
+            <div class="call-meta">
+                <h2 id="call-room-title" style="margin:0; font-size:1.1rem; color:#d4af37;">Panggilan Eksklusif</h2>
+                <p id="call-duration" style="margin:5px 0 0 0; color:#fff; font-size:0.9rem;">00:00</p>
+            </div>
+
+            <div id="video-grid" class="video-grid">
+                </div>
+
+            <div class="call-controls-bar">
+                <button class="ctrl-btn" id="toggle-mic"><i class="fas fa-microphone"></i></button>
+                <button class="ctrl-btn" id="toggle-camera"><i class="fas fa-video"></i></button>
+                <button class="ctrl-btn end-call-btn" id="terminate-call"><i class="fas fa-phone-slash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="media-archive-modal" class="media-modal hidden">
+        <div class="modal-overlay" onclick="app.closeMediaArchive()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-main">
+                    <h2><i class="fas fa-photo-video gold-icon"></i> Arsip Media Lounge</h2>
+                    <button class="close-modal" onclick="app.closeMediaArchive()">&times;</button>
+                </div>
+                <p class="header-desc">Koleksi lengkap sejarah media, dokumen, dan inspirasi audio-visual yang pernah dibagikan di Lounge ini.</p>
+                
+                <div class="category-filters">
+                    <button class="filter-btn active" onclick="app.filterArchive('semua', this)">Semua</button>
+                    <button class="filter-btn" onclick="app.filterArchive('file', this)">Dokumen</button>
+                    <button class="filter-btn" onclick="app.filterArchive('audio', this)">Audio</button>
+                    <button class="filter-btn" onclick="app.filterArchive('image', this)">Gambar</button>
+                    <button class="filter-btn" onclick="app.filterArchive('video', this)">Video</button>
+                </div>
+            </div>
+
+            <div id="archive-viewport" class="modal-body">
+                <div id="archive-loader" class="archive-loader hidden">
+                    <div class="spinner"></div> Memuat sejarah lama...
+                </div>
+                <div id="archive-grid" class="archive-grid">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="spread-config-modal" class="gatekeeper-overlay hidden" style="background: rgba(5,5,5,0.98); z-index: 9999;">
+        <div class="spread-modal-container">
+            <div class="spread-header">
+                <h2 class="font-playfair text-gold">Konfigurasi Penyebaran</h2>
+                <button class="close-btn" onclick="app.closeSpreadConfig()"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="spread-layout">
+                
+                <div class="spread-preview-section">
+                    <div class="carousel-wrapper">
+                        <button class="nav-btn prev" onclick="app.prevSlide()"><i class="fas fa-chevron-left"></i></button>
+                        
+                        <div id="spread-carousel-viewport" class="carousel-viewport">
+                            <div class="msg-preview-card">
+                                <div class="msg-content-preview">Loading...</div>
+                            </div>
+                        </div>
+
+                        <button class="nav-btn next" onclick="app.nextSlide()"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    
+                    <div class="carousel-indicator text-gold mt-2 text-center">
+                        <span id="current-slide-idx">1</span> / <span id="total-slide-idx">1</span>
+                    </div>
+
+                    <div class="caption-editor mt-4">
+                        <label class="text-secondary text-xs">Caption untuk pesan ini:</label>
+                        <div class="input-group">
+                            <input type="text" id="spread-caption-input" class="onyx-input" placeholder="Tulis caption khusus...">
+                            <button class="btn-icon-gold" onclick="app.applyBulkCaption()" title="Terapkan ke semua pesan">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="spread-controls-section">
+                    
+                    <div class="control-group">
+                        <h4 class="text-gold mb-2"><i class="fas fa-users"></i> Target (7)</h4>
+                        <select id="spread-target-select" class="onyx-select" multiple>
+                            <option value="general_lounge" selected>General Lounge</option>
+                            <option value="vip_room">VIP Kitchen</option>
+                            <option value="staff_room">Staff Area</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <h4 class="text-gold mb-2"><i class="fas fa-shield-alt"></i> Keamanan</h4>
+                        
+                        <div class="toggle-row">
+                            <span><i class="fas fa-user-secret"></i> Mode Privasi (Tanpa Metadata)</span>
+                            <input type="checkbox" id="opt-privacy" class="gold-switch">
+                        </div>
+
+                        <div class="toggle-row">
+                            <span><i class="fas fa-lock"></i> Kunci Teruskan (Forward Lock)</span>
+                            <input type="checkbox" id="opt-lock" class="gold-switch">
+                        </div>
+
+                        <div class="toggle-row">
+                            <span><i class="fas fa-bomb"></i> Hancurkan Otomatis</span>
+                            <select id="opt-destruct" class="mini-select">
+                                <option value="">Mati</option>
+                                <option value="1m">1 Menit</option>
+                                <option value="1h">1 Jam</option>
+                                <option value="1d">1 Hari</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h4 class="text-gold mb-2"><i class="fas fa-paper-plane"></i> Pengiriman</h4>
+
+                        <div class="toggle-row">
+                            <span><i class="fas fa-ghost"></i> Ghost Mode (Tanpa Notif)</span>
+                            <input type="checkbox" id="opt-ghost" class="gold-switch">
+                        </div>
+
+                        <div class="toggle-row column">
+                            <span><i class="fas fa-calendar-alt"></i> Jadwalkan</span>
+                            <input type="datetime-local" id="opt-schedule" class="onyx-input">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h4 class="text-gold mb-2"><i class="fas fa-paint-brush"></i> Visual</h4>
+                        <div class="toggle-row">
+                            <span><i class="fas fa-copyright"></i> Watermark Otomatis (Gambar)</span>
+                            <button id="btn-watermark" class="btn-xs-gold" onclick="app.applyWatermark()">Proses</button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                         <h4 class="text-gold mb-2"><i class="fas fa-sort"></i> Urutan</h4>
+                         <div id="sortable-list" class="sortable-container">
+                             </div>
+                    </div>
+
+                    <button class="btn-action-gold-large mt-4" onclick="app.saveSpreadConfig()">
+                        <i class="fas fa-save"></i> SIMPAN KONFIGURASI
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="media-upload-input" style="display: none;" accept="image/*, .pdf, .doc, .docx, audio/*, video/*" multiple>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="../js/percakapan_eksklusif.js"></script>
+</body>
+</html>

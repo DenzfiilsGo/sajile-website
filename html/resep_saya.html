@@ -3,11 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Resep Saya - SajiLe</title>
+        <meta name="referrer" content="no-referrer">
+        <title>Resep Buatan Saya - SajiLe</title>
         <link rel="icon" href="../assets/sajile_icon.jpg" type="image/x-icon">
         <link rel="stylesheet" href="..\css\resep_saya.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body data-logged-in="false">
 
@@ -56,7 +57,7 @@
                                 <li><a href="pengaturan_akun.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
                                 <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
                                 <li class="divider-item"></li>
-                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                                <li><a id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
                             </ul>
                         </div>
                     </div>
@@ -69,21 +70,21 @@
                 <header class="page-header">
                     <h1>Resep Saya</h1>
                     <p>Kelola semua resep yang telah Anda buat dan publikasikan di SajiLe.</p>
-                    <a href="buat_resep.html" class="btn-primary create-btn"><i class="fas fa-plus"></i> Buat Resep Baru</a>
+                    <a href="buat_resep.html" class="btn-primary create-btn"><i class="fas fa-plus"></i>&nbsp;&nbsp;Buat Resep Baru</a>
                 </header>
 
                 <div class="recipe-status-bar">
                     <span id="recipe-count-display">Memuat Resep...</span>
                     <div class="filter-controls">
-                        <button class="filter-btn active" data-filter="all"><i class="fas fa-list"></i> Semua</button>
-                        <button class="filter-btn" data-filter="published"><i class="fas fa-check-circle"></i> Dipublikasikan</button>
-                        <button class="filter-btn" data-filter="draft"><i class="fas fa-pencil-alt"></i> Draft</button>
+                        <button class="filter-btn active" data-filter="all"><i class="fas fa-list"></i>&nbsp;&nbsp;Semua</button>
+                        <button class="filter-btn" data-filter="published"><i class="fas fa-check-circle"></i>&nbsp;&nbsp;Dipublikasikan</button>
+                        <button class="filter-btn" data-filter="draft"><i class="fas fa-file-alt"></i>&nbsp;&nbsp;Draft</button>
                     </div>
                 </div>
                 
                 <section class="my-recipe-list" id="my-recipe-list">
                     <div class="loading-state">
-                        <i class="fas fa-spinner fa-spin"></i> Memuat resep Anda...
+                        <i class="fas fa-spinner fa-spin"></i>&nbsp;&nbsp;Memuat resep Anda...
                     </div>
                 </section>
                 

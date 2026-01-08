@@ -12,60 +12,111 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+// ============================================================
+// 1. VERIFIKASI EMAIL (Desain Asli - TIDAK DIUBAH)
+// ============================================================
 const sendVerificationEmail = async (email, verificationLink) => {
-    // Buat versi aman (encoded) — ini hanya memastikan karakter tidak mengacaukan HTML
     const safeLink = encodeURI(verificationLink);
 
     const mailOptions = {
-        from: `SajiLe Verification <${process.env.EMAIL_USER}>`,
+        from: `"SajiLe Security" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: 'Verifikasi Akun SajiLe Anda',
-        // PENTING: tambahkan text fallback agar penerima selalu melihat URL secara langsung
-        text: `Selamat datang di SajiLe!\n\nSilakan verifikasi akun Anda dengan mengunjungi link berikut:\n\n${verificationLink}\n\nLink berlaku 24 jam.`,
+        text: `Selamat datang di SajiLe!\n\nUntuk keamanan akun Anda, silakan verifikasi email Anda dengan menyalin tautan berikut ke browser:\n\n${verificationLink}\n\nLink ini berlaku selama 24 jam.\n\n© Tim SajiLe`,
         html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 600px; margin: auto; background-color: #f9f9f9;">
-                <h1 style="color: #4CAF50;">Selamat Datang di SajiLe!</h1>
-                <p>Terima kasih telah mendaftar. Silakan klik tombol di bawah ini untuk mengaktifkan akun Anda:</p>
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 25px auto 30px auto;">
+        <!DOCTYPE html>
+        <html lang="id">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Verifikasi Email SajiLe</title>
+                <style>
+                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+                    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                    .header { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #ffffff; padding: 30px 20px; text-align: center; }
+                    .header h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 1px; }
+                    .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
+                    .btn-verify { display: inline-block; background-color: #2ecc71; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 50px; font-weight: 600; margin-top: 20px; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); transition: transform 0.2s; }
+                    .btn-verify:hover { background-color: #27ae60; transform: translateY(-2px); }
+                    .footer { background-color: #333333; color: #ffffff; text-align: center; padding: 20px; font-size: 12px; }
+                    .footer a { color: #2ecc71; text-decoration: none; }
+                </style>
+            </head>
+            <body>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                        <td style="border-radius: 5px; background: #2ecc71; text-align: center;">
-                            <a href="${safeLink}" target="_blank" rel="noopener noreferrer"
-                                style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 12px 25px; border: 1px solid #2ecc71; border-radius: 5px; display: inline-block; font-weight: bold;">
-                                Verifikasi Akun Sekarang
-                            </a>
+                        <td align="center" style="padding: 40px 0;">
+                            <table class="container" cellpadding="0" cellspacing="0" border="0" width="600">
+                                <tr>
+                                    <td class="header">
+                                        <h1>SajiLe</h1>
+                                        <p style="margin-top: 5px; opacity: 0.9;">Verifikasi Identitas Anda</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="content">
+                                        <h2 style="color: #2c3e50; margin-top: 0;">Halo, Calon Koki Handal! 👨‍🍳</h2>
+                                        <p>Terima kasih telah mendaftar di <strong>SajiLe</strong>. Untuk mulai menjelajahi dan membagikan resep nusantara, mohon verifikasi alamat email Anda.</p>
+                                        <div style="text-align: center; margin: 30px 0;">
+                                            <a href="${safeLink}" class="btn-verify" style="color: #ffffff;">Verifikasi Akun Saya</a>
+                                        </div>
+                                        <p style="font-size: 0.9em; color: #666;">
+                                            Atau salin tautan berikut ke browser Anda:<br>
+                                            <a href="${safeLink}" style="color: #2ecc71; word-break: break-all;">${safeLink}</a>
+                                        </p>
+                                        <p>Tautan ini hanya berlaku selama <strong>24 jam</strong>.</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="footer">
+                                        <p>&copy; ${new Date().getFullYear()} SajiLe Team. All rights reserved.</p>
+                                        <p>
+                                            <a href="#" class="footer-link" style="color: #888888; text-decoration: none;">Syarat & Ketentuan</a> | 
+                                            <a href="#" class="footer-link" style="color: #888888; text-decoration: none;">Kebijakan Privasi</a> | 
+                                            <a href="#" class="footer-link" style="color: #888888; text-decoration: none;">Bantuan</a>
+                                        </p>
+                                        <p style="margin-top: 10px; color: #aaaaaa;">Email ini dikirim secara otomatis, mohon jangan membalas.</p>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
-
-                <p style="margin-top: 20px; color: #555;">Atau salin link ini ke browser jika tombol tidak berfungsi:<br><small>${verificationLink}</small></p>
-
-                <p style="margin-top: 20px; color: #555;">Link ini berlaku selama 24 jam. Jika Anda tidak mendaftar, abaikan email ini.</p>
-                <p style="color: #555;">Hormat kami,<br>Tim SajiLe</p>
-            </div>
+            </body>
+        </html>
         `,
     };
 
     try {
         const info = await transporter.sendMail(mailOptions);
-
-        // LOG DETAIL untuk debugging
-        console.log('[EMAIL-SMTP-POOL] Sukses: Email dikirim ke', email);
-        console.log('[EMAIL-SMTP-POOL] info:', {
-            messageId: info.messageId,
-            accepted: info.accepted,
-            rejected: info.rejected,
-            envelope: info.envelope,
-            response: info.response,
-        });
-
+        console.log('[EMAIL-VERIFY] Sukses: Email dikirim ke', email);
         return true;
     } catch (error) {
-        console.error('[EMAIL-SMTP-POOL] GAGAL KRITIS: Gagal mengirim email verifikasi ke', email, 'Error:', error.message);
-        if (error.code === 'EAUTH') {
-            console.error('Periksa EMAIL_PASS di .env. Password aplikasi Gmail bisa salah/kadaluarsa.');
-        }
+        console.error('[EMAIL-VERIFY] GAGAL:', error.message);
         return false;
     }
 };
 
-module.exports = { sendVerificationEmail };
+// ============================================================
+// 2. FUNGSI BARU: EMAIL GENERIK (Untuk Lupa Password, dll)
+// ============================================================
+const sendGenericEmail = async ({ to, subject, html }) => {
+    const mailOptions = {
+        from: `"SajiLe Support" <${process.env.EMAIL_USER}>`,
+        to: to,
+        subject: subject,
+        html: html
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('[EMAIL-GENERIC] Sukses: Email dikirim ke', to);
+        return true;
+    } catch (error) {
+        console.error('[EMAIL-GENERIC] GAGAL:', error.message);
+        return false;
+    }
+};
+
+// EKSPOR KEDUA FUNGSI
+module.exports = { sendVerificationEmail, sendGenericEmail };

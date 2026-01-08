@@ -3,10 +3,11 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="referrer" content="no-referrer">
         <title>Profil Pengguna - SajiLe</title>
         <link rel="stylesheet" href="../css/profil.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body data-logged-in="false">
 
@@ -21,7 +22,7 @@
 
             <div class="nav-menu-container" id="nav-menu">
                 <ul class="nav-links">
-                    <li><a href="../index.html" class="active">Beranda</a></li>
+                    <li><a href="../index.html">Beranda</a></li>
                     <li><a href="daftar_makanan.html">Menu</a></li>
                     <li><a href="resep.html">Resep</a></li>
                     <li><a href="favorit.html">Favorit</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="pengaturan_akun.html"><i class="fas fa-cog"></i> Pengaturan Akun</a></li>
                                 <li><a href="resep_saya.html"><i class="fas fa-utensils"></i> Resep Saya</a></li>
                                 <li class="divider-item"></li>
-                                <li><a href="#" id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                                <li><a id="logout-btn" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
                             </ul>
                         </div>
                     </div>
@@ -77,27 +78,63 @@
                                 <img id="profile-avatar-img" src="../assets/default-avatar.png" alt="Foto Profil" loading="lazy">
                             </div>
                             <div class="profile-info-text">
-                                <h1 id="profile-username">Nama Pengguna</h1>
-                                <p id="profile-bio" class="bio-text">Bio pengguna ini masih kosong atau tidak disediakan.</p>
+                                <div class="name-badge-wrapper">
+                                    <div class="name-rank-details">
+                                        <h1 id="profile-username">Nama Pengguna</h1>
+                                        <div class="rank-container">
+                                            <div class="rank-header">
+                                                <div id="user-rank-emblem" class="rank-emblem">
+                                                    <i class="fas fa-seedling"></i>
+                                                    <span id="rank-title">SajiLe Newbie</span>
+                                                </div>
+                                                <span id="rank-xp-text">0 / 30 XP</span>
+                                            </div>
+                                            <div class="progress-bar-wrapper">
+                                                <div id="rank-progress" class="progress-fill"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p id="profile-bio" class="bio-text">Bio pengguna ini masih kosong...</p>
                                 <button id="edit-profile-btn" class="btn-secondary" style="display: none;"><i class="fas fa-user-edit"></i> Edit Profil</button>
                             </div>
                         </div>
 
                         <div class="profile-stats-grid">
-                            <div class="stat-item">
-                                <i class="fas fa-list-alt"></i>
+                            <div class="stat-item" title="Resep yang dipublikasikan">
+                                <i class="fas fa-utensils"></i>
                                 <span class="stat-value" id="stat-recipes">0</span>
-                                <span class="stat-label">Total Resep</span>
+                                <span class="stat-label">Resep</span>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat-item" title="Total suka yang diterima">
                                 <i class="fas fa-heart"></i>
                                 <span class="stat-value" id="stat-likes">0</span>
-                                <span class="stat-label">Total Disukai</span>
+                                <span class="stat-label">Disukai</span>
                             </div>
-                            <div class="stat-item">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span class="stat-value" id="stat-joined-date">N/A</span>
-                                <span class="stat-label">Bergabung</span>
+                            <div class="stat-item" title="Komentar yang diterima dari orang lain">
+                                <i class="fas fa-comments"></i>
+                                <span class="stat-value" id="stat-comments-received">0</span>
+                                <span class="stat-label">Interaksi</span>
+                            </div>
+                            <div class="stat-item" title="Kontribusi komentar ke orang lain">
+                                <i class="fas fa-comment-dots"></i>
+                                <span class="stat-value" id="stat-comments-given">0</span>
+                                <span class="stat-label">Aktif</span>
+                            </div>
+                        </div>
+
+                        <div class="rating-analytics-section">
+                            <div class="rating-box received-ratings">
+                                <h3>Rating Diterima</h3>
+                                <div class="average-big" id="avg-received">0.0</div>
+                                <div class="star-bars" id="received-bars">
+                                    </div>
+                            </div>
+                            <div class="rating-box given-ratings">
+                                <h3>Rating Diberikan</h3>
+                                <div class="average-big" id="avg-given">0.0</div>
+                                <div class="star-bars" id="given-bars">
+                                    </div>
                             </div>
                         </div>
 
@@ -110,7 +147,36 @@
                                 <i class="fas fa-check-circle"></i>
                                 <span id="detail-verified">Status Verifikasi</span>
                             </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span id="stat-joined-date">N/A</span>
                             </div>
+                        </div>
+
+                        <aside class="leaderboard-card">
+                            <div class="leaderboard-header">
+                                <h3><i class="fas fa-trophy"></i> Top Chef <a class="main-brand"><strong>Saji<span class="main-brand-highlight">Le</span></strong></a></h3>
+                                <div class="leaderboard-tabs">
+                                    <button class="tab-btn active" data-time="all-time">Sepanjang Masa</button>
+                                    <button class="tab-btn" data-time="yearly">Tahunan</button>
+                                    <button class="tab-btn" data-time="monthly">Bulanan</button>
+                                    <button class="tab-btn" data-time="daily">Harian</button>
+                                </div>
+                            </div>
+                            
+                            <div id="sticky-rank-card-container-top" class="sticky-rank-card-container-top">
+                                <div id="user-rank-pin-top" class="user-rank-pin"></div>
+                            </div>
+
+                            <div id="leaderboard-list" class="leaderboard-list">
+                                <div class="loading-mini">Memuat peringkat...</div>
+                            </div>
+
+                            <div id="sticky-rank-card-container-bottom" class="sticky-rank-card-container-bottom">
+                                <div id="user-rank-pin-bottom" class="user-rank-pin"></div>
+                            </div>
+                            
+                        </aside>
                     </div>
 
                     <div class="user-recipes-section">
@@ -149,6 +215,16 @@
                 (ex-<a class="footer-brand"><strong>MBADOK<span class="footer-brand-highlight">Le</span></strong></a>) Indonesia
             </p>
         </footer>
+
+        <svg style="display: none;">
+            <filter id="aura-noise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+                <feComponentTransfer>
+                    <feFuncA type="linear" slope="0.15" /> </feComponentTransfer>
+                <feBlend in="SourceGraphic" operator="over" />
+            </filter>
+        </svg>
 
         <script type="module" src="../js/profil.js"></script>
     </body>

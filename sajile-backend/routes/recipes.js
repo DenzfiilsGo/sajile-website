@@ -19,9 +19,23 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// Kita buat middleware "optionalAuth" sederhana di sini atau di file middleware
+const optionalAuth = (req, res, next) => {
+    // Jika ada token di header, jalankan fungsi auth yang asli
+    // Jika tidak ada, biarkan lanjut sebagai guest
+    const token = req.header('x-auth-token') || req.header('Authorization');
+    if (token) {
+        return auth(req, res, next);
+    }
+    next();
+};
+
 // Public routes
 router.get('/', recipeController.getAllRecipes);
-router.get('/:id', recipeController.getRecipeById);
+// ⭐ TAMBAHKAN INI (Route 'my' harus DI ATAS '/:id') ⭐
+router.get('/my', auth, recipeController.getMyRecipes);
+// Gunakan optionalAuth pada route detail resep
+router.get('/:id', optionalAuth, recipeController.getRecipeById);
 router.get('/user/:userId', recipeController.getRecipesByUser);
 
 // Private routes

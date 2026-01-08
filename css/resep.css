@@ -119,7 +119,7 @@ body {
 .nav-actions { 
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     flex-shrink: 0;
 }
 
@@ -168,6 +168,13 @@ body {
 .hamburger.active .bar:nth-child(2) { opacity: 0; }
 .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
 .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* --- KONTROL TAMPILAN BERDASARKAN STATUS MASUK --- */
+.logged-in-only { display: none; }
+.logged-out-only { display: flex; align-items: center; } /* Default: tampilkan tombol Masuk/Daftar */
+
+body[data-logged-in="true"] .logged-in-only { display: flex; } /* Tampilkan profil jika logged-in=true */
+body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan tombol Masuk/Daftar jika logged-in=true */
 
 
 /* =========================================
@@ -386,17 +393,6 @@ body {
     }
 }
 
-/* Memperbaiki konflik: Dropdown menu mobile hanya muncul saat .logged-in-only muncul */
-@media (max-width: 1024px) {
-    .profile-dropdown-menu { display: block !important; } /* Paksa tampil di mobile */
-    .profile-pic#profile-pic-btn { display: none !important; } /* Sembunyikan pemicu profil */
-}
-/* Menyesuaikan kembali Dark Mode untuk Navbar Mobile */
-[data-theme="dark"] .btn-icon { border-color: #333; }
-[data-theme="dark"] .profile-dropdown-menu .dropdown-header { border-color: #333; }
-[data-theme="dark"] .profile-dropdown-menu .divider-item { background-color: #333; }
-
-
 /* =========================================
    4. STYLING KHUSUS RESEP
    ========================================= */
@@ -408,7 +404,7 @@ body {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: white;
     margin-bottom: 40px;
-    transition: all var(--color-transition); 
+    transition: background var(--color-transition), color var(--color-transition);
 }
 
 .resep-header h1 {
@@ -436,7 +432,7 @@ body {
     box-shadow: var(--card-shadow);
     overflow: hidden;
     padding: 5px;
-    transition: all var(--color-transition);
+    transition: background var(--color-transition), box-shadow var(--color-transition);
 }
 
 .search-bar input {
@@ -446,6 +442,7 @@ body {
     font-size: 1rem;
     background: transparent;
     color: var(--text-color);
+    transition: background var(--color-transition), color var(--color-transition);
 }
 .search-bar input:focus { outline: none; }
 
@@ -454,10 +451,12 @@ body {
     padding: 5px 15px;
     color: var(--primary-color);
     background: none; /* Override background dari btn-icon */
+    transition: color var(--color-transition), background var(--color-transition);
 }
 .search-bar .btn-icon:hover { 
     background-color: transparent; 
     color: var(--primary-dark);
+    transition: background-color var(--color-transition), color var(--color-transition);
 }
 
 .filter-tags {
@@ -475,19 +474,21 @@ body {
     border-radius: 20px;
     cursor: pointer;
     font-size: 0.9rem;
-    transition: var(--transition);
+    transition: background-color var(--color-transition), color var(--color-transition), border var(--color-transition);
 }
 
 .tag:hover {
     background-color: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
+    transition: background-color var(--color-transition), color var(--color-transition), border-color var(--color-transition);
 }
 
 .tag.active {
     background-color: var(--primary-dark);
     color: white;
     border-color: var(--primary-dark);
+    transition: background-color var(--color-transition), color var(--color-transition), border-color var(--color-transition);
 }
 
 /* Recipe Grid */
@@ -500,23 +501,47 @@ body {
     gap: 25px;
 }
 
-.recipe-grid-section .recipe-card {
-    position: relative;
-    z-index: 1; /* Layer dasar */
-    cursor: pointer;
-    display: block;
-    text-decoration: none;
-    background: var(--card-bg); /* Menggunakan card-bg */
+/* 2. KONTAINER BARU: Pindahkan logika hover card ke sini */
+.recipe-card-container {
+    position: relative; /* Wajib sebagai jangkar .btn-fav */
+    z-index: 1;
+    background: var(--card-bg);
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: var(--card-shadow);
-    transform: translateY(0px);
-    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color var(--color-transition);
+    /* Gunakan nilai awal shadow yang eksplisit */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    transform: translateY(0);
+
+    /* PAKAI INI: Ganti cubic-bezier dengan ease sementara untuk tes */
+    transition: transform 0.3s ease, 
+                box-shadow 0.3s ease, 
+                background-color 0.3s ease;
+}
+/* Efek angkat saat hover pindah ke container */
+.recipe-card-container:hover {
+    /* Pastikan nilai akhir menggunakan format yang sama (rgba) */
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    transform: translateY(-8px) !important;
+    z-index: 5;
 }
 
-.recipe-grid-section .recipe-card:hover {
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    transform: translateY(-5px);
+/* 3. MODIFIKASI .recipe-card (Sekarang hanya sebagai link di dalam container) */
+.recipe-card-container .recipe-card {
+    position: static; /* Biarkan container yang mengatur posisi */
+    display: block;
+    text-decoration: none;
+    background: transparent; /* Background sudah diambil container */
+    box-shadow: none;        /* Shadow sudah diambil container */
+    transform: none;         /* Transform sudah diambil container */
+    border-radius: 0;
+    overflow: visible;
+    transition: transform var(--color-transition), box-shadow var(--color-transition), background var(--color-transition);
+}
+
+/* Hilangkan efek hover lama pada card agar tidak double */
+.recipe-card-container .recipe-card:hover {
+    box-shadow: none;
+    transform: none;
 }
 
 .card-image {
@@ -541,47 +566,49 @@ body {
     border-radius: 10px;
     font-size: 0.75rem;
     font-weight: 600;
+    transition: background-color var(--color-transition), color var(--color-transition);
 }
 
-.btn-fav {
-    z-index: 100; /* 🔥 Z-INDEX TINGGI AGAR MENANG DARI LINK */
+/* 4. ATUR TOMBOL FAVORIT (Revisi Posisi) */
+.recipe-grid-section .btn-fav {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
+    /* Ubah dari bottom menjadi top agar patokannya adalah area gambar */
+    top: 135px; /* Sesuaikan angka ini agar tombol menggantung di pojok kanan bawah gambar */
+    right: 15px;
+    z-index: 10;
+    
+    background-color: rgba(255, 255, 255, 0.9); /* Sedikit lebih tebal agar kontras */
     color: var(--text-color);
     border: none;
     border-radius: 50%;
-    width: 35px;
-    height: 35px;
+    width: 38px;  /* Sedikit diperbesar agar nyaman diklik */
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 1.1rem;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: transform var(--color-transition), background-color var(--color-transition), color var(--color-transition), box-shadow var(--color-transition);
 }
-.btn-fav:hover {
+.recipe-grid-section .btn-fav:hover {
     background-color: var(--danger-color);
     color: white;
     transform: scale(1.1);
+    transition: background-color var(--color-transition), color var(--color-transition), transform var(--color-transition);
 }
-/* Contoh jika sudah di-favoritkan */
-.btn-fav.active i.fa-heart {
-    content: '\f004'; /* Menggunakan ikon solid heart */
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
+.recipe-grid-section .btn-fav.active {
+    transform: none;
+    background-color: rgba(255, 255, 255, 0.9); /* Sedikit lebih tebal agar kontras */
     color: var(--danger-color);
+    transition: transform var(--color-transition), background-color var(--color-transition), color var(--color-transition);
 }
-.btn-fav.active:hover {
+.recipe-grid-section .btn-fav.active:hover {
     background-color: var(--danger-color);
     color: white;
+    transform: scale(1.1);
+    transition: background-color var(--color-transition), color var(--color-transition), transform var(--color-transition);
 }
-.btn-fav.active i.fa-heart:hover {
-    color: white;
-}
-
 .card-info {
     padding: 15px;
 }
@@ -589,22 +616,59 @@ body {
 .card-info h3 {
     font-size: 1.1rem;
     color: var(--text-color);
-    margin-bottom: 5px;
-    transition: color var(--color-transition); 
+    margin-bottom: 10px; 
     white-space: nowrap;
     overflow: hidden; 
     text-overflow: ellipsis;
+    transition: color var(--color-transition);
 }
-.recipe-card:hover .card-info h3 { color: var(--primary-color); }
+/* 5. PERBAIKAN HOVER JUDUL */
+/* Karena judul di dalam .recipe-card, kita deteksi hover dari container */
+.recipe-card-container:hover .card-info h3 { 
+    color: var(--primary-color); 
+}
 
-.card-info .duration {
+.card-more-info {
+    display: grid;
+    /* Membuat dua kolom yang lebarnya otomatis mengikuti konten */
+    grid-template-columns: auto auto; 
+    
+    /* Mendistribusikan sisa ruang kosong DI ANTARA kedua elemen */
+    /* Ini yang membuat satu ke kiri dan satu ke kanan */
+    justify-content: space-between; 
+    
+    /* Menyelaraskan ikon dan teks agar sejajar secara vertikal */
+    align-items: center; 
+    
+    /* Memastikan kontainer mengambil lebar penuh */
+    width: 100%; 
+}
+
+/* Pastikan selector class sesuai dengan HTML Anda (.card-more-info) */
+.card-more-info .duration {
     font-size: 0.9rem;
+    font-weight: 600;
     color: var(--text-light);
+    transition: color var(--color-transition);
 }
 
-.card-info .duration i {
+.card-more-info .duration i {
     color: var(--primary-color);
     margin-right: 5px;
+    transition: color var(--color-transition);
+}
+
+.card-more-info .star-rating {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-light);
+    transition: color var(--color-transition);
+}
+
+.card-more-info .star-rating i {
+    color: #f1c40f;
+    margin-right: 5px;
+    transition: color var(--color-transition);
 }
 
 .load-more-btn-container {
@@ -622,7 +686,7 @@ body {
     border-radius: 20px;
     color: white;
     margin-bottom: 80px;
-    transition: background-color var(--color-transition);
+    transition: background var(--color-transition), color var(--color-transition);
 }
 
 .chatbot-icon {
@@ -644,19 +708,67 @@ body {
     font-size: 1rem;
     opacity: 0.9;
 }
-.cta-chatbot-section .btn-primary {
+.cta-chatbot-section .btn-ask-ai-now {
+    padding: 8px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 2px solid transparent;
     background-color: white;
     color: var(--primary-color);
     border-color: white;
+    transition: background-color var(--color-transition), color var(--color-transition), border-color var(--color-transition);
 }
-.cta-chatbot-section .btn-primary:hover {
+.cta-chatbot-section .btn-ask-ai-now:hover {
     background-color: transparent;
     color: white;
     border-color: white;
+    transition: background-color var(--color-transition), color var(--color-transition), border-color var(--color-transition);
+}
+
+.ai-login-required {
+    display: block;
+    text-align: center;
+    justify-content: space-between;
+    background: var(--primary-color);
+    padding: 25px 0 50px 0;
+    border-radius: 20px;
+    color: white;
+    margin-bottom: 80px;
+    transition: background var(--color-transition), color var(--color-transition);
+}
+.ai-login-required h2 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+.ai-login-required p {
+    margin-bottom: 30px;
+    padding: 8px 25px;
+    font-size: 1rem;
+    color: white;
+}
+.ai-login-required .btn-login-required {
+    padding: 8px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 2px solid transparent;
+    background-color: white;
+    color: var(--primary-color);
+    border-color: white;
+    transition: background-color var(--color-transition), color var(--color-transition), border-color var(--color-transition);
+}
+.ai-login-required .btn-login-required:hover {
+    background-color: transparent;
+    color: white;
+    border-color: white;
+    transition: background-color var(--color-transition), color var(--color-transition), border-color var(--color-transition);
 }
 
 /* Animations (untuk dipicu oleh JS) */
-.fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+.fade-in { opacity: 0; transform: translateY(30px); transition: opacity var(--color-transition), transform var(--color-transition); }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 /* Untuk menunda animasi pada elemen grid */
 .delay-1 { transition-delay: 0.05s; }
@@ -688,6 +800,124 @@ body {
 }
 
 @media (max-width: 768px) {
+    .navbar { padding: 0 20px; }
+    .hamburger { display: block; }
+
+    /* Ubah Container jadi Dropdown Vertical */
+    .nav-menu-container {
+        position: absolute;
+        top: var(--nav-height); /* Dihitung dari variabel nav-height */
+        left: 0;
+        width: 100%;
+        margin: 0;
+        
+        /* Flex Column untuk Vertical Menu */
+        flex-direction: column;
+        background-color: var(--bg-color);
+        padding: 30px 20px;
+        
+        /* Style Dropdown */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        
+        /* STATE AWAL: Hidden & Slide Up */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        
+        /* TRANSISI SUPER HALUS */
+        transition: opacity 0.4s ease, 
+                        transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), /* Efek mantul dikit */
+                        visibility 0.4s ease,
+                        background-color var(--color-transition);
+    }
+
+    /* KELAS ACTIVE (Saat hamburger diklik) */
+    .nav-menu-container.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Reset Link Styles */
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .nav-links a {
+        display: block; font-size: 1.2rem; padding: 10px 0;
+    }
+    
+    /* Actions di Bawah */
+    .nav-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+        border-top: 1px solid var(--text-light);
+        padding-top: 25px;
+        
+        /* Penting: Pastikan logged-in/out elemen juga diatur di sini */
+        display: flex; /* Override untuk memformat sebagai kolom */
+    }
+
+    .nav-auth-links {
+        width: 100%;
+        flex-direction: column; /* Tombol Masuk/Daftar jadi full-width */
+    }
+
+    .logged-out-only {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .profile-dropdown-wrapper {
+        position: static; /* Dropdown di mobile tidak perlu absolute */
+        width: 100%;
+        order: -1; /* Pindah ke atas */
+        flex-direction: column;
+        gap: 10px;
+        /* Penting: Pastikan logged-in-only tampil sebagai flex saat login */
+        display: flex; 
+        
+        /* Dropdown Header Styling untuk Mobile */
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .profile-dropdown-wrapper .dropdown-header {
+        border-bottom: none;
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+    }
+    .profile-dropdown-wrapper .profile-pic {
+        display: none; /* Sembunyikan profile pic kecil, hanya tampilkan info */
+    }
+    .profile-dropdown-wrapper .user-info {
+        display: block;
+        text-align: left;
+        padding-left: 0;
+    }
+    
+    /* Tombol Theme jadi baris panjang */
+    .btn-icon {
+        width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
+        border: 1px solid #ddd; border-radius: 10px; padding: 10px;
+    }
+    .mobile-only-text { display: inline; font-size: 1rem; font-weight: 500; }
+    
+    .btn-primary { width: 100%; text-align: center; padding: 12px; }
+    
+    /* Hapus dropdown menu, ganti dengan link di nav-links di mobile */
+    .profile-dropdown-menu {
+        display: none; /* Sembunyikan dropdown menu vertikal di mobile */
+    }
     .resep-header h1 { font-size: 2.5rem; }
     .search-bar { max-width: 90%; }
     .cta-chatbot-section { 
@@ -780,12 +1010,29 @@ body {
 [data-theme="dark"] .resep-header {
     background: linear-gradient(135deg, #00796b, #004d40); 
 }
-[data-theme="dark"] .search-bar,
-[data-theme="dark"] .recipe-grid-section .recipe-card {
+/*[data-theme="dark"] .search-bar,*/
+
+[data-theme="dark"] .recipe-card-container {
+    position: relative;
+    z-index: 1;
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transform: translateY(0px);
+    transition: transform var(--color-transition), box-shadow var(--color-transition), background var(--color-transition);
+}
+[data-theme="dark"] .recipe-card-container:hover {
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
+}
+
+[data-theme="dark"] .recipe-card-container .recipe-card {
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
+    transition: transform var(--color-transition), box-shadow var(--color-transition), background var(--color-transition);
 }
-[data-theme="dark"] .recipe-grid-section .recipe-card:hover {
+[data-theme="dark"] .recipe-card-container .recipe-card:hover {
     box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
 }
 [data-theme="dark"] .tag { border-color: #333; }
@@ -794,6 +1041,13 @@ body {
 [data-theme="dark"] .recipe-card:hover .card-info h3 { color: var(--primary-color); }
 
 [data-theme="dark"] .btn-fav { background-color: rgba(30, 30, 30, 0.8); color: #e0e0e0; }
+[data-theme="dark"] .recipe-grid-section .btn-fav.active { transform: none; background-color: rgba(30, 30, 30, 0.8); color: var(--danger-color); transition: transform var(--color-transition), background-color var(--color-transition), color var(--color-transition); }
+[data-theme="dark"] .recipe-grid-section .btn-fav.active:hover {
+    background-color: var(--danger-color);
+    color: white;
+    transform: scale(1.1);
+    transition: background-color var(--color-transition), color var(--color-transition), transform var(--color-transition);
+}
 
 [data-theme="dark"] .cta-chatbot-section {
     background: var(--primary-dark);
@@ -891,8 +1145,9 @@ body {
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s, top 0.3s;
+    /*transition: opacity 0.3s, top 0.3s;*/
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform var(--color-transition), background-color var(--color-transition), color var(--color-transition), box-shadow var(--color-transition);
 }
 
 .fav-toast.show {
@@ -925,6 +1180,7 @@ body {
     color: white;
     transform: scale(1.1);
     border-color: var(--danger-color);
+    transition: background-color var(--color-transition), color var(--color-transition), transform var(--color-transition), border-color var(--color-transition);
 }
 .btn-fav.active i::before {
     content: "\f004"; /* Kode FontAwesome untuk Solid Heart */

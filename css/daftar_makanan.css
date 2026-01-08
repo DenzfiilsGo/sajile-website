@@ -40,8 +40,8 @@ body {
 }
 
 /* =========================================
-    2. NAVBAR STYLING (STANDAR WAJIB)
-    ========================================= */
+   2. NAVBAR STYLING (FIXED & SAFE - STANDAR WAJIB)
+   ========================================= */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -102,7 +102,7 @@ body {
 .nav-actions { 
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     flex-shrink: 0;
 }
 
@@ -128,14 +128,16 @@ body {
 }
 .btn-icon:hover { background-color: rgba(0,0,0,0.05); color: #7296AB; }
 
-/* ----------------------------------------- */
-/* ⭐ Tambahan Styling Status Login/Logout ⭐ */
-/* ----------------------------------------- */
+.profile-pic img { 
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--primary-color); cursor: pointer;
+    transition: transform 0.3s ease;
+}
 
-/* Sembunyikan elemen tergantung status body data-logged-in */
-body[data-logged-in="true"] .logged-out-only { display: none !important; }
-body[data-logged-in="false"] .logged-in-only { display: none !important; }
-
+/* Tambahan: Sembunyikan item mobile di desktop */
+.mobile-only-text, .profile-pic.mobile-only { display: none; } 
+/* Tambahan: Tampilkan item desktop di desktop */
+.profile-pic.desktop-only { display: block; }
 
 /* Hamburger Button */
 .hamburger {
@@ -149,6 +151,13 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
 .hamburger.active .bar:nth-child(2) { opacity: 0; }
 .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
 .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* --- KONTROL TAMPILAN BERDASARKAN STATUS MASUK --- */
+.logged-in-only { display: none; }
+.logged-out-only { display: flex; align-items: center; } /* Default: tampilkan tombol Masuk/Daftar */
+
+body[data-logged-in="true"] .logged-in-only { display: flex; } /* Tampilkan profil jika logged-in=true */
+body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan tombol Masuk/Daftar jika logged-in=true */
 
 /* =========================================
     3. DROPDOWN PROFILE STYLING (STANDAR WAJIB)
@@ -403,8 +412,8 @@ body[data-logged-in="false"] .logged-in-only { display: none !important; }
 
 .menu-card {
     background: var(--card-bg); border-radius: 15px; overflow: hidden; box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease, background-color var(--color-transition), box-shadow var(--color-transition); 
     cursor: pointer; display: flex; flex-direction: column;
+    transition: transform var(--color-transition), background var(--color-transition), box-shadow var(--color-transition); 
 }
 .menu-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
 .card-img { width: 100%; height: 160px; background-size: cover; background-position: center; }

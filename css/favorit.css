@@ -13,15 +13,22 @@
     --nav-height: 70px;
     --transition: all 0.3s ease; 
     --color-transition: 0.5s cubic-bezier(.4, 0, .2, 1);
+    --accent-color: #3498db; /* Biru untuk badge kategori */
+    --danger-color: #e74c3c; /* Merah untuk Logout */
+    --user-name-color: #4B0082; /* Warna Nama Pengguna */
+    --dropdown-bg: #ffffff; /* Tambahan untuk dropdown */
+    --border-color: #eeeeee; /* Tambahan untuk batas */
 }
 
-/* Dark Mode Variables */
+/* DARK MODE VARIABLES */
 [data-theme="dark"] {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --text-light: #aaaaaa;
+    --bg-color: #121212; 
+    --text-color: #e0e0e0; 
+    --text-light: #aaaaaa; 
     --card-bg: #1e1e1e;
     --card-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+    --dropdown-bg: #1e1e1e; /* Dark mode dropdown */
+    --border-color: #333333; /* Dark mode batas */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -113,11 +120,10 @@ body {
 .nav-actions { 
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     flex-shrink: 0;
 }
 
-/* Tombol */
 .btn-primary { 
     background-color: var(--primary-color);
     color: white;
@@ -128,14 +134,11 @@ body {
     white-space: nowrap;
     transition: var(--transition);
     border: 2px solid transparent;
-    cursor: pointer;
 }
 .btn-primary:hover {
     background-color: transparent; border-color: var(--primary-color); color: var(--primary-color);
 }
-.btn-primary:active {
-    transform: scale(1.1);
-}
+
 .btn-icon { 
     background: none; border: none; font-size: 1.2rem; cursor: pointer; 
     color: var(--text-color); padding: 5px; border-radius: 50%;
@@ -149,8 +152,9 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* Visibilitas item di desktop */
+/* Tambahan: Sembunyikan item mobile di desktop */
 .mobile-only-text, .profile-pic.mobile-only { display: none; } 
+/* Tambahan: Tampilkan item desktop di desktop */
 .profile-pic.desktop-only { display: block; }
 
 /* Hamburger Button */
@@ -166,14 +170,12 @@ body {
 .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
 .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-/* =========================================
-   TAMBAHAN WAJIB: PROFILE DROPDOWN & LOGIC
-   (Bagian ini hilang di skrip sebelumnya)
-   ========================================= */
+/* --- KONTROL TAMPILAN BERDASARKAN STATUS MASUK --- */
+.logged-in-only { display: none; }
+.logged-out-only { display: flex; align-items: center; } /* Default: tampilkan tombol Masuk/Daftar */
 
-/* Kontrol Tampilan Berdasarkan Status Login */
-body[data-logged-in="true"] .logged-out-only { display: none !important; }
-body[data-logged-in="false"] .logged-in-only { display: none !important; }
+body[data-logged-in="true"] .logged-in-only { display: flex; } /* Tampilkan profil jika logged-in=true */
+body[data-logged-in="true"] .logged-out-only { display: none; } /* Sembunyikan tombol Masuk/Daftar jika logged-in=true */
 
 /* =========================================
     3. DROPDOWN PROFILE STYLING (STANDAR WAJIB)
